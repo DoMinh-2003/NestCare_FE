@@ -1,7 +1,9 @@
 import axios from "axios";
+import env from "react-dotenv";
 
 const api = axios.create({
-  baseURL: "http://14.225.217.207:8081/api/",
+  // baseURL: "http://14.225.217.207:8081/api/",
+  baseURL: import.meta.env.VITE_API_URL,
 });
 
 api.interceptors.request.use(
