@@ -8,6 +8,8 @@ import { StateProvider } from "./context/stateProvider";
 import "./index.scss";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ConfigProvider } from "antd";
+import { themeAntd } from "./config/antd";
 // AOS.init({
 //   // initialise with other settings
 //   duration: 1000,
@@ -15,14 +17,16 @@ import "react-toastify/dist/ReactToastify.css";
 function App() {
   return (
     <>
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <StateProvider>
-            <RouterProvider router={router} />
-            <ToastContainer />
-          </StateProvider>
-        </PersistGate>
-      </Provider>
+      <ConfigProvider theme={themeAntd}>
+        <Provider store={store}>
+          <PersistGate loading={null} persistor={persistor}>
+            <StateProvider>
+              <RouterProvider router={router} />
+              <ToastContainer />
+            </StateProvider>
+          </PersistGate>
+        </Provider>
+      </ConfigProvider>
     </>
   );
 }
