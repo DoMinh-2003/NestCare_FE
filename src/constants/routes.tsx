@@ -1,6 +1,8 @@
 // User Routes
 export enum USER_ROUTES {
-  HOME = "home",
+
+  HOME = "/",
+  HOME_PAGE = "",
   LOGIN = "login",
 }
 
