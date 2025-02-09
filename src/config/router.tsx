@@ -3,9 +3,11 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import { useCurrentUser } from "../utils/getcurrentUser";
 import { toast } from "react-toastify";
 import AdminLayout from "../components/layouts/admin-layout";
-import { ADMIN_ROUTES, DOCTOR_ROUTES } from "../constants/routes";
+import { ADMIN_ROUTES, DOCTOR_ROUTES, USER_ROUTES } from "../constants/routes";
 import ManageUser from "../pages/admin/manage-user";
 import ManageOverview from "../pages/admin/manage-overview";
+import CustomerLayout from "../components/layouts/customer-layout";
+import HomePage from "../pages/customer/home";
 
 interface ProtectedRouteByRoleProps {
   children: ReactNode;
@@ -45,8 +47,16 @@ const ProtectedRouteByRole: React.FC<ProtectedRouteByRoleProps> = ({
 
 export const router = createBrowserRouter([
   {
-    path: "/",
-    element: <div className="text-3xl font-bold underline ">Hi DoMinh</div>,
+    path: USER_ROUTES.HOME,
+    element: (
+     <CustomerLayout/>
+    ),
+    children: [
+      {
+        path: USER_ROUTES.HOME_PAGE,
+        element: <HomePage />,
+      },
+    ],
   },
   {
     path: "/test",
