@@ -48,6 +48,7 @@ const AdminLayout: React.FC = () => {
         collapsible
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
+        
       >
         <div className="demo-logo-vertical" />
         <Menu
