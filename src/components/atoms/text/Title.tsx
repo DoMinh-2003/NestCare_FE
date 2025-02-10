@@ -1,12 +1,11 @@
-import React from 'react'
-
 interface TitleProps{
-    text: string
+    text: string,
+    className?: string;
 }
 
-const Title = ({text}: TitleProps) => {
+const Title = ({text, className}: TitleProps) => {
   return (
-    <div className='font-bold text-pink-700 text-5xl'>
+    <div className={`${className} font-bold text-pink-700 text-5xl`}>
         {text}
     </div>
   )

@@ -29,6 +29,7 @@
     "redux": "^5.0.1",
     "redux-persist": "^6.0.0",
     "structmaster": "file:",
+    "swiper": "^11.2.2",
     "toast": "^0.5.4"
   },
   "devDependencies": {
