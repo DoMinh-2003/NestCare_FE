@@ -1,7 +1,7 @@
 
 import ServicePackage from '../../molecules/service-package';
 
-const ServicesPakageList = () => {
+const ServicesPackageList = () => {
     return (
         <div>
             {
@@ -41,4 +41,4 @@ const servicePackages = [
     }
 ];
 
-export default ServicesPakageList
+export default ServicesPackageList
