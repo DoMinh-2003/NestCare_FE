@@ -1,4 +1,5 @@
 import NavMenu from "../nav-menu/NavMenu";
+import PopoverNavList from "../popover-nav-list/PopoverNavList";
 
 const menuItems = [
   { label: "Giới thiệu", hasDropdown: false },
@@ -14,9 +15,17 @@ const menuItems = [
 
 const NavbarMenuList = () => {
   return (
-    <div className="flex space-x-6 pl-10">
+    <div className="flex space-x-5 pl-10">
       {menuItems.map((item, index) => (
-        <NavMenu  key={index} {...item} />
+        <>
+          {
+            item.label === "Tin tức" || item.label === "Chuyên khoa" || item.label === "Dịch vụ" || item.label === "Hướng dẫn" || item.label === "Kiến thức"
+              ?
+              <PopoverNavList title={item.label} />
+              :
+              <NavMenu key={index} {...item} />
+          }
+        </>
       ))}
     </div>
   );
