@@ -1,4 +1,3 @@
-import React from 'react'
 import Title from '../../atoms/text/Title'
 
 const CustomerFeedback = () => {
