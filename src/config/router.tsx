@@ -62,6 +62,10 @@ export const router = createBrowserRouter([
         path: USER_ROUTES.DOCTORS,
         element: <TeamOfDoctor />,
       },
+      {
+        path: USER_ROUTES.CONTACT,
+        element: <Contact />,
+      },
     ],
   },
   {
