@@ -1,67 +1,87 @@
 import { useEffect, useState } from "react";
 
 interface CarouselProps {
-    images: { src: string; alt: string }[];
+  images: { src: string; alt: string }[];
 }
 
 const Carousel: React.FC<CarouselProps> = ({ images }) => {
-    const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-    const nextSlide = () => {
-        setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
-    };
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  };
 
-    const prevSlide = () => {
-        setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
-    };
+  const prevSlide = () => {
+    setCurrentIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  };
 
-    // Tự động chuyển ảnh sau mỗi 5 giây
-    useEffect(() => {
-        const interval = setInterval(nextSlide, 5000);
-        return () => clearInterval(interval); // Dọn dẹp interval khi component unmount
-    }, [currentIndex]);
+  useEffect(() => {
+    const interval = setInterval(nextSlide, 5000);
+    return () => clearInterval(interval);
+  }, [currentIndex]);
 
-    return (
-        <div className="relative w-full overflow-hidden">
-            <div className="relative h-56 md:h-96">
-                {images.map((image, index) => (
-                    <img
-                        key={index}
-                        src={image.src}
-                        alt={image.alt}
-                        className={`absolute w-full h-full object-contain transition-opacity duration-700 ${index === currentIndex ? "opacity-100" : "opacity-0"
-                            }`}
-                    />
-                ))}
-            </div>
+  return (
+    <div className="relative w-full overflow-hidden flex justify-center items-center">
+      <div className="relative flex w-full max-w-[90vw] h-[50vh] justify-center items-center">
+        {images.map((image, index) => {
+          let position = "hidden"; // Ẩn ảnh mặc định
 
-            {/* Indicators */}
-            <div className="absolute bottom-5 left-1/2 flex -translate-x-1/2 space-x-2">
-                {images.map((_, index) => (
+          if (
+            index === currentIndex ||
+            index === (currentIndex + 1) % images.length ||
+            index === (currentIndex - 1 + images.length) % images.length
+          ) {
+            position = "block"; // Hiển thị 3 ảnh
+          }
+
+          const isCenter = index === currentIndex;
+          const isLeft = index === (currentIndex - 1 + images.length) % images.length;
+          const isRight = index === (currentIndex + 1) % images.length;
+
+          return (
+            <div
+              key={index}
+              className={`absolute transition-all duration-700 flex flex-col items-center p-5  ${position} 
+                ${isCenter ? "w-[40vw] scale-100 opacity-100 z-10" : "w-[30vw] opacity-80"} 
+                ${isLeft ? "-translate-x-[115%] ml-2 sm:ml-4" : ""} 
+                ${isRight ? "translate-x-[115%] mr-2 sm:mr-4" : ""}`}
+            >
+              <img src={image.src} alt={image.alt} className="w-full rounded-2xl shadow-lg" />
+
+              {/* Indicators nằm ngay dưới ảnh giữa */}
+              {isCenter && (
+                <div className="absolute 2xl:bottom-20 bottom-5 b left-1/2 -translate-x-1/2 flex space-x-2">
+                  {images.map((_, index) => (
                     <button
-                        key={index}
-                        className={`w-3 h-3 rounded-full transition-colors ${index === currentIndex ? "bg-white" : "bg-gray-400"
-                            }`}
-                        onClick={() => setCurrentIndex(index)}
+                      key={index}
+                      className={`w-3 h-3 rounded-full transition-colors ${
+                        index === currentIndex ? "bg-white" : "bg-gray-400"
+                      }`}
+                      onClick={() => setCurrentIndex(index)}
                     />
-                ))}
+                  ))}
+                </div>
+              )}
             </div>
+          );
+        })}
+      </div>
 
-            {/* Controls */}
-            <button
-                className="absolute top-1/2 left-2 -translate-y-1/2 p-2 bg-gray-800/30 text-white rounded-full"
-                onClick={prevSlide}
-            >
-                ❮
-            </button>
-            <button
-                className="absolute top-1/2 right-2 -translate-y-1/2 p-2 bg-gray-800/30 text-white rounded-full"
-                onClick={nextSlide}
-            >
-                ❯
-            </button>
-        </div>
-    );
+      {/* Controls */}
+      <button
+        className="absolute top-1/2 left-2 -translate-y-1/2 p-2 bg-gray-800/30 text-white rounded-full"
+        onClick={prevSlide}
+      >
+        ❮
+      </button>
+      <button
+        className="absolute top-1/2 right-2 -translate-y-1/2 p-2 bg-gray-800/30 text-white rounded-full"
+        onClick={nextSlide}
+      >
+        ❯
+      </button>
+    </div>
+  );
 };
 
-export default Carousel
+export default Carousel;

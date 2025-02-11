@@ -11,22 +11,22 @@ import InformationForCustomer from "../../../components/organisms/infomation-for
 import LearnMoreAboutNestCare from "../../../components/organisms/learn-more-about-nest-care/LearnMoreAboutNestCare";
 
 const HomePage = () => {
-  
+
   return (
-    <>
+    <div className="mx-5">
       <HomeCarousel />
       <div className="container mx-auto mt-5">
         <About />
-        <ServiceAtNestCare/>
+        <ServiceAtNestCare />
         <DoctorList />
         <BookingSection />
-        <OutStandingService/>
-        <CustomerFeedback/>
-        <HealthKnowledge/>
-        <InformationForCustomer/>
-        <LearnMoreAboutNestCare/>
+        <OutStandingService />
+        <CustomerFeedback />
+        <HealthKnowledge />
+        <InformationForCustomer />
+        <LearnMoreAboutNestCare />
       </div>
-    </> 
+    </div>
   );
 };
 
