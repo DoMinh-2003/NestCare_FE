@@ -2,7 +2,7 @@ import NavMenu from "../nav-menu/NavMenu";
 import PopoverNavList from "../popover-nav-list/PopoverNavList";
 
 const menuItems = [
-  { label: "Giới thiệu", hasDropdown: false, link: "/gioi-thieu" },
+  { label: "Giới thiệu", hasDropdown: false, link: "/about" },
   { label: "Chuyên khoa", hasDropdown: true, link: "/chuyen-khoa" },
   { label: "Dịch vụ", hasDropdown: true, link: "/services" },
   { label: "Bác sĩ", hasDropdown: false, link: "/doctors" },
