@@ -8,6 +8,7 @@ import ManageUser from "../pages/admin/manage-user";
 import ManageOverview from "../pages/admin/manage-overview";
 import CustomerLayout from "../components/layouts/customer-layout";
 import HomePage from "../pages/customer/home";
+import Contact from "../pages/contact";
 
 interface ProtectedRouteByRoleProps {
   children: ReactNode;
@@ -55,6 +56,10 @@ export const router = createBrowserRouter([
       {
         path: USER_ROUTES.HOME_PAGE,
         element: <HomePage />,
+      },
+      {
+        path: USER_ROUTES.CONTACT,
+        element: <Contact />,
       },
     ],
   },

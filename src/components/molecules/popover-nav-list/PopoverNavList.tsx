@@ -42,11 +42,12 @@ const news = [
   "Videos"
 ];
 
-interface SpecialtiesProps {
-  title: string
+interface PopoverNavListProps {
+  title: string;
+  link: string;
 }
 
-const PopoverNavList = ({ title }: SpecialtiesProps) => {
+const PopoverNavList = ({ title, link}: PopoverNavListProps) => {
   let popContent: string[];
 
   switch (title) {
@@ -73,6 +74,7 @@ const PopoverNavList = ({ title }: SpecialtiesProps) => {
   return (
     <div className="">
       <PopoverNavbar
+      link={link}
         title={title}
         content={
           popContent

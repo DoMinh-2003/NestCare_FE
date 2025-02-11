@@ -5,9 +5,10 @@ interface PopoverProps {
     content: string[];
     className?: string;
     title: string;
+    link: string;
 }
 
-const PopoverNavbar = ({ content, className, title }: PopoverProps) => {
+const PopoverNavbar = ({ content, className, title, link }: PopoverProps) => {
     const popContent =
         <div className='mb-3'>
             {
@@ -26,7 +27,7 @@ const PopoverNavbar = ({ content, className, title }: PopoverProps) => {
         <>
             <Popover className={className} content={popContent}>
                 <div>
-                    <NavMenu label={title} hasDropdown />
+                    <NavMenu label={title} hasDropdown link={link}/>
                 </div>
             </Popover>
         </>

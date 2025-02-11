@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Text from "../../atoms/text/Text";
 import {
   DownOutlined
@@ -6,12 +7,15 @@ interface NavMenuProps {
   label: string;
   hasDropdown?: boolean;
   className?: string;
+  link: string;
 }
 
-const NavMenu = ({ label, hasDropdown, className }: NavMenuProps) => {
+const NavMenu = ({ label, hasDropdown, className, link }: NavMenuProps) => {
   return (
-    <div className="hover:bg-pink-100 p-2 rounded-xl">
-      <Text>{label} {hasDropdown && <DownOutlined/>}</Text>
+    <div className={`${className} hover:bg-pink-100 p-2 rounded-xl`}>
+      <Link to={link}>
+        <Text>{label} {hasDropdown && <DownOutlined />}</Text>
+      </Link>
     </div>
   )
 };
