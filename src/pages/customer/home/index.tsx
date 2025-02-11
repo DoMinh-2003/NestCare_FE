@@ -12,7 +12,6 @@ import LearnMoreAboutNestCare from "../../../components/organisms/learn-more-abo
 
 const HomePage = () => {
   
-
   return (
     <>
       <HomeCarousel />

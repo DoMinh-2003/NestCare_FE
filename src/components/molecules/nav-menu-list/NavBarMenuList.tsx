@@ -14,9 +14,9 @@ const menuItems = [
 
 const NavbarMenuList = () => {
   return (
-    <div className="flex space-x-5">
+    <div className="flex space-x-6 pl-10">
       {menuItems.map((item, index) => (
-        <NavMenu key={index} {...item} />
+        <NavMenu  key={index} {...item} />
       ))}
     </div>
   );
