@@ -13,14 +13,30 @@ const Directors = () => {
           {doctors
             .filter(item => item.position.includes("Giám Đốc"))
             .map((item, index) => (
-              <DoctorCard
-                key={item.name}
-                professional_qualifications={item.professional_qualifications}
-                background_color={index % 2 === 1 ? "pink" : "blue"}
-                name={item.name}
-                specialty={item.position}
-                image={item.image}
-              />
+              <>
+                {
+                  index === 0 ?
+                    <div>
+                      <DoctorCard
+                        key={item.name}
+                        professional_qualifications={item.professional_qualifications}
+                        background_color={index % 2 === 1 ? "pink" : "blue"}
+                        name={item.name}
+                        specialty={item.position}
+                        image={item.image}
+                      />
+                    </div>
+                    :
+                    <DoctorCard
+                      key={item.name}
+                      professional_qualifications={item.professional_qualifications}
+                      background_color={index % 2 === 1 ? "pink" : "blue"}
+                      name={item.name}
+                      specialty={item.position}
+                      image={item.image}
+                    />
+                }
+              </>
             ))}
         </div>
 

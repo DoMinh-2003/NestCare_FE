@@ -23,7 +23,7 @@ const OutStandingService = () => {
                 <div className="col-span-5">
                     <Title text='Dịch vụ nổi bật' className='mt-20'/>
                     <div className="mt-10">
-                        Với hành trình 23 năm phát triển trong nghành sản – phụ khoa, SIHospital tự hào là đơn vị tiên phong mang tiêu chuẩn dịch vụ bệnh viện Phụ sản Quốc tế đến Việt Nam. Khám phá các thế mạnh dịch vụ của SIHospital tại đây.
+                        Với hành trình 23 năm phát triển trong nghành sản – phụ khoa, NestCare tự hào là đơn vị tiên phong mang tiêu chuẩn dịch vụ bệnh viện Phụ sản Quốc tế đến Việt Nam. Khám phá các thế mạnh dịch vụ của NestCare tại đây.
                     </div>
                     <div className="mt-10">
                         <button onClick={showModal} type="button" className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
