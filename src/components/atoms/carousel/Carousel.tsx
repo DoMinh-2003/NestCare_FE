@@ -22,7 +22,7 @@ const Carousel: React.FC<CarouselProps> = ({ images }) => {
 
   return (
     <div className="relative w-full overflow-hidden flex justify-center items-center">
-      <div className="relative flex w-full max-w-[90vw] h-[50vh] justify-center items-center">
+      <div className="relative flex w-full max-w-[90vw] h-[60vh] justify-center items-center">
         {images.map((image, index) => {
           let position = "hidden"; // Ẩn ảnh mặc định
 
@@ -42,15 +42,15 @@ const Carousel: React.FC<CarouselProps> = ({ images }) => {
             <div
               key={index}
               className={`absolute transition-all duration-700 flex flex-col items-center p-5  ${position} 
-                ${isCenter ? "w-[40vw] scale-100 opacity-100 z-10" : "w-[30vw] opacity-80"} 
-                ${isLeft ? "-translate-x-[115%] ml-2 sm:ml-4" : ""} 
-                ${isRight ? "translate-x-[115%] mr-2 sm:mr-4" : ""}`}
+                ${isCenter ? "w-[50vw] scale-110 opacity-100 z-10" : "w-[25vw] scale-90 opacity-70"} 
+                ${isLeft ? "-translate-x-[130%] ml-2 sm:ml-4" : ""} 
+                ${isRight ? "translate-x-[130%] mr-2 sm:mr-4" : ""}`}
             >
               <img src={image.src} alt={image.alt} className="w-full rounded-2xl shadow-lg" />
 
               {/* Indicators nằm ngay dưới ảnh giữa */}
               {isCenter && (
-                <div className="absolute 2xl:bottom-20 bottom-5 b left-1/2 -translate-x-1/2 flex space-x-2">
+                <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex space-x-2">
                   {images.map((_, index) => (
                     <button
                       key={index}
