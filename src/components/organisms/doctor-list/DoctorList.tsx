@@ -6,7 +6,7 @@ import DoctorCard from "../../molecules/doctor-card/DoctorCard";
 
 const DoctorList = () => {
   return (
-    <div className="  ">
+    <div className="">
           <p className="text-5xl font-bold text-pink-700 py-20">Đội ngũ bác sĩ</p>
           <Swiper
             modules={[Autoplay]}
@@ -15,16 +15,16 @@ const DoctorList = () => {
             slidesPerView={4}
             spaceBetween={30}
             pagination={{ clickable: true }}
-            className="mySwiper"
+            className="mySwiper "
             breakpoints={{
               320: { slidesPerView: 1 },  // Điện thoại nhỏ
-              640: { slidesPerView: 2 },  // Tablet
-              1024: { slidesPerView: 3 }, // Laptop
-              1280: { slidesPerView: 4 }, // Màn hình lớn
+              768: { slidesPerView: 2 },  // Tablet
+              1000: { slidesPerView: 3 }, // Laptop
+              1536: { slidesPerView: 4 }, // Màn hình lớn
             }}
           >
             {doctors.map((item, index) => (
-              <SwiperSlide key={index}>
+              <SwiperSlide key={index} className="justify-items-center">
                 <DoctorCard
                   professional_qualifications={item.professional_qualifications}
                   background_color={index % 2 === 0 ? "pink" : "blue"}
