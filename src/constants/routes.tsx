@@ -4,7 +4,8 @@ export enum USER_ROUTES {
   HOME = "/",
   HOME_PAGE = "",
   LOGIN = "login",
-  CONTACT = "contact"
+  CONTACT = "contact",
+  DOCTORS = "doctors"
 }
 
 export enum DOCTOR_ROUTES {
