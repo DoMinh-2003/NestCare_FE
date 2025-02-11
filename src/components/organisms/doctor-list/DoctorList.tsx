@@ -5,6 +5,8 @@ import DoctorCard from "../../molecules/doctor-card/DoctorCard";
 
 
 const DoctorList = () => {
+ 
+
   return (
     <div className="">
           <p className="text-5xl font-bold text-pink-700 py-20">Đội ngũ bác sĩ</p>
@@ -41,61 +43,166 @@ const DoctorList = () => {
 };
 
 export const doctors = [
-    {
-      name: "Nguyễn Văn An",
-      specialty: "Nội khoa",
-      professional_qualifications: "BS.CK1",
-      background_color: "#FFDDC1",
-      image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
-    },
-    {
-      name: "Trần Thị Bình",
-      specialty: "Nhi khoa",
-      professional_qualifications: "BS.CK1",
-      background_color: "#C1E1FF",
-      image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
-    },
-    {
-      name: "Lê Văn Cường",
-      specialty: "Tim mạch",
-      professional_qualifications: "BS.CK1",
-      background_color: "#E1FFC1",
-      image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
-    },
-    {
-      name: "Phạm Thị Dung",
-      specialty: "Sản phụ khoa",
-      professional_qualifications: "BS.CK1",
-      background_color: "#FFC1E1",
-      image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
-    },
-    {
-      name: "Hoàng Văn Đức",
-      specialty: "Chấn thương chỉnh hình",
-      professional_qualifications: "BS.CK1",
-      background_color: "#FFD700",
-      image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
-    },
-    {
-      name: "Vũ Thị Hạnh",
-      specialty: "Da liễu",
-      professional_qualifications: "BS.CK1",
-      background_color: "#98FB98",
-      image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
-    },
-    {
-      name: "Đinh Văn Khánh",
-      specialty: "Tai - Mũi - Họng",
-      professional_qualifications: "BS.CK1",
-      background_color: "#ADD8E6",
-      image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
-    },
-    {
-      name: "Ngô Thị Lan",
-      specialty: "Mắt",
-      professional_qualifications: "BS.CK1",
-      background_color: "#FFB6C1",
-      image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
-    }
-  ];
+  {
+    name: "Nguyễn Văn An",
+    specialty: "Nội khoa",
+    position: "Giám Đốc Y Khoa",
+    professional_qualifications: "BS.CK2",
+    background_color: "#FFDDC1",
+    image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
+  },
+  {
+    name: "Trần Thị Bình",
+    specialty: "Nhi khoa",
+    position: "Phó Giám Đốc Y Khoa",
+    professional_qualifications: "BS.CK2",
+    background_color: "#C1E1FF",
+    image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
+  },
+  {
+    name: "Lê Văn Cường",
+    specialty: "Tim mạch",
+    position: "Trưởng Khoa",
+    professional_qualifications: "BS.CK1",
+    background_color: "#E1FFC1",
+    image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
+  },
+  {
+    name: "Phạm Thị Dung",
+    specialty: "Sản phụ khoa",
+    position: "Trưởng Khoa",
+    professional_qualifications: "BS.CK1",
+    background_color: "#FFC1E1",
+    image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
+  },
+  {
+    name: "Hoàng Văn Đức",
+    specialty: "Chấn thương chỉnh hình",
+    position: "Trưởng Khoa",
+    professional_qualifications: "BS.CK1",
+    background_color: "#FFD700",
+    image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
+  },
+  {
+    name: "Vũ Thị Hạnh",
+    specialty: "Da liễu",
+    position: "Trưởng Khoa",
+    professional_qualifications: "BS.CK1",
+    background_color: "#98FB98",
+    image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
+  },
+  {
+    name: "Đinh Văn Khánh",
+    specialty: "Tai - Mũi - Họng",
+    position: "Trưởng Khoa",
+    professional_qualifications: "BS.CK1",
+    background_color: "#ADD8E6",
+    image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
+  },
+  {
+    name: "Ngô Thị Lan",
+    specialty: "Mắt",
+    position: "Trưởng Khoa",
+    professional_qualifications: "BS.CK1",
+    background_color: "#FFB6C1",
+    image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
+  },
+  {
+    name: "Lý Minh Hoàng",
+    specialty: "Nội khoa",
+    position: "Phó Khoa",
+    professional_qualifications: "BS.CK1",
+    background_color: "#F0E68C",
+    image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
+  },
+  {
+    name: "Trần Thu Hà",
+    specialty: "Nhi khoa",
+    position: "Phó Khoa",
+    professional_qualifications: "BS.CK1",
+    background_color: "#DDA0DD",
+    image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
+  },
+  {
+    name: "Nguyễn Văn Phúc",
+    specialty: "Tim mạch",
+    position: "Phó Khoa",
+    professional_qualifications: "BS.CK1",
+    background_color: "#87CEFA",
+    image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
+  },
+  {
+    name: "Lê Thị Như",
+    specialty: "Sản phụ khoa",
+    position: "Phó Khoa",
+    professional_qualifications: "BS.CK1",
+    background_color: "#FFA07A",
+    image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
+  },
+  {
+    name: "Ngô Văn Tâm",
+    specialty: "Chấn thương chỉnh hình",
+    position: "Phó Khoa",
+    professional_qualifications: "BS.CK1",
+    background_color: "#20B2AA",
+    image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
+  },
+  {
+    name: "Đào Minh Khang",
+    specialty: "Da liễu",
+    position: "Phó Khoa",
+    professional_qualifications: "BS.CK1",
+    background_color: "#32CD32",
+    image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
+  },
+  {
+    name: "Lý Thị Vân",
+    specialty: "Tai - Mũi - Họng",
+    position: "Phó Khoa",
+    professional_qualifications: "BS.CK1",
+    background_color: "#FF4500",
+    image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
+  },
+  {
+    name: "Vũ Ngọc Hiếu",
+    specialty: "Mắt",
+    position: "Phó Khoa",
+    professional_qualifications: "BS.CK1",
+    background_color: "#8A2BE2",
+    image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
+  },
+  {
+    name: "Trần Đình Nam",
+    specialty: "Nội khoa",
+    position: "Bác Sĩ",
+    professional_qualifications: "BS.CK1",
+    background_color: "#B0C4DE",
+    image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
+  },
+  {
+    name: "Nguyễn Thị Hoa",
+    specialty: "Nhi khoa",
+    position: "Bác Sĩ",
+    professional_qualifications: "BS.CK1",
+    background_color: "#FFDAB9",
+    image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
+  },
+  {
+    name: "Phạm Văn Minh",
+    specialty: "Tim mạch",
+    position: "Bác Sĩ",
+    professional_qualifications: "BS.CK1",
+    background_color: "#CD5C5C",
+    image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
+  },
+  {
+    name: "Hoàng Thị Yến",
+    specialty: "Sản phụ khoa",
+    position: "Bác Sĩ",
+    professional_qualifications: "BS.CK1",
+    background_color: "#FA8072",
+    image: "https://sihospital.com.vn/uploads/202405/18/Rq6jtz-ba--ng.png"
+  }
+];
+
 export default DoctorList;
