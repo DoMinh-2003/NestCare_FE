@@ -9,7 +9,7 @@ const menuItems = [
   { label: "Tin tức", hasDropdown: false, link: "/news" },
   { label: "Hướng dẫn", hasDropdown: true, link: "/huong-dan" },
   { label: "Kiến thức", hasDropdown: true, link: "/kien-thuc" },
-  { label: "Tuyển dụng", hasDropdown: false, link: "/tuyen-dung" },
+  { label: "Tuyển dụng", hasDropdown: false, link: "/recruitment" },
   { label: "Liên hệ", hasDropdown: false, link: "/contact" },
 ];
 
