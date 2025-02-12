@@ -7,7 +7,8 @@ export enum USER_ROUTES {
   CONTACT = "contact",
   DOCTORS = "doctors",
   ABOUT_PAGE = "about",
-  SERVICES_PAGE = "services"
+  SERVICES_PAGE = "services",
+  SPECIALTY = "specialty",
 }
 
 export enum DOCTOR_ROUTES {
