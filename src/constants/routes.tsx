@@ -5,7 +5,9 @@ export enum USER_ROUTES {
   HOME_PAGE = "",
   LOGIN = "login",
   CONTACT = "contact",
-  DOCTORS = "doctors"
+  DOCTORS = "doctors",
+  ABOUT_PAGE = "about",
+  SERVICES_PAGE = "services"
 }
 
 export enum DOCTOR_ROUTES {
