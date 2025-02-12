@@ -1,22 +1,22 @@
 import SpecialtyCard from '../../molecules/specialty-card/SpecialtyCard';
 
 const SpecialtiesList = () => {
-  return (
-    <div className='grid xl:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-10'>
-      {
-        specialties.map((item)=>{
-            return(
-                <div>
-                <SpecialtyCard
-                icon={item.icon}
-                title={item.title}
-                />
-                </div>
-            )
-        })
-      }
-    </div>
-  )
+    return (
+        <div className='grid xl:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-10'>
+            {
+                specialties.map((item) => {
+                    return (
+                        <div>
+                            <SpecialtyCard
+                                icon={item.icon}
+                                title={item.title}
+                            />
+                        </div>
+                    )
+                })
+            }
+        </div>
+    )
 }
 
 const specialties = [
@@ -31,7 +31,7 @@ const specialties = [
     { icon: "💊", title: "Khoa Dược - Nhà Thuốc" },
     { icon: "🏡", title: "Khoa Kế hoạch hóa gia đình" },
     { icon: "🩻", title: "Khối Cận lâm sàng" }
-  ];
-  
-  
+];
+
+
 export default SpecialtiesList
