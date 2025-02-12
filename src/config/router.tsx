@@ -13,6 +13,7 @@ import TeamOfDoctor from "../pages/customer/team-of-doctors";
 import About from "../pages/customer/about";
 import ServicesPage from "../pages/customer/services-page";
 import Specialty from "../pages/customer/specialty";
+import News from "../pages/customer/news";
 
 interface ProtectedRouteByRoleProps {
   children: ReactNode;
@@ -80,6 +81,10 @@ export const router = createBrowserRouter([
       {
         path: USER_ROUTES.SPECIALTY,
         element: <Specialty />,
+      },
+      {
+        path: USER_ROUTES.NEWS_PAGE,
+        element: <News />,
       },
     ],
   },

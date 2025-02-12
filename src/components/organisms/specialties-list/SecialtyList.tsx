@@ -2,7 +2,7 @@ import SpecialtyCard from '../../molecules/specialty-card/SpecialtyCard';
 
 const SpecialtiesList = () => {
     return (
-        <div className='grid xl:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-10'>
+        <div className='grid xl:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-10 justify-items-center'>
             {
                 specialties.map((item) => {
                     return (
