@@ -10,11 +10,13 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ConfigProvider } from "antd";
 import { themeAntd } from "./config/antd";
+
 // AOS.init({
 //   // initialise with other settings
 //   duration: 1000,
 // });
 function App() {
+  
   return (
     <>
       <ConfigProvider theme={themeAntd}>

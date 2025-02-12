@@ -10,6 +10,8 @@ import CustomerLayout from "../components/layouts/customer-layout";
 import HomePage from "../pages/customer/home";
 import Contact from "../pages/customer/contact";
 import TeamOfDoctor from "../pages/customer/team-of-doctors";
+import About from "../pages/customer/about";
+import ServicesPage from "../pages/customer/services-page";
 
 interface ProtectedRouteByRoleProps {
   children: ReactNode;
@@ -65,6 +67,14 @@ export const router = createBrowserRouter([
       {
         path: USER_ROUTES.CONTACT,
         element: <Contact />,
+      },
+      {
+        path: USER_ROUTES.ABOUT_PAGE,
+        element: <About />,
+      },
+      {
+        path: USER_ROUTES.SERVICES_PAGE,
+        element: <ServicesPage />,
       },
     ],
   },
