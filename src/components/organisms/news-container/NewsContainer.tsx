@@ -25,13 +25,15 @@ const NewsContainer = ({ selectedCategory }: NewsContainerProps) => {
         </div>
     );
 }
-const newsData = [
+
+export const newsData = [
     {
         title: "SIHospital - Hội nghị Khoa học Kỹ thuật thường niên 2024: Hành trình kết nối tri thức y khoa",
         description: "Chiều ngày 26/12/2024, không khí tại SIHOSPITAL trở nên sôi động hơn. Gần 70 Bác sĩ, Dược sĩ, và cán bộ y tế từ các Khoa/Phòng đã có mặt, mang theo tinh thần học hỏi và khát khao phát triển...",
         image: "https://sihospital.com.vn/uploads/202412/52/32C1MU-tintucsihnoel.jpg", // Thay bằng link ảnh thực tế
         time: "khoảng 2 tháng trước",
         category: "Tin tức SIHospital",
+        view_counts: 100
     },
     {
         title: "SIHospital - Giáng Sinh đầy ấm áp",
@@ -39,6 +41,7 @@ const newsData = [
         image: "https://sihospital.com.vn/uploads/202412/52/32C1MU-tintucsihnoel.jpg",
         time: "khoảng 2 tháng trước",
         category: "Tin tức SIHospital",
+        view_counts: 101
     },
     {
         title: "Bệnh viện Phụ sản Quốc tế Sài Gòn ra mắt không gian khám sang trọng và tiện lợi",
@@ -46,6 +49,7 @@ const newsData = [
         image: "https://sihospital.com.vn/uploads/202412/52/32C1MU-tintucsihnoel.jpg",
         time: "4 tháng trước",
         category: "Tin tức SIHospital",
+        view_counts: 102
     },
     {
         title: "Phẫu thuật thành công khối u xơ tử cung (UXTC) nặng 2kg trong người bệnh nhân",
@@ -53,6 +57,7 @@ const newsData = [
         image: "https://sihospital.com.vn/uploads/202412/52/32C1MU-tintucsihnoel.jpg",
         time: "4 tháng trước",
         category: "Tin tức SIHospital",
+        view_counts: 1000
     },
     {
         title: "Hành trình đón bé yêu - Ghi lại khoảnh khắc thiêng liêng bên gia đình",
@@ -60,6 +65,7 @@ const newsData = [
         image: "https://sihospital.com.vn/uploads/202412/52/32C1MU-tintucsihnoel.jpg",
         time: "4 tháng trước",
         category: "Tin tức SIHospital",
+        view_counts: 103
     },
     {
         title: "Năm 2023 - Danh mục kỹ thuật được phê duyệt bổ sung tại SIHospital",
@@ -67,6 +73,7 @@ const newsData = [
         time: "11 tháng trước",
         category: "Thông tin y khoa",
         image: "https://sihospital.com.vn/uploads/202412/52/32C1MU-tintucsihnoel.jpg",
+        view_counts: 104
     },
     {
         title: "Năm 2022 - Danh mục kỹ thuật được phê duyệt bổ sung tại SIHospital",
@@ -74,6 +81,7 @@ const newsData = [
         time: "9 tháng trước",
         category: "Thông tin y khoa",
         image: "https://sihospital.com.vn/uploads/202412/52/32C1MU-tintucsihnoel.jpg",
+        view_counts: 105
     }
 ];
 

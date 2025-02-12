@@ -9,7 +9,7 @@ const NewsMenu = ({ selectedCategory, setSelectedCategory }: NewsMenuProps) => {
     ];
 
     return (
-        <div className='p-3 border border-solid rounded-xl'>
+        <div className='p-3 border border-solid rounded-xl pb-4'>
             <div className='text-gray-400 text-xl font-semibold'>
                 Danh mục
             </div>

@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import NewsContainer from "../../../components/organisms/news-container/NewsContainer";
 import NewsMenu from "../../../components/molecules/news-menu/NewsMenu";
+import NewsViewALot from "../../../components/organisms/news-view-a-lot/NewsViewALot";
 
 const News = () => {
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -14,6 +15,7 @@ const News = () => {
                     </div>
                     <div className="col-span-3 mt-10">
                         <NewsMenu selectedCategory={selectedCategory} setSelectedCategory={setSelectedCategory} />
+                        <NewsViewALot selectedCategory={selectedCategory}/>
                     </div>
                 </div>
             </div>
