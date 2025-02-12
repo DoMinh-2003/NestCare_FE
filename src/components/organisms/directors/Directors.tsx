@@ -1,13 +1,19 @@
 import DoctorCard from '../../molecules/doctor-card/DoctorCard'
 import { doctors } from '../doctor-list/DoctorList'
 
-const Directors = () => {
+interface DirectorsProps {
+  isShowTitle: boolean
+}
+
+const Directors = ({ isShowTitle }: DirectorsProps) => {
 
   return (
     <div>
-      <div className='font-semibold text-xl my-2 '>
-        Ban giám đốc y khoa
-      </div>
+      {isShowTitle === true &&
+        <div className='font-semibold text-xl my-2 '>
+          Ban giám đốc y khoa
+        </div>
+      }
       <div className='justify-items-center'>
         <div className="grid grid-cols-2 gap-5">
           {doctors

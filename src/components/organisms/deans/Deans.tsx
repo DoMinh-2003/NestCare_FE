@@ -3,13 +3,20 @@ import { doctors } from '../doctor-list/DoctorList'
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import { Autoplay } from "swiper/modules";
-const Deans = () => {
+
+interface DeansProps {
+    isShowTitle: boolean
+}
+
+const Deans = ({ isShowTitle }: DeansProps) => {
     const DoctorsFilters = doctors.filter(doctor => doctor.position.includes("Trưởng Khoa") || doctor.position.includes("Phó Khoa"))
     return (
         <div className='mt-14'>
-            <div className='font-semibold text-xl my-2'>
-                Trưởng, phó khoa/phòng
-            </div>
+            {isShowTitle === true &&
+                <div className='font-semibold text-xl my-2'>
+                    Trưởng, phó khoa/phòng
+                </div>
+            }
             <div className='justify-items-center'>
                 <Swiper
                     modules={[Autoplay]}
