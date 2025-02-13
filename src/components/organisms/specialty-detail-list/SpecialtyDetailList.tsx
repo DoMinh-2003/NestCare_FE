@@ -5,9 +5,9 @@ const SpecialtyDetailList = () => {
         <div>
             {
                 specialties.map((item, index) => (
-                    <div className='mt-10'>
+                    <div key={index} className='mt-10'>
                         <SpecialtyDetailCard
-                            index={index}
+                            index={index}        
                             name={item.name}
                             description={item.description}
                             services={item.services}
