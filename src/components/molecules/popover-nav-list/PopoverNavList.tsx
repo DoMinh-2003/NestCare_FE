@@ -33,7 +33,7 @@ export interface InstructProps {
 export const instruct: InstructProps[] = [
   {
     title: "Quy trình khám bệnh SIHospital",
-    link: "/quy-trinh-kham-benh",
+    link: "/medical-examination-process",
   },
   {
     title: "Quy trình nhập viện & xuất viện",

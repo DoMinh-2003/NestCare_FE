@@ -15,6 +15,7 @@ import ServicesPage from "../pages/customer/services-page";
 import Specialty from "../pages/customer/specialty";
 import News from "../pages/customer/news";
 import Recruitment from "../pages/customer/recruitment";
+import MedicalExaminationProcess from "../pages/customer/medical-examination-process";
 
 interface ProtectedRouteByRoleProps {
   children: ReactNode;
@@ -90,6 +91,10 @@ export const router = createBrowserRouter([
       {
         path: USER_ROUTES.RECRUITMENT_PAGE,
         element: <Recruitment />,
+      },
+      {
+        path: USER_ROUTES.MEDICAL_EXAMINATION_PROCESS,
+        element: <MedicalExaminationProcess />,
       },
     ],
   },
