@@ -37,7 +37,7 @@ export const instruct: InstructProps[] = [
   },
   {
     title: "Quy trình nhập viện & xuất viện",
-    link: "/quy-trinh-nhap-xuat-vien",
+    link: "/admission-and-discharge-process",
   },
   {
     title: "Quyền và nghĩa vụ của bệnh nhân",
