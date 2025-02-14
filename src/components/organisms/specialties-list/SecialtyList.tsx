@@ -4,9 +4,9 @@ const SpecialtiesList = () => {
     return (
         <div className='grid xl:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-10 justify-items-center'>
             {
-                specialties.map((item) => {
+                specialties.map((item, index) => {
                     return (
-                        <div>
+                        <div key={index}>
                             <SpecialtyCard
                                 icon={item.icon}
                                 title={item.title}
