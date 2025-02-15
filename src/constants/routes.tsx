@@ -14,6 +14,7 @@ export enum USER_ROUTES {
   MEDICAL_EXAMINATION_PROCESS = "medical-examination-process",
   ADMISSION_AND_DISCHARGE_PROCESS = "admission-and-discharge-process",
   KNOWLEDGE_PAGE = "/knowledge",
+  RIGHTS_OF_PATIENTS_PAGE = "/rights-of-patients",
 }
 
 export enum DOCTOR_ROUTES {
