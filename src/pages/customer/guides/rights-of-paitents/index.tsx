@@ -4,17 +4,17 @@ import RightsOfPaitentsContainer from "../../../../components/organisms/rights-o
 
 
 const RightsOfPaitents = () => {
-  return (
-    <div>
-       <div className="mx-5">
-      <div className="container mx-auto">
-            <RightsOfPaitentsContainer/>
-            <BookingSection/>
-            <LearnMoreAboutNestCare/>
-      </div>
-    </div>
-    </div>
-  )
+    return (
+        <div>
+            <div className="mx-5">
+                <div className="container mx-auto">
+                    <RightsOfPaitentsContainer />
+                    <BookingSection />
+                    <LearnMoreAboutNestCare />
+                </div>
+            </div>
+        </div>
+    )
 }
 
 export default RightsOfPaitents

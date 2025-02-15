@@ -20,6 +20,7 @@ import MedicalExaminationProcess from "../pages/customer/guides/medical-examinat
 import AdmissionAndDischargeProcess from "../pages/customer/guides/admission_and_discharge_process";
 import RightsOfPaitents from "../pages/customer/guides/rights-of-paitents";
 import PrivacyPolicy from "../pages/customer/guides/privacy-policy";
+import MethodOfPayingHospitalFees from "../pages/customer/guides/method-of-paying-hospital-fees/inddx";
 
 
 interface ProtectedRouteByRoleProps {
@@ -116,6 +117,10 @@ export const router = createBrowserRouter([
       {
         path: USER_ROUTES.PRIVACY_POLICY_PAGE,
         element: <PrivacyPolicy />,
+      },
+      {
+        path: USER_ROUTES.METHOD_OF_PAYING_HOSPITAL_FEES,
+        element: <MethodOfPayingHospitalFees />,
       },
     ],
   },

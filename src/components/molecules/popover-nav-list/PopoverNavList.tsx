@@ -53,7 +53,7 @@ export const instruct: InstructProps[] = [
   },
   {
     title: "Hướng dẫn thanh toán viện phí",
-    link: "/huong-dan-thanh-toan-vien-phi",
+    link: "/method-of-paying-hospital-fees",
   },
 ];
 
