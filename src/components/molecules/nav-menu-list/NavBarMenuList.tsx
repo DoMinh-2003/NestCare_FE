@@ -8,7 +8,7 @@ const menuItems = [
   { label: "Bác sĩ", hasDropdown: false, link: "/doctors" },
   { label: "Tin tức", hasDropdown: false, link: "/news" },
   { label: "Hướng dẫn", hasDropdown: true, link: "/huong-dan" },
-  { label: "Kiến thức", hasDropdown: true, link: "/kien-thuc" },
+  { label: "Kiến thức", hasDropdown: true, link: "/knowledge" },
   { label: "Tuyển dụng", hasDropdown: false, link: "/recruitment" },
   { label: "Liên hệ", hasDropdown: false, link: "/contact" },
 ];

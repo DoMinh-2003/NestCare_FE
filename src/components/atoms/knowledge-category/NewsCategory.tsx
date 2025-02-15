@@ -1,8 +1,8 @@
 import React from 'react'
-interface KnowledgeCategoryProps {
+interface NewsCategoryProps {
     category_name: string;
 }
-const KnowledgeCategory = ({ category_name }: KnowledgeCategoryProps) => {
+const NewsCategory = ({ category_name }: NewsCategoryProps) => {
     return (
         <div className='bg-pink-600 border border-solid py-0.5 px-1 text-xs text-white rounded-xl'>
             {category_name}
@@ -10,4 +10,4 @@ const KnowledgeCategory = ({ category_name }: KnowledgeCategoryProps) => {
     )
 }
 
-export default KnowledgeCategory
+export default NewsCategory
