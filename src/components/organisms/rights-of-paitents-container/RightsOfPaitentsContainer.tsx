@@ -1,9 +1,7 @@
-import React from 'react'
 import Title from '../../atoms/text/Title'
 
 const RightsOfPaitentsContainer = () => {
   return (
-
     <div>
       <Title text='Quyền của người bệnh' className='my-20' />
       <div className='justify-items-center'>

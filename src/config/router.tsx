@@ -19,6 +19,7 @@ import Knowledge from "../pages/customer/knowledge";
 import MedicalExaminationProcess from "../pages/customer/guides/medical-examination-process";
 import AdmissionAndDischargeProcess from "../pages/customer/guides/admission_and_discharge_process";
 import RightsOfPaitents from "../pages/customer/guides/rights-of-paitents";
+import PrivacyPolicy from "../pages/customer/guides/privacy-policy";
 
 
 interface ProtectedRouteByRoleProps {
@@ -111,6 +112,10 @@ export const router = createBrowserRouter([
       {
         path: USER_ROUTES.KNOWLEDGE_PAGE,
         element: <Knowledge />,
+      },
+      {
+        path: USER_ROUTES.PRIVACY_POLICY_PAGE,
+        element: <PrivacyPolicy />,
       },
     ],
   },
