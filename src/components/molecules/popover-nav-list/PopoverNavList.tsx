@@ -45,7 +45,7 @@ export const instruct: InstructProps[] = [
   },
   {
     title: "Chính sách bảo mật SIHospital",
-    link: "/chinh-sach-bao-mat",
+    link: "/privacy-policy",
   },
   {
     title: "Thời gian hoạt động và thăm bệnh",
