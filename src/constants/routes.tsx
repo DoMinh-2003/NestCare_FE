@@ -16,6 +16,8 @@ export enum USER_ROUTES {
   KNOWLEDGE_PAGE = "/knowledge",
   RIGHTS_OF_PATIENTS_PAGE = "/rights-of-patients",
   PRIVACY_POLICY_PAGE = "/privacy-policy",
+  METHOD_OF_PAYING_HOSPITAL_FEES = "/method-of-paying-hospital-fees",
+  
 }
 
 export enum DOCTOR_ROUTES {
