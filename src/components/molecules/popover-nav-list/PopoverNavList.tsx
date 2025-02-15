@@ -41,7 +41,7 @@ export const instruct: InstructProps[] = [
   },
   {
     title: "Quyền và nghĩa vụ của bệnh nhân",
-    link: "/quyen-va-nghia-vu-benh-nhan",
+    link: "/rights-of-patients",
   },
   {
     title: "Chính sách bảo mật SIHospital",
