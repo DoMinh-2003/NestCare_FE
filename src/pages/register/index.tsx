@@ -3,9 +3,9 @@ import AuthField from "../../components/molecules/auth-field/AuthField";
 
 function RegisterPage() {
   return (
-    <Form className="w-full h-fit">
-      <div className="flex  justify-between items-end">
-        <h1 className="text-[36px] font-[800] text-[#ed302a] mb-4">ĐĂNG KÝ</h1>
+    <Form requiredMark={false}  className="w-full h-fit">
+      <div className="flex justify-between items-end">
+        <h1 className="text-5xl-medium font-[800] text-[#ed302a] mb-4">ĐĂNG KÝ</h1>
         <img
           className="inline-block w-[60px]"
           src="https://sihospital.com.vn/images/logo.png"
@@ -64,7 +64,7 @@ function RegisterPage() {
         message="Please enter your address"
       />
       <Form.Item
-        label="Gender"
+         label={<p className="text-base-medium">Gender</p>}
         name="gender"
         rules={[{ required: true, message: "Please select your gender" }]}
       >
