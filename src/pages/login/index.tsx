@@ -5,9 +5,9 @@ import AuthField from "../../components/molecules/auth-field/AuthField";
 function LoginPage() {
   return (
     <div className="w-full">
-      <Form className="w-full h-fit">
+      <Form requiredMark={false}  className="w-full h-fit">
         <div className="flex  justify-between items-end">
-          <h1 className="text-[36px] font-[800] text-[#ed302a] mb-4">
+          <h1 className="text-5xl-medium font-[800] text-[#ed302a] mb-4">
             ĐĂNG NHẬP
           </h1>
           <img
