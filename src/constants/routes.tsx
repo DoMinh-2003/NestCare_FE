@@ -1,9 +1,9 @@
 // User Routes
 export enum USER_ROUTES {
-
   HOME = "/",
   HOME_PAGE = "",
   LOGIN = "login",
+  REGISTER = "register",
   CONTACT = "contact",
   DOCTORS = "doctors",
   ABOUT_PAGE = "about",
@@ -17,7 +17,7 @@ export enum USER_ROUTES {
   RIGHTS_OF_PATIENTS_PAGE = "/rights-of-patients",
   PRIVACY_POLICY_PAGE = "/privacy-policy",
   METHOD_OF_PAYING_HOSPITAL_FEES = "/method-of-paying-hospital-fees",
-  
+  AUTH = "auth",
 }
 
 export enum DOCTOR_ROUTES {
@@ -32,4 +32,3 @@ export enum ADMIN_ROUTES {
   CONFIG = "config",
   OVERVIEW = "overview",
 }
-

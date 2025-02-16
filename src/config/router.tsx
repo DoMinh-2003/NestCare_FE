@@ -21,6 +21,9 @@ import AdmissionAndDischargeProcess from "../pages/customer/guides/admission_and
 import RightsOfPaitents from "../pages/customer/guides/rights-of-paitents";
 import PrivacyPolicy from "../pages/customer/guides/privacy-policy";
 import MethodOfPayingHospitalFees from "../pages/customer/guides/method-of-paying-hospital-fees/inddx";
+import RegisterPage from "../pages/register";
+import LoginPage from "../pages/login";
+import AuthLayout from "../components/layouts/auth-layout";
 
 
 interface ProtectedRouteByRoleProps {
@@ -124,6 +127,22 @@ export const router = createBrowserRouter([
       },
     ],
   },
+
+  {
+    path: USER_ROUTES.AUTH,
+    element: <AuthLayout />,
+    children: [
+      {
+        path: USER_ROUTES.REGISTER,
+        element: <RegisterPage />,
+      },
+      {
+        path: USER_ROUTES.LOGIN,
+        element: <LoginPage />,
+      },
+    ],
+  },
+
   {
     path: "/test",
     element: (
