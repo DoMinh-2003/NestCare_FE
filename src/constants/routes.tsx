@@ -18,6 +18,7 @@ export enum USER_ROUTES {
   PRIVACY_POLICY_PAGE = "/privacy-policy",
   METHOD_OF_PAYING_HOSPITAL_FEES = "/method-of-paying-hospital-fees",
   PREGNANCY_CHECK_UP_PACKAGE="/services/pregnancy-check-up-package",
+  FULL_BIRTH_PACKAGE="/services/full-birth-package",
   AUTH = "auth",
 }
 
