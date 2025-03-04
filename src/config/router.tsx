@@ -24,6 +24,7 @@ import MethodOfPayingHospitalFees from "../pages/customer/guides/method-of-payin
 import RegisterPage from "../pages/register";
 import LoginPage from "../pages/login";
 import AuthLayout from "../components/layouts/auth-layout";
+import PregnancyCheckUpPackage from "../pages/customer/services-detail/pregnancy-checkup-package";
 
 
 interface ProtectedRouteByRoleProps {
@@ -124,6 +125,10 @@ export const router = createBrowserRouter([
       {
         path: USER_ROUTES.METHOD_OF_PAYING_HOSPITAL_FEES,
         element: <MethodOfPayingHospitalFees />,
+      },
+      {
+        path: USER_ROUTES.PREGNANCY_CHECK_UP_PACKAGE,
+        element: <PregnancyCheckUpPackage />,
       },
     ],
   },

@@ -16,8 +16,8 @@ const HomePage = () => {
     <div className="mx-5">
       <HomeCarousel />
       <div className="container mx-auto mt-5">
-        <About />
         <ServiceAtNestCare />
+        <About />
         <DoctorList />
         <BookingSection />
         <OutStandingService />
