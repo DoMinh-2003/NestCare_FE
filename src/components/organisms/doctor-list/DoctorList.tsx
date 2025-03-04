@@ -2,6 +2,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import { Autoplay } from "swiper/modules";
 import DoctorCard from "../../molecules/doctor-card/DoctorCard";
+import Title from "../../atoms/text/Title";
 
 
 const DoctorList = () => {
@@ -9,7 +10,7 @@ const DoctorList = () => {
 
   return (
     <div className="">
-          <p className="text-5xl font-bold text-pink-700 py-20">Đội ngũ bác sĩ</p>
+          <Title text="Đội ngũ bác sĩ" className="my-10"/>
           <Swiper
             modules={[Autoplay]}
             autoplay={{ delay: 3000 }}
