@@ -1,4 +1,4 @@
-import PregnancyCheckUpPackageContainer from "../../../../components/organisms/services-detail/pregnancy-checkup-package/PregnancyCheckUpPackageContainer"
+import PregnancyCheckUpPackageContainer from "../../../../components/organisms/services-detail/pregnancy-checkup-package-container/PregnancyCheckUpPackageContainer"
 const PregnancyCheckUpPackage = () => {
     return (
         <div className="mx-5">
