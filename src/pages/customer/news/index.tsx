@@ -8,8 +8,8 @@ const News = () => {
 
     return (
         <div className="mx-5">
-            <div className="container mx-auto">
-                <div className="grid grid-cols-12">
+            <div className="container mx-auto justify-items-center">
+                <div className="grid grid-cols-12 w-[1210px] gap-10 ">
                     <div className="col-span-9">
                         <NewsContainer selectedCategory={selectedCategory} />
                     </div>
