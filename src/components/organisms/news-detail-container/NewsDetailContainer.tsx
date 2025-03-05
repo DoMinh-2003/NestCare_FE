@@ -1,14 +1,21 @@
+import CustomBreadcrumbs, { BreadcrumbsProps } from '../../atoms/breadcrumbs/CustomBreadcrumbs'
 import NewsCategory from '../../atoms/knowledge-category/NewsCategory'
 import NewsDetailCard from '../../molecules/news-detail-card/NewsDetailCard'
 
 const NewsDetailContainer = () => {
 
+    const breadcrumbItems:BreadcrumbsProps[] = [
+        { title: "Trang chủ", link: "/" },
+        { title: "Tin tức", link: "/news" },
+        { title: "Tin tức chi tiết" }, // Không có link => chỉ hiển thị text
+      ];
     return (
         <div className='w-[900px]'>
-            <div className='text-3xl font-bold'>
+            <CustomBreadcrumbs items={breadcrumbItems}/>
+            <div className='text-3xl font-bold mt-10'>
                 {BlogData.title}
             </div>
-            <div className='flex gap-1'>
+            <div className='flex gap-1 mt-10'>
                 {BlogData.time} | <NewsCategory category_name={BlogData.category} />
             </div>
             <div className='mt-5'>
