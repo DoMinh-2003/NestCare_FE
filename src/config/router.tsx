@@ -26,6 +26,7 @@ import LoginPage from "../pages/login";
 import AuthLayout from "../components/layouts/auth-layout";
 import PregnancyCheckUpPackage from "../pages/customer/services-detail/pregnancy-checkup-package";
 import FullBirthPackage from "../pages/customer/services-detail/full-birth-package";
+import NewsDetail from "../pages/customer/news-detail";
 
 
 interface ProtectedRouteByRoleProps {
@@ -134,6 +135,10 @@ export const router = createBrowserRouter([
       {
         path: USER_ROUTES.FULL_BIRTH_PACKAGE,
         element: <FullBirthPackage />,
+      },
+      {
+        path: USER_ROUTES.NEWS_DETAIL_PAGE,
+        element: <NewsDetail />,
       },
     ],
   },

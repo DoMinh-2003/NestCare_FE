@@ -10,6 +10,7 @@ export enum USER_ROUTES {
   SERVICES_PAGE = "services",
   SPECIALTY = "specialty",
   NEWS_PAGE = "news",
+  NEWS_DETAIL_PAGE = "news/detail",
   RECRUITMENT_PAGE = "recruitment",
   MEDICAL_EXAMINATION_PROCESS = "medical-examination-process",
   ADMISSION_AND_DISCHARGE_PROCESS = "admission-and-discharge-process",
