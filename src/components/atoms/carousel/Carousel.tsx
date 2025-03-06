@@ -21,17 +21,17 @@ const Carousel: React.FC<CarouselProps> = ({ images }) => {
   }, [currentIndex]);
 
   return (
-    <div className="relative w-full overflow-hidden flex justify-center items-center">
+    <div className="relative w-full flex justify-center items-center overflow-hidden">
       <div className="relative flex w-full max-w-[90vw] h-[60vh] justify-center items-center">
         {images.map((image, index) => {
-          let position = "hidden"; // Ẩn ảnh mặc định
+          let position = "hidden"; // Mặc định ẩn ảnh
 
           if (
             index === currentIndex ||
             index === (currentIndex + 1) % images.length ||
             index === (currentIndex - 1 + images.length) % images.length
           ) {
-            position = "block"; // Hiển thị 3 ảnh
+            position = "block"; // Hiển thị 3 ảnh (trung tâm + 2 ảnh phụ)
           }
 
           const isCenter = index === currentIndex;
@@ -41,23 +41,22 @@ const Carousel: React.FC<CarouselProps> = ({ images }) => {
           return (
             <div
               key={index}
-              className={`absolute transition-all duration-700 flex flex-col items-center p-5  ${position} 
-                ${isCenter ? "w-[50vw] scale-110 opacity-100 z-10" : "w-[25vw] scale-90 opacity-70"} 
-                ${isLeft ? "-translate-x-[130%] ml-2 sm:ml-4" : ""} 
-                ${isRight ? "translate-x-[130%] mr-2 sm:mr-4" : ""}`}
+              className={`absolute transition-all duration-700 flex flex-col items-center p-5 ${position}
+                ${isCenter ? "w-[40vw] scale-105 opacity-100 z-10" : "w-[34vw] scale-90 opacity-70"} 
+                ${isLeft ? "-translate-x-[105%]" : ""} 
+                ${isRight ? "translate-x-[105%]" : ""}`}
             >
-              <img src={image.src} alt={image.alt} className="w-full rounded-2xl shadow-lg" />
+              <img src={image.src} alt={image.alt} className="w-full h-full object-cover rounded-2xl shadow-xl" />
 
-              {/* Indicators nằm ngay dưới ảnh giữa */}
+              {/* Indicators */}
               {isCenter && (
                 <div className="absolute bottom-5 left-1/2 -translate-x-1/2 flex space-x-2">
-                  {images.map((_, index) => (
+                  {images.map((_, idx) => (
                     <button
-                      key={index}
-                      className={`w-3 h-3 rounded-full transition-colors ${
-                        index === currentIndex ? "bg-white" : "bg-gray-400"
-                      }`}
-                      onClick={() => setCurrentIndex(index)}
+                      key={idx}
+                      className={`w-3 h-3 rounded-full transition-colors ${idx === currentIndex ? "bg-white" : "bg-gray-400"
+                        }`}
+                      onClick={() => setCurrentIndex(idx)}
                     />
                   ))}
                 </div>

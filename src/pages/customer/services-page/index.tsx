@@ -6,9 +6,9 @@ const ServicesPage = () => {
   return (
     <div className="mx-5">
       <div className="container mx-auto">
-            <ServicePageCarousel/>
-            <ServicesPackageList/>
-            <LearnMoreAboutNestCare/>
+        <ServicePageCarousel />
+        <ServicesPackageList />
+        <LearnMoreAboutNestCare />
       </div>
     </div>
   )
