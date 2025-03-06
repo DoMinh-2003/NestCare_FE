@@ -9,7 +9,7 @@ interface NewsProps {
 }
 const News = ({ title, descripion, time, category, image }: NewsProps) => {
   return (
-    <div className='mt-10 border border-solid p-2 rounded-xl hover:border-yellow-400 grid grid-cols-12 gap-4 w-[900px] hover:bg-yellow-50'>
+    <div className='mt-5 border border-solid p-2 rounded-xl hover:border-yellow-400 grid grid-cols-12 gap-4 w-[900px] hover:bg-yellow-50'>
       <div className="col-span-4"> 
         <img className="rounded-xl" src={image} alt={title} />
       </div>

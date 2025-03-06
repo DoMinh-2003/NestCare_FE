@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import News from "../../molecules/news-card/News";
 
 interface NewsContainerProps {
@@ -13,6 +14,7 @@ const NewsContainer = ({ selectedCategory }: NewsContainerProps) => {
         <div className="mt-10">
             {filteredNews.map((item) => (
                 <div key={item.title}>
+                    <Link to={"/news/detail"}>
                     <News
                         title={item.title}
                         category={item.category}
@@ -20,6 +22,7 @@ const NewsContainer = ({ selectedCategory }: NewsContainerProps) => {
                         image={item.image}
                         descripion={item.description}
                     />
+                    </Link>
                 </div>
             ))}
         </div>

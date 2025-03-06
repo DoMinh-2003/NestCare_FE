@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import NewsViewALotCard from "../../molecules/news-view-a-lot-card/NewsViewALotCard"
 import { newsData } from "../news-container/NewsContainer"
 
@@ -17,7 +18,7 @@ const NewsViewALot = ({selectedCategory}: NewsViewALotProps) => {
 
 
     return (
-        <div className="border border-solid p-5 mt-12 rounded-xl">
+        <div className="border border-solid p-5 mt-5 rounded-xl">
         <div className='text-gray-400 text-xl font-semibold'>
             Tin xem nhiều
         </div>
@@ -25,11 +26,13 @@ const NewsViewALot = ({selectedCategory}: NewsViewALotProps) => {
             {
                 newsDataFilter.map((item) => (
                     <div className="mt-10">
+                        <Link to={"/news/detail"}>
                         <NewsViewALotCard
                             time={item.time}
                             title={item.title}
                             image={item.image}
                         />
+                        </Link>
                     </div>
                 ))
             }
