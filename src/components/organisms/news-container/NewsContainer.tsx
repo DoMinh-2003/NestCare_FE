@@ -15,7 +15,9 @@ const NewsContainer = ({ selectedCategory }: NewsContainerProps) => {
         <div className="mt-10">
             {filteredNews.map((item) => (
                 <div key={item.title}>
+
                     <Link to={`/${USER_ROUTES.NEWS_DETAIL_PAGE}`}>
+
                     <News
                         title={item.title}
                         category={item.category}

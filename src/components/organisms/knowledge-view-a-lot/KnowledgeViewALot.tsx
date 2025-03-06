@@ -1,7 +1,6 @@
 import NewsViewALotCard from "../../molecules/news-view-a-lot-card/NewsViewALotCard"
 import { KnowledgeData } from "../knowledge-container/KnowledgeContainer";
 
-
 interface KnowledgeViewALotProps {
     selectedCategory: string | null;
 }
