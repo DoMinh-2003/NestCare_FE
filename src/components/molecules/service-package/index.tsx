@@ -2,22 +2,23 @@ import {
     CheckOutlined,
 } from '@ant-design/icons';
 import BookingNowButton from '../../atoms/button/BookingNowButton';
+import { Link } from 'react-router-dom';
+import { USER_ROUTES } from '../../../constants/routes';
 
 interface iServicePackage {
     name: string;
     description?: string
     services: string[];
     image: string;
+    link?: string;
 }
-const ServicePackage = ({ name, services, image }: iServicePackage) => {
+const ServicePackage = ({ name, services, image, link }: iServicePackage) => {
 
     return (
         <div className='border border-solid rounded-lg p-10 bg-pink-50 mt-10'>
-            <div className='grid grid-cols-12 gap-10'>
-                <div className='col-span-7'>
-                    <img className='rounded-lg' src={image} alt="" />
-                </div>
-                <div className='col-span-5'>
+            <div className=' gap-10'>
+
+                <div className=''>
                     <div className='text-3xl font-bold'>
                         {name}
                     </div>
@@ -30,11 +31,13 @@ const ServicePackage = ({ name, services, image }: iServicePackage) => {
                             ))
                         }
                     </div>
-                    <div className='mt-10 flex gap-5'>
+                    <div className='mt-10 flex justify-center gap-5'>
                         <BookingNowButton />
-                        <button type="button" className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
-                            Xem chi tiết
-                        </button>
+                        <Link to={`/${USER_ROUTES.SERVICES_PAGE}/${link}`}>
+                            <button type="button" className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
+                                Xem chi tiết
+                            </button>
+                        </Link>
                     </div>
                 </div>
             </div>

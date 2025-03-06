@@ -4,7 +4,7 @@ import QuestionCollapse from "../../molecules/question-collapse/QuestionLapse"
 
 const FrequentlyAskedQuestions = () => {
     return (
-        <div className="mt-20 grid grid-cols-12 gap-10">
+        <div className="mt-20 grid grid-cols-12 gap-10" id="often_qna">
             <div className="col-span-5">
                 <Title text="Câu hỏi thường gặp" />
                 <div className="mt-14">

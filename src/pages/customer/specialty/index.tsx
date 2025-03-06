@@ -11,7 +11,7 @@ import SpecialtyDetailList from '../../../components/organisms/specialty-detail-
 const Specialty = () => {
     return (
         <div className='mx-5'>
-            <div className='mt-20 container mx-auto'>
+            <div className='mt-20 container mx-auto '>
                 <Title text='Các chuyên khoa' />
                 <div className='mt-20'>
                     <SpecialtiesList />
