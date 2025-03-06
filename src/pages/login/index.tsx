@@ -1,11 +1,22 @@
-import { Form, Row } from "antd";
+import { Form, FormProps, Row } from "antd";
 import { FcGoogle } from "react-icons/fc";
 import AuthField from "../../components/molecules/auth-field/AuthField";
-
+import useAuthService from "../../services/useUserService";
 function LoginPage() {
+  const { login } = useAuthService()
+
+  const onFinish: FormProps['onFinish'] = async (values) => {
+    console.log('Success:', values);
+    if (values) {
+      const response = await login(values);
+      if (response) {
+        console.log("login: ", response)
+      }
+    }
+  };
   return (
     <div className="w-full">
-      <Form requiredMark={false}  className="w-full h-fit">
+      <Form onFinish={onFinish} requiredMark={false} className="w-full h-fit">
         <div className="flex  justify-between items-end">
           <h1 className="text-5xl-medium font-[800] text-[#ed302a] mb-4">
             ĐĂNG NHẬP
@@ -17,10 +28,10 @@ function LoginPage() {
           />
         </div>
         <AuthField
-          label="Phone Number"
-          placeholder="Your phone number"
-          name="phoneNumber"
-          message="Please enter your phone number"
+          label="User name"
+          placeholder="Your user name"
+          name="username"
+          message="Please enter your username"
         />
         <AuthField
           label="Password"

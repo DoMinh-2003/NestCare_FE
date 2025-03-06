@@ -15,7 +15,7 @@ interface iServicePackage {
 const ServicePackage = ({ name, services, image, link }: iServicePackage) => {
 
     return (
-        <div className='border border-solid rounded-lg p-10 bg-pink-50 mt-10'>
+        <div className='border border-solid rounded-lg p-10 bg-pink-50'>
             <div className=' gap-10'>
 
                 <div className=''>
