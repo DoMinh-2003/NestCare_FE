@@ -1,9 +1,32 @@
-import { Col, Form, Row, Select } from "antd";
+import { Col, Row, Select } from "antd";
 import AuthField from "../../components/molecules/auth-field/AuthField";
+import type { FormProps } from 'antd';
+import { Button, Checkbox, Form, Input } from 'antd';
+import useAuthService from "../../services/useUserService";
 
 function RegisterPage() {
+  const { register } = useAuthService()
+  const onFinish: FormProps['onFinish'] = async (values) => {
+    console.log('Success:', values);
+    if (values) {
+      const valuesSubmit: any = {
+        ...values,
+        fullName: values.fullName,
+        email: values.email,
+        username: values.email,
+        password: values.password,
+        phone: values.phone
+      }
+
+      const response = await register(valuesSubmit);
+      if (response) {
+        console.log("response: ", response)
+      }
+    }
+  };
+
   return (
-    <Form requiredMark={false} className="w-full h-fit">
+    <Form onFinish={onFinish} requiredMark={false} className="w-full h-fit">
       <div className="flex justify-between items-end">
         <h1 className="text-5xl-medium font-[800] text-[#ed302a] mb-4">ĐĂNG KÝ</h1>
         <img
@@ -17,7 +40,7 @@ function RegisterPage() {
           <AuthField
             label="Full name"
             placeholder="Your full name"
-            name="fullname"
+            name="fullName"
             message="Please enter your full name"
           />
         </Col>
@@ -53,7 +76,7 @@ function RegisterPage() {
       <AuthField
         label="Phone Number"
         placeholder="Your phone number"
-        name="phoneNumber"
+        name="phone"
         message="Please enter your phone number"
       />
 
