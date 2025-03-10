@@ -29,6 +29,8 @@ function getItem(
 const items: MenuItem[] = [
   getItem("Overview", "overview", <FaChartPie />),
   getItem("User", "user", <SlCalender />),
+  getItem("Service", "services", <SlCalender />),
+  getItem("Package", "packages", <SlCalender />),
 ];
 const AdminLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -42,6 +44,7 @@ const AdminLayout: React.FC = () => {
     navigate("/login");
     toast.success("Logged out");
   };
+
   return (
     <Layout style={{ height: "100vh" }}>
       <Sider
@@ -96,4 +99,5 @@ const AdminLayout: React.FC = () => {
     </Layout>
   );
 };
+
 export default AdminLayout;
