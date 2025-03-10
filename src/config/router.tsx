@@ -27,6 +27,7 @@ import AuthLayout from "../components/layouts/auth-layout";
 import PregnancyCheckUpPackage from "../pages/customer/services-detail/pregnancy-checkup-package";
 import FullBirthPackage from "../pages/customer/services-detail/full-birth-package";
 import NewsDetail from "../pages/customer/news-detail";
+import ManagerServices from "../pages/admin/manage-services";
 
 
 interface ProtectedRouteByRoleProps {
@@ -181,6 +182,10 @@ export const router = createBrowserRouter([
       {
         path: ADMIN_ROUTES.OVERVIEW,
         element: <ManageOverview />,
+      },
+      {
+        path: ADMIN_ROUTES.SERVICES,
+        element: <ManagerServices />,
       },
     ],
   },
