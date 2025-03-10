@@ -17,8 +17,6 @@ export interface Service {
 const useServiceService = () => {
   const { callApi, loading, setIsLoading } = useApiService();
   const router = useNavigate();
-  const dispatch = useDispatch();
-
   const getServices = useCallback(
     async () => {
       try {
@@ -45,7 +43,36 @@ const useServiceService = () => {
     },
     [callApi, router]
   );
-  return { getServices,createServices, loading, setIsLoading };
+
+  const updateServices = useCallback(
+    async (values: any) => {
+      try {
+        const response = await callApi("put", `services/${values.id}`,{
+          description: values.description,
+          price: values.price,
+          name: values.name
+        });
+        return response;
+      } catch (e: any) {
+        toast.error(e?.response?.data);
+      }
+    },
+    [callApi, router]
+  );
+
+  const deleteServices = useCallback(
+    async (id: string) => {
+      try {
+        const response = await callApi("delete", `services/${id}`);
+        return response;
+      } catch (e: any) {
+        toast.error(e?.response?.data);
+      }
+    },
+    [callApi, router]
+  );
+
+  return { getServices, deleteServices ,createServices,updateServices, loading, setIsLoading };
 };
 
 export default useServiceService;

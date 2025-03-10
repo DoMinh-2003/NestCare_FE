@@ -12,6 +12,7 @@ interface ServiceData {
   name: string;
   description: string;
   price: number;
+  id?: string;
 }
 
 const ModalCreateUpdateServices: React.FC<ServiceFormProps> = ({
@@ -34,7 +35,7 @@ const ModalCreateUpdateServices: React.FC<ServiceFormProps> = ({
     form
       .validateFields()
       .then((values) => {
-        onSubmit(values);
+        onSubmit({ ...values, id: initialValues?.id });
         onClose();
       })
       .catch((info) => {
@@ -78,7 +79,7 @@ const ModalCreateUpdateServices: React.FC<ServiceFormProps> = ({
           name="price"
           rules={[
             { required: true, message: "Vui lòng nhập giá" },
-            { type: "number", min: 0, message: "Giá phải lớn hơn 0" },
+            // { type: "number", min: 0, message: "Giá phải lớn hơn 0" },
           ]}
         >
           <InputNumber placeholder="Nhập giá dịch vụ" className="w-full" />
