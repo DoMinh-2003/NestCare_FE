@@ -51,10 +51,10 @@ const usePackageService = () => {
         [callApi, router]
     );
 
-    const createServices = useCallback(
+    const createPackage = useCallback(
         async (values: any) => {
             try {
-                const response = await callApi("post", "services", {
+                const response = await callApi("post", "packages", {
                     ...values
                 });
                 return response;
@@ -65,13 +65,14 @@ const usePackageService = () => {
         [callApi, router]
     );
 
-    const updateServices = useCallback(
+    const updatePackage = useCallback(
         async (values: any) => {
             try {
-                const response = await callApi("put", `services/${values.id}`, {
-                    description: values.description,
-                    price: values.price,
-                    name: values.name
+                const response = await callApi("put", `packages/${values.id}`, {
+                    // description: values.description,
+                    // price: values.price,
+                    // name: values.name
+                    ...values
                 });
                 return response;
             } catch (e: any) {
@@ -93,7 +94,7 @@ const usePackageService = () => {
         [callApi, router]
     );
 
-    return { getPackages, deleteServices, createServices, updateServices, loading, setIsLoading };
+    return { getPackages, deleteServices, createPackage, updatePackage, loading, setIsLoading };
 };
 
 export default usePackageService;
