@@ -28,6 +28,7 @@ import PregnancyCheckUpPackage from "../pages/customer/services-detail/pregnancy
 import FullBirthPackage from "../pages/customer/services-detail/full-birth-package";
 import NewsDetail from "../pages/customer/news-detail";
 import ManagerServices from "../pages/admin/manage-services";
+import ManagePackage from "../pages/admin/manage-package";
 
 
 interface ProtectedRouteByRoleProps {
@@ -186,6 +187,10 @@ export const router = createBrowserRouter([
       {
         path: ADMIN_ROUTES.SERVICES,
         element: <ManagerServices />,
+      },
+      {
+        path: ADMIN_ROUTES.PACKAGES,
+        element: <ManagePackage />,
       },
     ],
   },

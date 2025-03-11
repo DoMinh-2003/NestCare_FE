@@ -35,4 +35,5 @@ export enum ADMIN_ROUTES {
   CONFIG = "config",
   OVERVIEW = "overview",
   SERVICES = "services",
+  PACKAGES = "packages",
 }
