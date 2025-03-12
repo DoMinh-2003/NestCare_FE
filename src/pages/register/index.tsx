@@ -2,7 +2,7 @@ import { Col, Row, Select } from "antd";
 import AuthField from "../../components/molecules/auth-field/AuthField";
 import type { FormProps } from 'antd';
 import { Button, Checkbox, Form, Input } from 'antd';
-import useAuthService from "../../services/useUserService";
+import useAuthService from "../../services/useAuthService";
 
 function RegisterPage() {
   const { register } = useAuthService()

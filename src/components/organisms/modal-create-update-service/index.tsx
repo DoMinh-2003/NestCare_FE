@@ -8,7 +8,7 @@ interface ServiceFormProps {
   initialValues?: ServiceData | null;
 }
 
-interface ServiceData {
+export interface ServiceData {
   name: string;
   description: string;
   price: number;
@@ -36,7 +36,7 @@ const ModalCreateUpdateServices: React.FC<ServiceFormProps> = ({
       .validateFields()
       .then((values) => {
         onSubmit({ ...values, id: initialValues?.id });
-        onClose();
+        onClose(); // Move this line here
       })
       .catch((info) => {
         console.error("Validation Failed:", info);
@@ -79,7 +79,6 @@ const ModalCreateUpdateServices: React.FC<ServiceFormProps> = ({
           name="price"
           rules={[
             { required: true, message: "Vui lòng nhập giá" },
-            // { type: "number", min: 0, message: "Giá phải lớn hơn 0" },
           ]}
         >
           <InputNumber placeholder="Nhập giá dịch vụ" className="w-full" />

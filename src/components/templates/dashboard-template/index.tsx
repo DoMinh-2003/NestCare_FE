@@ -112,7 +112,7 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
       const response = await api.get(apiURI);
       console.log(apiURI);
       let formatData = response.data.data.content || response.data.data;
-
+      console.log("formatData: ", formatData)
       if (!Array.isArray(formatData)) {
         formatData = [formatData];
       }

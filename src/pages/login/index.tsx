@@ -1,7 +1,7 @@
 import { Form, FormProps, Row } from "antd";
 import { FcGoogle } from "react-icons/fc";
 import AuthField from "../../components/molecules/auth-field/AuthField";
-import useAuthService from "../../services/useUserService";
+import useAuthService from "../../services/useAuthService";
 function LoginPage() {
   const { login } = useAuthService()
 

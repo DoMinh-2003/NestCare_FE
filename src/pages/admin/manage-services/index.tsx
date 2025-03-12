@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import useServiceService, { Service } from "../../../services/useServiceService";
 import { Table, Input, Button, message } from "antd";
 import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
-import ModalCreateUpdateServices from "../../../components/organisms/modal-create-update-service";
+import ModalCreateUpdateServices, { ServiceData } from "../../../components/organisms/modal-create-update-service";
 import ModalDelete from "../../../components/organisms/modal-delete";
 
 const ManagerServices = () => {
@@ -44,18 +44,16 @@ const ManagerServices = () => {
         setIsModalDeleteOpen(false);
     };
 
-    const handleSaveService = async (values: Service) => {
+    const handleSaveService = async (values: ServiceData) => {
         if (!values.id) {
             const response = await createServices(values);
             if (response && response.data) {
-                setServices(response.data);
                 message.success("Tạo service thành công");
                 getServicesFromCustomer();
             }
         } else {
             const response = await updateServices(values);
             if (response && response.data) {
-                setServices(response.data);
                 message.success("Cập nhật service thành công");
                 getServicesFromCustomer();
             }
@@ -64,9 +62,8 @@ const ManagerServices = () => {
 
     const getServicesFromCustomer = async () => {
         const response = await getServices();
-        console.log("res: ", response)
         if (response && Array.isArray(response.data)) {
-            setServices(response.data.filter((item : Service)=> item.isDeleted === 0));
+            setServices(response.data.filter((item: Service) => !item.isDeleted));
         } else {
             console.error("Expected an array but got:", response.data);
             setServices([]); // Ensure an array is always passed to Table
@@ -76,6 +73,10 @@ const ManagerServices = () => {
     const handleSearch = (value: string) => {
         setSearchText(value);
     };
+
+    const filteredServices = services.filter(service =>
+        service.name.toLowerCase().includes(searchText.toLowerCase())
+    );
 
     const columns = [
         {
@@ -130,7 +131,7 @@ const ManagerServices = () => {
             <ModalCreateUpdateServices
                 visible={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                onSubmit={()=>handleSaveService} // Pass the function directly
+                onSubmit={handleSaveService} // Pass the function directly
                 initialValues={selectedService}
             />
             <div style={{ marginBottom: 16 }}>
@@ -146,7 +147,7 @@ const ManagerServices = () => {
                 </Button>
             </div>
             <Table
-                dataSource={Array.isArray(services) ? services : []}
+                dataSource={filteredServices}
                 columns={columns}
                 rowKey="id"
             />

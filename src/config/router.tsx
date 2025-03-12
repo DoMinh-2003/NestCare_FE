@@ -29,6 +29,7 @@ import FullBirthPackage from "../pages/customer/services-detail/full-birth-packa
 import NewsDetail from "../pages/customer/news-detail";
 import ManagerServices from "../pages/admin/manage-services";
 import ManagePackage from "../pages/admin/manage-package";
+import ManageUsers from "../pages/admin/manage-users";
 
 
 interface ProtectedRouteByRoleProps {
@@ -178,7 +179,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: ADMIN_ROUTES.USER,
-        element: <ManageUser />,
+        element: <ManageUsers />,
       },
       {
         path: ADMIN_ROUTES.OVERVIEW,
