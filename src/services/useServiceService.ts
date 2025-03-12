@@ -1,4 +1,4 @@
-import { useDispatch } from "react-redux";
+
 import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useApiService from "../hooks/useApi";
@@ -9,7 +9,7 @@ export interface Service {
   name: string;
   price: number;
   description: string;
-  isDeleted: number; // 0: chưa xóa, 1: đã xóa
+  isDeleted: boolean; // 0: chưa xóa, 1: đã xóa
   createdAt: string; // ISO Date string
   updatedAt: string; // ISO Date string
 }
@@ -63,10 +63,14 @@ const useServiceService = () => {
   const deleteServices = useCallback(
     async (id: string) => {
       try {
-        const response = await callApi("delete", `services/${id}`);
+        const response = await callApi("put", `services/${id}/toggle-delete`,{
+          isDeleted: true
+        });
+        console.log("response dl: ", response)
         return response;
       } catch (e: any) {
         toast.error(e?.response?.data);
+        console.log("deleteServices: ", e?.response?.data)
       }
     },
     [callApi, router]

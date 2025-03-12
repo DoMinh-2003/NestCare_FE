@@ -63,7 +63,7 @@ function ManageUser() {
         isCustom
         isImport
         // apiURI={ADMIN_API.ADMIN}
-        apiURI={"ADMIN_API.ADMIN"}
+        apiURI={"users"}
         formItems={formItems}
         title={title}
         columns={columns}
