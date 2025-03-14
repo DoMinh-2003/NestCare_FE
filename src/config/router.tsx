@@ -3,7 +3,7 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import { useCurrentUser } from "../utils/getcurrentUser";
 import { toast } from "react-toastify";
 import AdminLayout from "../components/layouts/admin-layout";
-import { ADMIN_ROUTES, DOCTOR_ROUTES, USER_ROUTES } from "../constants/routes";
+import { ADMIN_ROUTES, DOCTOR_ROUTES, NURSE_ROUTES, USER_ROUTES } from "../constants/routes";
 import ManageUser from "../pages/admin/manage-user";
 import ManageOverview from "../pages/admin/manage-overview";
 import CustomerLayout from "../components/layouts/customer-layout";
@@ -30,7 +30,8 @@ import NewsDetail from "../pages/customer/news-detail";
 import ManagerServices from "../pages/admin/manage-services";
 import ManagePackage from "../pages/admin/manage-package";
 import ManageUsers from "../pages/admin/manage-users";
-
+import NurseLayout from "../components/layouts/nurse-layout";
+import NurseManageUsers from "../pages/nurse/manage-users";
 
 interface ProtectedRouteByRoleProps {
   children: ReactNode;
@@ -72,7 +73,7 @@ export const router = createBrowserRouter([
   {
     path: USER_ROUTES.HOME,
     element: (
-     <CustomerLayout/>
+      <CustomerLayout />
     ),
     children: [
       {
@@ -145,7 +146,6 @@ export const router = createBrowserRouter([
       },
     ],
   },
-
   {
     path: USER_ROUTES.AUTH,
     element: <AuthLayout />,
@@ -160,7 +160,6 @@ export const router = createBrowserRouter([
       },
     ],
   },
-
   {
     path: "/test",
     element: (
@@ -173,7 +172,7 @@ export const router = createBrowserRouter([
     path: ADMIN_ROUTES.ADMIN,
     element: (
       // <ProtectedRouteByRole allowedRoles={["ADMIN"]}>
-        <AdminLayout />
+      <AdminLayout />
       // </ProtectedRouteByRole>
     ),
     children: [
@@ -192,6 +191,20 @@ export const router = createBrowserRouter([
       {
         path: ADMIN_ROUTES.PACKAGES,
         element: <ManagePackage />,
+      },
+    ],
+  },
+  {
+    path: NURSE_ROUTES.NURSE,
+    element: (
+      // <ProtectedRouteByRole allowedRoles={["ADMIN"]}>
+      <NurseLayout/>
+      // </ProtectedRouteByRole>
+    ),
+    children: [
+      {
+        path: NURSE_ROUTES.USER,
+        element: <NurseManageUsers />,
       },
     ],
   },
