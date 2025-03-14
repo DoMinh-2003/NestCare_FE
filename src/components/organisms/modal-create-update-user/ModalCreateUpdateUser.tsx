@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, Upload, message } from 'antd';
+import { Modal, Form, Input, Upload, message, Image } from 'antd';
 import { uploadToCloudinary } from '../../../constants/function';
 import { PlusOutlined } from '@ant-design/icons';
 export interface UserData {
@@ -9,15 +9,17 @@ export interface UserData {
   fullName: string;
   phone: string;
   role: 'user';
-  image?: string; // Tùy chọn
+  image: string; // Tùy chọn
+  id?: string;
+  isDeleted?: boolean;
 }
 
 interface UserModalProps {
   visible: boolean;
-  onCreate: (values: UserData) => void;
+  onCreate: (values: UserData) => Promise<void>;
   onCancel: () => void;
   user?: UserData | null; // Có thể là null khi tạo mới
-  form:any
+  form: any
 }
 interface FileProps {
   uid: string;
@@ -27,7 +29,7 @@ interface FileProps {
 }
 const ModalCreateUpdateUser: React.FC<UserModalProps> = ({ visible, onCreate, onCancel, user, form }) => {
   const [file, setFile] = useState<FileProps | null>(null);
- 
+
   useEffect(() => {
     if (user) {
       form.setFieldsValue(user);
@@ -48,6 +50,7 @@ const ModalCreateUpdateUser: React.FC<UserModalProps> = ({ visible, onCreate, on
   const onFinish = (values: UserData) => {
     const valuesSubmit = {
       ...values,
+      id: user?.id,
       image: file?.url // Thêm URL ảnh vào dữ liệu gửi lên
     };
     console.log("onFinish: ", valuesSubmit);
@@ -91,7 +94,7 @@ const ModalCreateUpdateUser: React.FC<UserModalProps> = ({ visible, onCreate, on
       onOk={() => {
         form
           .validateFields()
-          .then((values:UserData) => {
+          .then((values: UserData) => {
             onFinish(values);
           })
       }}
@@ -104,20 +107,21 @@ const ModalCreateUpdateUser: React.FC<UserModalProps> = ({ visible, onCreate, on
         }}
         layout="vertical"
       >
-
+        {/* {
+          user?.image &&  <Form.Item
+          name="image"
+          label="Ảnh đại diện hiện tại"
+          rules={[{ required: true, message: 'Vui lòng nhập tên người dùng!' }]}
+        >
+          <Image src={user.image} />
+        </Form.Item>
+        } */}
         <Form.Item
           name="username"
           label="Tên người dùng"
           rules={[{ required: true, message: 'Vui lòng nhập tên người dùng!' }]}
         >
           <Input />
-        </Form.Item>
-        <Form.Item
-          name="password"
-          label="Mật khẩu"
-          rules={user ? [] : [{ required: true, message: 'Vui lòng nhập mật khẩu!' }]} // Không yêu cầu mật khẩu khi cập nhật
-        >
-          <Input.Password />
         </Form.Item>
         <Form.Item
           name="email"
@@ -145,7 +149,7 @@ const ModalCreateUpdateUser: React.FC<UserModalProps> = ({ visible, onCreate, on
           label="Vai trò"
           rules={[{ required: true, message: 'Vui lòng chọn vai trò!' }]}
         >
-          <Input disabled/>
+          <Input disabled />
         </Form.Item>
         <Form.Item
           name="image"
@@ -154,7 +158,7 @@ const ModalCreateUpdateUser: React.FC<UserModalProps> = ({ visible, onCreate, on
           <Upload
             listType="picture-card"
             customRequest={handleUpload}
-            fileList={file ? [file] : []}
+            fileList={ file ? [file] : []}
             onPreview={() => window.open(file?.url, "_blank")}
             onRemove={handleRemove}
             showUploadList={{

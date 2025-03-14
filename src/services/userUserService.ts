@@ -38,7 +38,38 @@ const userUserService = () => {
     [callApi, dispatch, router]
   );
 
-  return { getUsers, loading, createUser, setIsLoading };
+  const updateUser = useCallback(
+    async (values: any) => {
+      console.log("id: ", values.id)
+      try {
+        const response = await callApi("put", `users/${values.id}`,{
+          ...values
+        });
+        console.log("createUser: ", response)
+        return response;
+      } catch (e: any) {
+        console.log("e: ", e)
+      }
+    },
+    [callApi, dispatch, router]
+  );
+
+  const deleteUser = useCallback(
+    async (id: any) => {
+      try {
+        const response = await callApi("put", `users/${id}/toggle-delete`,{
+          isDeleted: true
+        });
+        console.log("createUser: ", response)
+        return response;
+      } catch (e: any) {
+        console.log("e: ", e)
+      }
+    },
+    [callApi, dispatch, router]
+  );
+
+  return { getUsers, loading, updateUser,deleteUser, createUser, setIsLoading };
 };
 
 export default userUserService;
