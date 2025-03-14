@@ -43,3 +43,7 @@ export const uploadToCloudinary = async (file: File) => {
         return null;
     }
 };
+
+export const tableText = ()=>{
+    return "text-lg"
+}

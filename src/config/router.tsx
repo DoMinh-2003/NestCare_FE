@@ -32,6 +32,7 @@ import ManagePackage from "../pages/admin/manage-package";
 import ManageUsers from "../pages/admin/manage-users";
 import NurseLayout from "../components/layouts/nurse-layout";
 import NurseManageUsers from "../pages/nurse/manage-users";
+import NurseManageOrders from "../pages/nurse/manage-orders";
 
 interface ProtectedRouteByRoleProps {
   children: ReactNode;
@@ -205,6 +206,10 @@ export const router = createBrowserRouter([
       {
         path: NURSE_ROUTES.USER,
         element: <NurseManageUsers />,
+      },
+      {
+        path: NURSE_ROUTES.ORDER,
+        element: <NurseManageOrders />,
       },
     ],
   },

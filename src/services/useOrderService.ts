@@ -4,30 +4,20 @@ import { useNavigate } from "react-router-dom";
 import useApiService from "../hooks/useApi";
 import { toast } from "react-toastify";
 
-const userUserService = () => {
+
+const useOrderService = () => {
   const { callApi, loading, setIsLoading } = useApiService();
   const router = useNavigate();
   const dispatch = useDispatch();
 
-  const getUsers = useCallback(
-    async () => {
-      try {
-        const response = await callApi("get", "users");
-        return response;
-      } catch (e: any) {
-        toast.error(e?.response?.data || "GetUsers failed");
-      }
-    },
-    [callApi, dispatch, router]
-  );
 
-  const createUser = useCallback(
+  const createOrder = useCallback(
     async (values: any) => {
       try {
-        const response = await callApi("post", "users/register",{
+        const response = await callApi("post", "order",{
           ...values
         });
-        console.log("createUser: ", response)
+        console.log("createOrder: ", response)
         return response;
       } catch (e: any) {
         console.log("e: ", e)
@@ -36,14 +26,11 @@ const userUserService = () => {
     [callApi, dispatch, router]
   );
 
-  const updateUser = useCallback(
-    async (values: any) => {
-      console.log("id: ", values.id)
+  const getOrderByUserId = useCallback(
+    async (userId: any) => {
       try {
-        const response = await callApi("put", `users/${values.id}`,{
-          ...values
-        });
-        console.log("createUser: ", response)
+        const response = await callApi("get", `order/user/${userId}`);
+        console.log("getOrderByUserId: ", response)
         return response;
       } catch (e: any) {
         console.log("e: ", e)
@@ -67,7 +54,7 @@ const userUserService = () => {
     [callApi, dispatch, router]
   );
 
-  return { getUsers, loading, updateUser,deleteUser, createUser, setIsLoading };
+  return {  loading, getOrderByUserId,deleteUser, createOrder, setIsLoading };
 };
 
-export default userUserService;
+export default useOrderService;
