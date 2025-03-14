@@ -1,4 +1,5 @@
-
+import axios from "axios";
+import SECRECT from "../secret";
 export const generateTimeSlots = () => {
     const slots = [];
     const startHour = 7; // Bắt đầu từ 7:00
@@ -22,4 +23,23 @@ export const generateTimeSlots = () => {
     }
 
     return slots;
+};
+
+export const uploadToCloudinary = async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("upload_preset", SECRECT.CLOUDINARY_UPLOAD_PRESET); // Tạo trong Cloudinary
+    formData.append("cloud_name", `${SECRECT.CLOUDINARY_NAME}`);
+
+    try {
+        const response = await axios.post(
+            `https://api.cloudinary.com/v1_1/${SECRECT.CLOUDINARY_NAME}/image/upload`,
+            formData
+        );
+        console.log("response.data.secure_url: ", response.data.secure_url)
+        return response.data.secure_url; // URL ảnh sau khi upload
+    } catch (error) {
+        console.error("Upload failed:", error);
+        return null;
+    }
 };
