@@ -29,7 +29,8 @@ export enum DOCTOR_ROUTES {
 }
 export enum NURSE_ROUTES {
   NURSE = "nurse",
-  USER = "user",
+  USER = "users",
+  ORDER = "orders",
 }
 // Admin Routes
 export enum ADMIN_ROUTES {

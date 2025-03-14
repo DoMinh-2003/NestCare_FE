@@ -1,59 +1,48 @@
-import React, { useEffect, useState } from "react";
-import userUserService from "../../../services/userUserService";
-import { Button, message, Table, Form, Image } from "antd";
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import ModalCreateUpdateUser, { UserData } from "../../../components/organisms/modal-create-update-user/ModalCreateUpdateUser";
-import ModalDelete from "../../../components/organisms/modal-delete";
-import { tableText } from "../../../constants/function";
+import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
+import { UserData } from '../../../components/organisms/modal-create-update-user/ModalCreateUpdateUser';
+import { Form, Image, Table } from 'antd';
+import { useEffect, useState } from 'react';
+import userUserService from '../../../services/userUserService';
+import { tableText } from '../../../constants/function';
+import usePackageService, { Package } from '../../../services/usePackageService';
+import ModalCreateOrder from '../../../components/organisms/modal-create-order/ModalCreateOrder';
+import useOrderService from '../../../services/useOrderService';
 
-
-const NurseManageUsers: React.FC = () => {
+import ModalOrderDetail, { OrderDetail } from '../../../components/organisms/modal-order-detail/ModalOrderDetail';
+const NurseManageOrders = () => {
     const [users, setUsers] = useState<UserData[]>([]);
-    const [currentUser, setCurrentUser] = useState<UserData | null>(null);
-    const [visible, setVisible] = useState(false);
-    const { createUser, updateUser, deleteUser, getUsers } = userUserService();
-    const [form] = Form.useForm(); // Create a form reference
-    const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
-    const showModal = (user: UserData | null = null) => {
-        if (user) {
-            setCurrentUser(user);
-        } else {
-            setCurrentUser(null); // Reset currentUser  when adding a new user
-            form.resetFields(); // Reset form fields when opening modal
-        }
-        setVisible(true);
-    };
-
-    const handleCreateOrUpdate = async (values: UserData) => {
-        console.log("handleCreateOrUpdate:", values);
-        if (currentUser) {
-            // Update user logic can be added here
-            const response = await updateUser(values);
-            if (response) {
-                message.success("Cập nhật dùng thành công");
-                getUsersFromAdmin();
-                setVisible(false); // Close the modal only after successful creation
-                form.resetFields(); // Reset the form fields
-            }
-        } else {
-            // Create new user
-            const response = await createUser(values);
-            if (response) {
-                message.success("Tạo người dùng thành công");
-                getUsersFromAdmin();
-                setVisible(false); // Close the modal only after successful creation
-                form.resetFields(); // Reset the form fields
-            }
-        }
-    };
-
-    const handleCancel = () => {
-        setVisible(false);
-    };
+    const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
+    const { getUsers } = userUserService();
+    const { getPackages } = usePackageService();
+    const [packages, setPackages] = useState<Package[]>([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const {createOrder, getOrderByUserId} = useOrderService()
+    const [form] = Form.useForm()
+    const [isModalOpenOrderDetail, setIsModalOpenOrderDetail] = useState(false);
+    const [orderDetail, setOrderDetail] = useState<OrderDetail[]>([])
 
     useEffect(() => {
         getUsersFromAdmin();
+        getPackagesFromAdmin();
     }, []);
+
+    const handleCreateOrder = async(data: { userId: string; packageId: string }) => {
+        console.log("Order Created:", data);
+       const response = await createOrder(data)
+       if(response) {
+        setIsModalOpen(false); // Đóng modal sau khi tạo đơn hàng
+        form.resetFields()
+        window.location.href = response
+       }
+    };
+
+    const getPackagesFromAdmin = async () => {
+        const response = await getPackages();
+        console.log("response: ", response.data);
+        if (response && response.data) {
+            setPackages(response.data);
+        }
+    };
 
     const getUsersFromAdmin = async () => {
         const response = await getUsers();
@@ -62,12 +51,13 @@ const NurseManageUsers: React.FC = () => {
             setUsers(response.filter((item: UserData) => item.role === "user" && !item.isDeleted));
         }
     };
-    const handleOpenModalDelete = (record: UserData) => {
-        console.log("record: ", record)
-        setCurrentUser(record);
-        setIsModalDeleteOpen(true);
-    };
-    // Cấu hình cột cho bảng
+
+    const showModalCraeteOrder = (record: UserData)=>{
+        setIsModalOpen(true)
+        setSelectedUser(record)
+    }
+
+
     const columns = [
         {
             title: "Tên đầy đủ",
@@ -107,48 +97,48 @@ const NurseManageUsers: React.FC = () => {
             title: 'Hành động',
             render: (record: UserData) => (
                 <div className="flex gap-2 text-xl">
-                    <EditOutlined onClick={() => showModal(record)} className="text-blue" />
-                    <DeleteOutlined onClick={() => handleOpenModalDelete(record)} className="text-red-500" />
+                    <PlusOutlined onClick={() => showModalCraeteOrder(record)} className="text-yellow-500" />
+                    <EyeOutlined onClick={()=> showModalOrderDetail(record)} className='text-purple-500'/>
+                    {/* <EditOutlined onClick={() => showModal(record)} className="text-blue" />
+                    <DeleteOutlined onClick={() => handleOpenModalDelete(record)} className="text-red-500" /> */}
                 </div>
             )
         },
     ];
 
-    const handleCancelModalDelete = () => {
-        setIsModalDeleteOpen(false);
-    };
+    const getOrderDetail = async(id: string)=>{
+        const response = await getOrderByUserId(id)
+        if(response){
+            setOrderDetail(response)
+        }
+    }
 
-    const handleOkModalDelete = async () => {
-        console.log("currentUser: ", currentUser)
-        if (!currentUser) return; // Ensure selectedService is defined
-        await deleteUser(currentUser.id);
-        message.success(`Xóa dịch vụ ${currentUser.fullName} thành công`);
-        setCurrentUser(null);
-        setIsModalDeleteOpen(false);
-        getUsersFromAdmin(); // Refresh the service list after deletion
-    };
+    const showModalOrderDetail =(record: UserData)=>{
+        getOrderDetail(record.id+"")
+        setIsModalOpenOrderDetail(true);
+    }
+    const handleCancel = () => {
+        setIsModalOpenOrderDetail(false);
+      };
     return (
         <div>
-            <ModalDelete
-                handleCancelModalDelete={handleCancelModalDelete}
-                handleOkModalDelete={handleOkModalDelete}
-                name={currentUser?.fullName || ""}
-                isModalOpenDelete={isModalDeleteOpen}
+            <ModalOrderDetail
+            order={orderDetail}
+            isModalOpen={isModalOpenOrderDetail}
+            handleCancel={handleCancel}
             />
-            <ModalCreateUpdateUser
-                visible={visible}
-                onCreate={handleCreateOrUpdate}
-                onCancel={handleCancel}
-                user={currentUser}
-                form={form} // Pass the form reference to the modal
+            {/* modal create order */}
+            <ModalCreateOrder
+                form={form}
+                visible={isModalOpen}
+                onCancel={() => setIsModalOpen(false)}
+                onSubmit={handleCreateOrder}
+                user={selectedUser?.id || null}
+                packages={packages}
             />
-            <Button onClick={() => showModal()} type="primary" style={{ marginBottom: 16 }}>
-                Thêm người dùng
-            </Button>
-
-            <Table rowClassName={() => tableText()}  columns={columns} dataSource={users} rowKey="id" />
+            <Table rowClassName={() => tableText()} columns={columns} dataSource={users} rowKey="id" />
         </div>
-    );
-};
+    )
+}
 
-export default NurseManageUsers;
+export default NurseManageOrders
