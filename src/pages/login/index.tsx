@@ -1,8 +1,8 @@
 import { Form, FormProps, Row } from "antd";
 import { FcGoogle } from "react-icons/fc";
 import AuthField from "../../components/molecules/auth-field/AuthField";
-import useAuthService from "../../services/useUserService";
-function LoginPage() {
+import useAuthService from "../../services/useAuthService";
+function CustomerLoginPage() {
   const { login } = useAuthService()
 
   const onFinish: FormProps['onFinish'] = async (values) => {
@@ -65,4 +65,4 @@ function LoginPage() {
   );
 }
 
-export default LoginPage;
+export default CustomerLoginPage;

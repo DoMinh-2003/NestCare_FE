@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { Modal, Form, Input, InputNumber, Button, Select, Table } from "antd";
 import useServiceService, { Service } from "../../../services/useServiceService";
-import { values } from "lodash";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { Package, PackageService } from "../../../services/usePackageService";
 
@@ -47,7 +46,7 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues }
     const getServicesFromCustomer = async () => {
         const response = await getServices();
         if (response && Array.isArray(response.data)) {
-            setServices(response.data.filter((item: Service) => item.isDeleted === 0));
+            setServices(response.data.filter((item: Service) => item.isDeleted === false));
         } else {
             console.error("Expected an array but got:", response.data);
             setServices([]); // Ensure an array is always passed to Table
@@ -74,9 +73,9 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues }
     const columns = [
         {
             title: "Tên gói",
-            render:(record: PackageService)=>(
+            render: (record: PackageService) => (
                 <div>
-                {record.service.name}
+                    {record.service.name}
                 </div>
             )
         },
@@ -90,7 +89,7 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues }
         },
     ];
 
-    const handleDeleteServicePromPackage = (id: string)=>{
+    const handleDeleteServicePromPackage = (id: string) => {
         console.log("id: ", id)
         console.log("oldServices: ", oldServices)
         setOldServices(oldServices.filter(item => item.service.id != id))
@@ -175,7 +174,9 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues }
                                 />
                             </Form.Item>
                         }
-                        <Table columns={columns} dataSource={oldServices} rowKey="id" />
+                        {
+                            initialValues && <Table columns={columns} dataSource={oldServices} rowKey="id" />
+                        }
                     </div>
                 </div>
             </Form>
