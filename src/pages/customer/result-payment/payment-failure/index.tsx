@@ -1,20 +1,28 @@
-import { useLocation, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import paymentFailureImg from '../../../../../public/images/failure.png';
 
 const PaymentFailure = () => {
-	const { state } = useLocation();
-	const { orderId, errorCode } = state || {};
+	// const { state } = useLocation();
+	// const { orderId, errorCode } = state || {};
 
 	return (
-		<div className="p-10 text-center">
-			<h1 className="text-2xl font-bold text-red-600">Payment Failed</h1>
-			<p>Something went wrong. Order ID: {orderId || 'N/A'}</p>
-			{errorCode && <p>Error Code: {errorCode}</p>}
-			<Link to="/services">
-				<button className="mt-5 bg-blue-500 text-white px-5 py-2 rounded-lg">
-					Back to Services
-				</button>
-			</Link>
-		</div>
+		<>
+			<div className="border border-solid h-fit p-5 flex flex-col items-center gap-5 max-w-[550px] mx-auto rounded-md bg-[#fff3f3]" style={{ boxShadow: "15px 15px 30px #bebebe, -15px -15px 30px #ffffff" }}>
+				<img src={paymentFailureImg} alt="payment-success" className='h-[300px]' />
+				<h1 className="text-2xl font-bold text-red-800">Thanh Toán Thất Bại!</h1>
+				<p className='text-xl font-sans'>Đã có lỗi trong quá trình thanh toán. Hãy thử lại !</p>
+				<Link to="/">
+					<button className="text-gray-900 mt-5 bg-blue-500 text-lg px-12 py-3 rounded-lg bg-gray-200 cursor-pointer border border-gray-200 transition duration-300 shadow-[6px_6px_12px_#c5c5c5,-6px_-6px_12px_#ffffff] active:text-gray-500 active:shadow-[inset_4px_4px_12px_#c5c5c5,inset_-4px_-4px_12px_#ffffff]">
+						Trở về trang chủ
+					</button>
+				</Link>
+				<Link to="/services">
+					<button className="text-gray-900 mt-5 bg-blue-500 px-7 py-3 text-lg rounded-lg bg-gray-200 cursor-pointer border border-gray-200 transition duration-300 shadow-[6px_6px_12px_#c5c5c5,-6px_-6px_12px_#ffffff] active:text-gray-500 active:shadow-[inset_4px_4px_12px_#c5c5c5,inset_-4px_-4px_12px_#ffffff]">
+						Xem thông tin dịch vụ
+					</button>
+				</Link>
+			</div>
+		</>
 	);
 };
 

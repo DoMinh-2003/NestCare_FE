@@ -22,7 +22,7 @@ const NavbarMenuList = () => {
           {
             item.label === "Tin tức" || item.label === "Chuyên khoa" || item.label === "Dịch vụ" || item.label === "Hướng dẫn" || item.label === "Kiến thức"
               ?
-              <PopoverNavList title={item.label} link={item.link}/>
+              <PopoverNavList title={item.label} link={item.link} />
               :
               <NavMenu key={index} {...item} />
           }
