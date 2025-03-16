@@ -22,6 +22,7 @@ const ServicesPackageList = () => {
                     <div className=''>
                         <ServicePackage
                             key={item.id}
+                            id={item.id}
                             name={item.name}
                             services={item?.packageServices}
                             image={item.image}
