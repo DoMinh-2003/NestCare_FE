@@ -18,9 +18,13 @@ export enum USER_ROUTES {
   RIGHTS_OF_PATIENTS_PAGE = "/rights-of-patients",
   PRIVACY_POLICY_PAGE = "/privacy-policy",
   METHOD_OF_PAYING_HOSPITAL_FEES = "/method-of-paying-hospital-fees",
-  PREGNANCY_CHECK_UP_PACKAGE="/services/pregnancy-check-up-package",
-  FULL_BIRTH_PACKAGE="/services/full-birth-package",
+  PREGNANCY_CHECK_UP_PACKAGE = "/services/pregnancy-check-up-package",
+  FULL_BIRTH_PACKAGE = "/services/full-birth-package",
   AUTH = "auth",
+  PAYMENT = "/payment/result",
+  PAYMENT_SUCCESS = "/payment/success",
+  PAYMENT_FAILURE = "/payment/failure",
+  PAYMENT_CANCEL = "/payment/cancel",
 }
 
 export enum DOCTOR_ROUTES {

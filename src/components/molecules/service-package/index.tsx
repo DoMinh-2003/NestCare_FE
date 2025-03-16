@@ -2,11 +2,9 @@ import {
     CheckOutlined,
 } from '@ant-design/icons';
 import BookingNowButton from '../../atoms/button/BookingNowButton';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { USER_ROUTES } from '../../../constants/routes';
 import { formatMoney } from '../../../utils/formatMoney';
-import { useCurrentUser } from '../../../utils/getcurrentUser';
-import usePackageService from '../../../services/usePackageService';
 import useOrderService from '../../../services/useOrderService';
 
 interface servicesProps {
@@ -32,24 +30,16 @@ interface ServicePackageProps {
 
 const ServicePackage = ({ id, name, services, price, link }: ServicePackageProps) => {
     const { createOrder } = useOrderService();
-    const navigate = useNavigate(); // Use React Router's navigate function for internal redirection
 
-    const handleBookingPackage = async (userId: string, packageId: string) => {
+    const handleBookingPackage = async (packageId: string) => {
         const storedUser = localStorage.getItem('USER');
         if (storedUser) {
             const userObject = JSON.parse(storedUser);
             console.log(userObject);
             console.log("userId: ", userObject.id, "packageId: ", packageId);
             const response = await createOrder({ userId: userObject.id, packageId: packageId });
-            console.log('====================================')
-            console.log("Create order-------", response)
-            console.log('====================================')
-            if (response && response.startsWith('/')) {
-                // Internal link, use React Router
-                navigate(response);
-            } else {
-                // External link, use window.location.replace
-                window.location.replace(response);
+            if (response) {
+                window.location.href = response;
             }
         }
     }
@@ -75,7 +65,7 @@ const ServicePackage = ({ id, name, services, price, link }: ServicePackageProps
                         }
                     </div>
                     <div className='mt-10 flex justify-center gap-5'>
-                        <BookingNowButton onClick={() => handleBookingPackage('userId', id)} nameButton='Đăng ký' />
+                        <BookingNowButton onClick={() => handleBookingPackage(id)} nameButton='Đăng ký' />
                         <Link to={`/${USER_ROUTES.SERVICES_PAGE}/${link}`}>
                             <button type="button" className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
                                 Xem chi tiết

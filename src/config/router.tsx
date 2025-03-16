@@ -33,6 +33,10 @@ import ManageUsers from "../pages/admin/manage-users";
 import NurseLayout from "../components/layouts/nurse-layout";
 import NurseManageUsers from "../pages/nurse/manage-users";
 import NurseManageOrders from "../pages/nurse/manage-orders";
+import ResultPayment from "../pages/customer/result-payment";
+import PaymentSuccess from "../pages/customer/result-payment/payment-success";
+import PaymentFailure from "../pages/customer/result-payment/payment-failure";
+import PaymentCancel from "../pages/customer/result-payment/payment-cancel";
 
 interface ProtectedRouteByRoleProps {
   children: ReactNode;
@@ -213,6 +217,24 @@ export const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path: USER_ROUTES.PAYMENT, //payment/result
+    element: <ResultPayment />,
+    children: [
+      {
+        path: USER_ROUTES.PAYMENT_SUCCESS, //payment/success
+        element: <PaymentSuccess />,
+      },
+      {
+        path: USER_ROUTES.PAYMENT_CANCEL, //payment/cancel
+        element: <PaymentCancel />,
+      },
+      {
+        path: USER_ROUTES.PAYMENT_FAILURE, //payment/failure
+        element: <PaymentFailure />,
+      },
+    ]
+  }
 
   // {
   //   path: DOCTOR_ROUTES.DOCTOR,
