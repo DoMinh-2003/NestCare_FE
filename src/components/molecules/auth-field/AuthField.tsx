@@ -1,7 +1,7 @@
 import { Form, Input } from "antd";
 
 interface AuthFieldProps {
-  label?: React.ReactNode ;
+  label?: React.ReactNode;
   placeholder?: string;
   name?: string;
   message?: string;
@@ -12,10 +12,14 @@ function AuthField({ label, placeholder, name, message }: AuthFieldProps) {
     <Form.Item
       name={name}
       rules={[{ required: true, message: message }]}
-      label=  {<p className="text-base-medium">{label}</p>}
-
+      label={
+        <p className="text-base-medium">
+          <span className="text-red-600">*</span> {label}
+        </p>
+      }
+      labelCol={{ span: 24 }}
     >
-    
+
       <Input className="p-1 w-full" placeholder={placeholder} />
     </Form.Item>
   );

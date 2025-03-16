@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 export interface Service {
     id: string;
     name: string;
-    price: string;
+    price: number;
     description: string;
     isDeleted: number;
     createdAt: string;

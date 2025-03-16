@@ -40,8 +40,8 @@ const NurseLayout: React.FC = () => {
   const navigate = useNavigate();
   const handleLogout = () => {
     dispatch(logout());
-    navigate("/login");
-    toast.success("Logged out");
+    navigate("/");
+    toast.success("Đăng xuất thành công");
   };
 
   return (

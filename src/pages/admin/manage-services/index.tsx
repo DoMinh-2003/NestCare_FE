@@ -4,6 +4,8 @@ import { Table, Input, Button, message } from "antd";
 import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
 import ModalCreateUpdateServices, { ServiceData } from "../../../components/organisms/modal-create-update-service";
 import ModalDelete from "../../../components/organisms/modal-delete";
+import { formatMoney } from "../../../utils/formatMoney";
+import { formatCreatedAt, formatDate } from "../../../utils/formatDate";
 
 const ManagerServices = () => {
     const [services, setServices] = useState<Service[]>([]);
@@ -47,6 +49,7 @@ const ManagerServices = () => {
     const handleSaveService = async (values: ServiceData) => {
         if (!values.id) {
             const response = await createServices(values);
+            console.log(response);
             if (response && response.data) {
                 message.success("Tạo service thành công");
                 getServicesFromCustomer();
@@ -62,8 +65,11 @@ const ManagerServices = () => {
 
     const getServicesFromCustomer = async () => {
         const response = await getServices();
+        console.log(response);
         if (response && Array.isArray(response.data)) {
-            setServices(response.data.filter((item: Service) => !item.isDeleted));
+            const sortData = formatCreatedAt(response);
+            console.log(sortData);
+            setServices(sortData.filter((item: Service) => !item.isDeleted));
         } else {
             console.error("Expected an array but got:", response.data);
             setServices([]); // Ensure an array is always passed to Table
@@ -80,37 +86,35 @@ const ManagerServices = () => {
 
     const columns = [
         {
-            title: 'ID',
-            dataIndex: 'id',
-            key: 'id',
-        },
-        {
-            title: 'Name',
+            title: 'Tên dịch vụ',
             dataIndex: 'name',
             key: 'name',
         },
         {
-            title: 'Price',
+            title: 'Giá (VND)',
             dataIndex: 'price',
             key: 'price',
+            render: (price: number) => formatMoney(price)
         },
         {
-            title: 'Description',
+            title: 'Mô tả',
             dataIndex: 'description',
             key: 'description',
         },
         {
-            title: 'Created At',
+            title: 'Được tạo vào',
             dataIndex: 'createdAt',
             key: 'createdAt',
+            render: (date: string) => formatDate(date),
         },
         {
-            title: 'Updated At',
+            title: 'Được sửa vào',
             dataIndex: 'updatedAt',
             key: 'updatedAt',
+            render: (date: string) => formatDate(date),
         },
         {
-            title: 'Action',
+            title: 'Hành động',
             render: (record: Service) => (
                 <div className="flex gap-2">
                     <EditOutlined onClick={() => handleOpenModal(record)} className="text-blue" />
@@ -134,9 +138,12 @@ const ManagerServices = () => {
                 onSubmit={handleSaveService} // Pass the function directly
                 initialValues={selectedService}
             />
-            <div style={{ marginBottom: 16 }}>
+            <h1 className="text-5xl font-extrabold text-center mb-5">
+                Quản lí dịch vụ
+            </h1>
+            <div className="mb-4 flex items-center justify-between">
                 <Input
-                    placeholder="Search by name"
+                    placeholder="Tìm theo tên dịch vụ"
                     value={searchText}
                     onChange={(e) => handleSearch(e.target.value)}
                     style={{ width: 200, marginRight: 8 }}

@@ -27,10 +27,10 @@ function getItem(
   } as MenuItem;
 }
 const items: MenuItem[] = [
-  getItem("Overview", "overview", <FaChartPie />),
-  getItem("User", "user", <SlCalender />),
-  getItem("Service", "services", <SlCalender />),
-  getItem("Package", "packages", <SlCalender />),
+  getItem("Tổng quan", "overview", <FaChartPie />),
+  getItem("Người dùng", "user", <SlCalender />),
+  getItem("Dịch vụ", "services", <SlCalender />),
+  getItem("Gói dịch vụ", "packages", <SlCalender />),
 ];
 const AdminLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
@@ -51,7 +51,7 @@ const AdminLayout: React.FC = () => {
         collapsible
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
-        
+
       >
         <div className="demo-logo-vertical" />
         <Menu
