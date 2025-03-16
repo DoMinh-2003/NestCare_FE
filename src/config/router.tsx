@@ -199,7 +199,7 @@ export const router = createBrowserRouter([
     path: NURSE_ROUTES.NURSE,
     element: (
       // <ProtectedRouteByRole allowedRoles={["ADMIN"]}>
-      <NurseLayout/>
+      <NurseLayout />
       // </ProtectedRouteByRole>
     ),
     children: [

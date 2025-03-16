@@ -24,7 +24,7 @@ const userUserService = () => {
   const createUser = useCallback(
     async (values: any) => {
       try {
-        const response = await callApi("post", "users/register",{
+        const response = await callApi("post", "users/register", {
           ...values
         });
         console.log("createUser: ", response)
@@ -40,7 +40,7 @@ const userUserService = () => {
     async (values: any) => {
       console.log("id: ", values.id)
       try {
-        const response = await callApi("put", `users/${values.id}`,{
+        const response = await callApi("put", `users/${values.id}`, {
           ...values
         });
         console.log("createUser: ", response)
@@ -55,7 +55,7 @@ const userUserService = () => {
   const deleteUser = useCallback(
     async (id: any) => {
       try {
-        const response = await callApi("put", `users/${id}/toggle-delete`,{
+        const response = await callApi("put", `users/${id}/toggle-delete`, {
           isDeleted: true
         });
         console.log("createUser: ", response)
@@ -67,7 +67,7 @@ const userUserService = () => {
     [callApi, dispatch, router]
   );
 
-  return { getUsers, loading, updateUser,deleteUser, createUser, setIsLoading };
+  return { getUsers, loading, updateUser, deleteUser, createUser, setIsLoading };
 };
 
 export default userUserService;
