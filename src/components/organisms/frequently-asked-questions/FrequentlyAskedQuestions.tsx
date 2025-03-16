@@ -11,7 +11,7 @@ const FrequentlyAskedQuestions = () => {
                     Bệnh viện Phụ sản Quốc tế Sài Gòn tiếp nhận khám chữa bệnh với bảo hiểm bảo lãnh viện phí có thẻ đăng ký ban đầu tại mọi cơ sở y tế trên toàn quốc.
                 </div>
                 <div className="mt-5">
-                    <BookingNowButton />
+                    <BookingNowButton nameButton="Đặt lịch ngay" />
                 </div>
             </div>
             <div className="col-span-7">
