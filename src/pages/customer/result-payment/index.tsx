@@ -33,7 +33,6 @@ const PaymentResult = () => {
 				console.log('Navigating to PAYMENT_CANCEL');
 				navigate(USER_ROUTES.PAYMENT_CANCEL, { state: { orderId, errorCode: responseCode }, replace: true });
 				break;
-
 			// Failure cases
 			case '07': // Suspected fraud
 			case '09': // Card not registered for Internet Banking
