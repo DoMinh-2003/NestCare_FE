@@ -16,7 +16,7 @@ import { themeAntd } from "./config/antd";
 //   duration: 1000,
 // });
 function App() {
-  
+
   return (
     <>
       <ConfigProvider theme={themeAntd}>

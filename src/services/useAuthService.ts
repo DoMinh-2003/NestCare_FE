@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useApiService from "../hooks/useApi";
 import { toast } from "react-toastify";
+import { useCurrentUser } from "../utils/getcurrentUser";
 
 const useAuthService = () => {
   const { callApi, loading, setIsLoading } = useApiService();
@@ -31,7 +32,10 @@ const useAuthService = () => {
       try {
         const response = await callApi("post", "auth/login", values);
         console.log("login: ", response)
+
         localStorage.setItem("token", response?.token);
+        localStorage.setItem('USER', JSON.stringify(response));
+        console.log(localStorage.getItem('USER'));
         toast.success("Login Successfully");
         router("/");
         // dispatch(loginRedux(response?.data));
@@ -43,20 +47,20 @@ const useAuthService = () => {
     [callApi, dispatch, router]
   );
 
-//   const loginGoogle = useCallback(async () => {
-//     try {
-//       const result = await signInWithPopup(auth, ggProvider);
-//       const token = await result.user?.getIdToken();
-//       if (token) {
-//         const res = await callApi("post", "/login-google", { token });
-//         localStorage.setItem("token", res?.data?.token);
-//         router.push("/");
-//         dispatch(loginRedux(res?.data));
-//       }
-//     } catch (e: any) {
-//       console.error("Error during Google sign-in or API request:", e);
-//     }
-//   }, [callApi, dispatch, router]);
+  //   const loginGoogle = useCallback(async () => {
+  //     try {
+  //       const result = await signInWithPopup(auth, ggProvider);
+  //       const token = await result.user?.getIdToken();
+  //       if (token) {
+  //         const res = await callApi("post", "/login-google", { token });
+  //         localStorage.setItem("token", res?.data?.token);
+  //         router.push("/");
+  //         dispatch(loginRedux(res?.data));
+  //       }
+  //     } catch (e: any) {
+  //       console.error("Error during Google sign-in or API request:", e);
+  //     }
+  //   }, [callApi, dispatch, router]);
 
   return { register, login, loading, setIsLoading };
 };

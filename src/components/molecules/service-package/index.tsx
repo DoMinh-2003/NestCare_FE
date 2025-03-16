@@ -1,47 +1,58 @@
-import {
-    CheckOutlined,
-} from '@ant-design/icons';
-import BookingNowButton from '../../atoms/button/BookingNowButton';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { USER_ROUTES } from '../../../constants/routes';
+import { Package } from '../../../model/Pakage';
+import { Services } from '../../../model/service';
+import useOrderService from '../../../services/useOrderService';
+import { formatMoney } from '../../../utils/formatMoney';
+import style from './style.module.scss';
 
-interface iServicePackage {
-    name: string;
-    description?: string
-    services: string[];
-    image: string;
-    link?: string;
+interface ServicePackageProps {
+    servicePackage: Package;
 }
-const ServicePackage = ({ name, services, image, link }: iServicePackage) => {
+
+const ServicePackage = ({ servicePackage }: ServicePackageProps) => {
+    const { createOrder } = useOrderService();
+    const navigate = useNavigate()
+
+    const { id, name, description, packageServices, price } = servicePackage
+
+    const handleBookingPackage = async (packageId: string) => {
+        const storedUser = localStorage.getItem('USER');
+        if (storedUser) {
+            const userObject = JSON.parse(storedUser);
+            console.log(userObject);
+            console.log("userId: ", userObject.id, "packageId: ", packageId);
+            const response = await createOrder({ userId: userObject.id, packageId: packageId });
+            if (response) {
+                window.location.href = response;
+            }
+        }
+    }
 
     return (
-        <div className='border border-solid rounded-lg p-10 bg-pink-50'>
-            <div className=' gap-10'>
-
-                <div className=''>
-                    <div className='text-3xl font-bold'>
-                        {name}
-                    </div>
-                    <div className='grid grid-cols-2'>
-                        {
-                            services.map((item) => (
-                                <button type="button" className="mt-5 font-bold text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
-                                    <CheckOutlined className='text-pink-700 font-bold text-lg' />   {item}
-                                </button>
-                            ))
-                        }
-                    </div>
-                    <div className='mt-10 flex justify-center gap-5'>
-                        <BookingNowButton />
-                        <Link to={`/${USER_ROUTES.SERVICES_PAGE}/${link}`}>
-                            <button type="button" className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2">
-                                Xem chi tiết
-                            </button>
-                        </Link>
-                    </div>
+        <>
+            <div className={style.card}>
+                <div className={style.header}>
+                    <span className={style.title}>{name}</span>
+                    <span className={style.price}>{formatMoney(Number(price))}</span>
+                </div>
+                <p className={style.desc}>{description}</p>
+                <ul className={style.lists}>
+                    {packageServices?.map((item: Services) =>
+                        <li className={style.list} key={item.id}>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                            </svg>
+                            <span key={item.service.id}>{item.service.name}</span>
+                        </li>
+                    )}
+                </ul>
+                <div className='flex flex-col gap-3'>
+                    <button type="button" className={style.action} onClick={() => handleBookingPackage(id)}>Đăng ký Ngay</button>
+                    <button type="button" className={style.action} onClick={() => navigate(`/${USER_ROUTES.SERVICES_PAGE}/${link}`)}>Xem Chi Tiết</button>
                 </div>
             </div>
-        </div>
+        </>
     )
 }
 
