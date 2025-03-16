@@ -2,10 +2,12 @@ import {
     CheckOutlined,
 } from '@ant-design/icons';
 import BookingNowButton from '../../atoms/button/BookingNowButton';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { USER_ROUTES } from '../../../constants/routes';
 import { formatMoney } from '../../../utils/formatMoney';
 import { useCurrentUser } from '../../../utils/getcurrentUser';
+import usePackageService from '../../../services/usePackageService';
+import useOrderService from '../../../services/useOrderService';
 
 interface servicesProps {
     id: string,
@@ -29,13 +31,26 @@ interface ServicePackageProps {
 }
 
 const ServicePackage = ({ id, name, services, price, link }: ServicePackageProps) => {
+    const { createOrder } = useOrderService();
+    const navigate = useNavigate(); // Use React Router's navigate function for internal redirection
 
-    const handleBookingPackage = (userId: string, packageId: string) => {
+    const handleBookingPackage = async (userId: string, packageId: string) => {
         const storedUser = localStorage.getItem('USER');
         if (storedUser) {
             const userObject = JSON.parse(storedUser);
             console.log(userObject);
             console.log("userId: ", userObject.id, "packageId: ", packageId);
+            const response = await createOrder({ userId: userObject.id, packageId: packageId });
+            console.log('====================================')
+            console.log("Create order-------", response)
+            console.log('====================================')
+            if (response && response.startsWith('/')) {
+                // Internal link, use React Router
+                navigate(response);
+            } else {
+                // External link, use window.location.replace
+                window.location.replace(response);
+            }
         }
     }
 
