@@ -22,9 +22,9 @@ export enum USER_ROUTES {
   FULL_BIRTH_PACKAGE = "/services/full-birth-package",
   AUTH = "auth",
   PAYMENT = "/payment/result",
-  PAYMENT_SUCCESS = "/payment/success",
-  PAYMENT_FAILURE = "/payment/failure",
-  PAYMENT_CANCEL = "/payment/cancel",
+  PAYMENT_SUCCESS = "/payment/result/success",
+  PAYMENT_FAILURE = "/payment/result/failure",
+  PAYMENT_CANCEL = "/payment/result/cancel"
 }
 
 export enum DOCTOR_ROUTES {

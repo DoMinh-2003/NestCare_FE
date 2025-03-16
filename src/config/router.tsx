@@ -220,21 +220,20 @@ export const router = createBrowserRouter([
   {
     path: USER_ROUTES.PAYMENT, //payment/result
     element: <ResultPayment />,
-    children: [
-      {
-        path: USER_ROUTES.PAYMENT_SUCCESS, //payment/success
-        element: <PaymentSuccess />,
-      },
-      {
-        path: USER_ROUTES.PAYMENT_CANCEL, //payment/cancel
-        element: <PaymentCancel />,
-      },
-      {
-        path: USER_ROUTES.PAYMENT_FAILURE, //payment/failure
-        element: <PaymentFailure />,
-      },
-    ]
-  }
+  },
+  {
+    path: USER_ROUTES.PAYMENT_SUCCESS, //payment/success
+    element: <PaymentSuccess />,
+  },
+  {
+    path: USER_ROUTES.PAYMENT_CANCEL, //payment/cancel
+    element: <PaymentCancel />,
+  },
+  {
+    path: USER_ROUTES.PAYMENT_FAILURE, //payment/failure
+    element: <PaymentFailure />,
+  },
+
 
   // {
   //   path: DOCTOR_ROUTES.DOCTOR,
