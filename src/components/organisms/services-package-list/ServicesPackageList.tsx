@@ -2,18 +2,7 @@
 import { useEffect, useState } from 'react';
 import usePackageService from '../../../services/usePackageService';
 import ServicePackage from '../../molecules/service-package';
-
-interface Package {
-    id: string;
-    name: string;
-    price: string;
-    description: string;
-    packageServices: [];
-    image: string;
-    isDeleted: number;
-    createdAt: string;
-    updatedAt: string;
-}
+import { Package } from '../../../model/Pakage';
 
 const ServicesPackageList = () => {
 
@@ -23,26 +12,19 @@ const ServicesPackageList = () => {
     useEffect(() => {
         getPackages()
             .then((packages) => setServicePackages(packages));
-        console.log(servicePackages);
+        console.log("Gois service--------", servicePackages);
     }, []);
 
 
     return (
-        <div className='grid xl:grid-cols-2 lg:grid-cols-1 gap-10'>
-            {
-                servicePackages.map((item: Package) => (
-                    <div className=''>
-                        <ServicePackage
-                            key={item.id}
-                            id={item.id}
-                            name={item.name}
-                            services={item?.packageServices}
-                            image={item.image}
-                            price={item.price}
-                        />
-                    </div>
-                ))
-            }
+        <div className='grid md:grid-cols-3 md:gap-10 h-fit grid-cols-1 gap-3'>
+            {servicePackages.map((item: Package) => (
+                <div key={item.id}>
+                    <ServicePackage
+                        servicePackage={item}
+                    />
+                </div>
+            ))}
         </div>
     )
 }
