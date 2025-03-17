@@ -86,18 +86,6 @@ function RegisterPage() {
         name="address"
         message="Please enter your address"
       />
-      <Form.Item
-        label={<p className="text-base-medium">Gender</p>}
-        name="gender"
-        rules={[{ required: true, message: "Please select your gender" }]}
-      >
-        <Select
-          options={[
-            { value: "Male", label: "Male" },
-            { value: "Female", label: "Female" },
-          ]}
-        />
-      </Form.Item>
       <Form.Item className="text-center mt-5">
         <button
           type="submit"

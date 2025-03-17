@@ -1,14 +1,4 @@
 
-export interface ServicePackageModel {
-	id: string;
-	name: string;
-	description?: string
-	services: Services[];
-	image: string;
-	link?: string;
-	price: string;
-}
-
 export interface Services {
 	id: string,
 	slot: number,
@@ -19,5 +9,4 @@ export interface Services {
 		description: string
 	}
 };
-
 

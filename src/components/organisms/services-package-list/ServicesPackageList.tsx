@@ -12,7 +12,6 @@ const ServicesPackageList = () => {
     useEffect(() => {
         getPackages()
             .then((packages) => setServicePackages(packages));
-        console.log("Gois service--------", servicePackages);
     }, []);
 
 

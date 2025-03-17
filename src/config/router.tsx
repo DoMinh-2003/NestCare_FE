@@ -36,6 +36,7 @@ import NurseManageOrders from "../pages/nurse/manage-orders";
 import NurseManageUsers from "../pages/nurse/manage-users";
 import RegisterPage from "../pages/register";
 import { useCurrentUser } from "../utils/getcurrentUser";
+import PackageDetail from "../components/molecules/package-detail";
 
 interface ProtectedRouteByRoleProps {
   children: ReactNode;
@@ -99,6 +100,10 @@ export const router = createBrowserRouter([
       {
         path: USER_ROUTES.SERVICES_PAGE,
         element: <ServicesPage />,
+      },
+      {
+        path: USER_ROUTES.PACKAGE_DETAIL,
+        element: <PackageDetail />,
       },
       {
         path: USER_ROUTES.SPECIALTY,
