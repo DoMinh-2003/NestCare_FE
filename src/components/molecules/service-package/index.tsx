@@ -30,15 +30,15 @@ const ServicePackage = ({ servicePackage }: ServicePackageProps) => {
 
     return (
         <>
-            <div className={style.card}>
+            <div className='card w-fit max-w-prose mx-auto p-6 rounded-xl bg-[#FFAFBD] bg-gradient-to-r from-[#ffc3a0] to-[#FFAFBD] text-gray-900 flex flex-col items-stretch'>
                 <div className={style.header}>
                     <span className={style.title}>{name}</span>
                     <span className={style.price}>{formatMoney(Number(price))}</span>
                 </div>
                 <p className={style.desc}>{description}</p>
-                <div className='flex flex-col gap-3'>
+                <div className='flex gap-6 justify-center'>
                     <button type="button" className={style.action} onClick={() => handleBookingPackage(id)}>Đăng ký Ngay</button>
-                    <button type="button" className={style.action} onClick={() => navigate(`/${USER_ROUTES.SERVICES_PAGE}/${id}`)}>Xem Chi Tiết</button>
+                    <button type="button" className={style.action} onClick={() => navigate(`${USER_ROUTES.SERVICES_PAGE}/${id}`)}>Xem Chi Tiết</button>
                 </div>
             </div>
         </>

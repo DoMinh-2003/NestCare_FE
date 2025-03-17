@@ -5,8 +5,11 @@ export interface Services {
 	service: {
 		id: string;
 		name: string;
-		price: number,
-		description: string
+		price: number;
+		description: string;
+		isDeleted: boolean;
+		createdAt: string;
+		updatedAt: string;
 	}
 };
 
