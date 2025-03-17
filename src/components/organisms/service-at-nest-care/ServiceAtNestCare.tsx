@@ -7,31 +7,49 @@ const ServiceAtNestCare = () => {
 
     const showModal = () => {
         setIsModalOpen(true);
-        console.log("a")
+        console.log("a");
     };
 
     return (
-        <div>
-            <ModalBookingForm isModalOpen={isModalOpen} handleCancel={() => setIsModalOpen(false)} />
-            <div className="mt-14 grid grid-cols-12 gap-4">
-                <div className="col-span-5">
-                    <Title text='Dịch vụ tại NextCare' className='mt-20'/>
-                    <p className="mt-10">Tại NestCare, chúng tôi cung cấp đa dạng các dịch vụ từ hỗ trợ sinh sản cho đến các dịch vụ chăm sóc mẹ và bé sau sinh, bao gồm: Phụ khoa; Khám thai; Hiếm muộn; Sanh; Chăm sóc mẹ & bé; Nhi – sơ sinh; Kế hoạch hóa gia đình, Cận lâm sàng.</p>
-                    <div className="mt-10">
-                        <button onClick={showModal} type="button" className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">
+        <div className="py-8">
+            <ModalBookingForm
+                isModalOpen={isModalOpen}
+                handleCancel={() => setIsModalOpen(false)}
+            />
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-center mt-14">
+                {/* Left side: Content */}
+                <div className="md:col-span-5 flex flex-col justify-center">
+                    <Title text="Dịch vụ tại NextCare" className="mb-6" />
+                    <p className="mb-6 text-gray-700 leading-relaxed">
+                        Tại NestCare, chúng tôi cung cấp đa dạng các dịch vụ từ hỗ trợ sinh sản cho đến các dịch vụ chăm sóc mẹ và bé sau sinh, bao gồm: Phụ khoa; Khám thai; Hiếm muộn; Sanh; Chăm sóc mẹ & bé; Nhi – sơ sinh; Kế hoạch hóa gia đình, Cận lâm sàng.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-4">
+                        <button
+                            onClick={showModal}
+                            type="button"
+                            className="flex-1 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
+                        >
                             Đặt lịch ngay
                         </button>
-                        <button type="button" className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700">
+                        <button
+                            type="button"
+                            className="flex-1 text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
+                        >
                             Tìm hiểu thêm
                         </button>
                     </div>
                 </div>
-                <div className="col-span-7">
-                    <img src="https://sihospital.com.vn/images/dichvu.jpg" className="w-full" alt="" />
+                {/* Right side: Image */}
+                <div className="md:col-span-7 flex justify-center">
+                    <img
+                        src="https://sihospital.com.vn/images/dichvu.jpg"
+                        className="w-full rounded-lg shadow-lg"
+                        alt="Dịch vụ NestCare"
+                    />
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default ServiceAtNestCare
+export default ServiceAtNestCare;

@@ -37,11 +37,12 @@ const useAuthService = () => {
         localStorage.setItem('USER', JSON.stringify(response));
         console.log(localStorage.getItem('USER'));
         toast.success("Login Successfully");
+
         router("/");
         // dispatch(loginRedux(response?.data));
         return response?.data;
       } catch (e: any) {
-        toast.error(e?.response?.data || "Login failed");
+        toast.error(e?.response?.data || "Đăng nhập thất bại");
       }
     },
     [callApi, dispatch, router]
