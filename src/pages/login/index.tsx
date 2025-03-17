@@ -28,16 +28,16 @@ function CustomerLoginPage() {
           />
         </div>
         <AuthField
-          label="User name"
-          placeholder="Your user name"
+          label="Tên đăng nhập"
+          placeholder="Tên đăng nhập của bạn"
           name="username"
-          message="Please enter your username"
+          message="Vui lòng điền tên đăng nhập"
         />
         <AuthField
-          label="Password"
-          placeholder="Your password"
+          label="Mật khẩu"
+          placeholder="Mật khẩu của bạn"
           name="password"
-          message="Please enter your password"
+          message="Vui lòng điền mật khẩu"
         />
         <Form.Item className="text-center mt-5">
           <button
@@ -50,7 +50,7 @@ function CustomerLoginPage() {
       </Form>
       <div className="flex items-center w-full my-4">
         <div className="flex-grow border-t border-gray-300"></div>
-        <span className="px-2 text-gray-500 text-sm">OR</span>
+        <span className="px-2 text-gray-500 text-sm">Hoặc</span>
         <div className="flex-grow border-t border-gray-300"></div>
       </div>
       <button

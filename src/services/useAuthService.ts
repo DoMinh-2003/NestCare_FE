@@ -32,31 +32,31 @@ const useAuthService = () => {
         const response = await callApi("post", "auth/login", values);
         console.log("login: ", response)
         localStorage.setItem("token", response?.token);
-        toast.success("Login Successfully");
+        toast.success("Đăng nhập thành công");
         router("/");
         // dispatch(loginRedux(response?.data));
         return response?.data;
       } catch (e: any) {
-        toast.error(e?.response?.data || "Login failed");
+        toast.error(e?.response?.data || "Đăng nhập thất bại");
       }
     },
     [callApi, dispatch, router]
   );
 
-//   const loginGoogle = useCallback(async () => {
-//     try {
-//       const result = await signInWithPopup(auth, ggProvider);
-//       const token = await result.user?.getIdToken();
-//       if (token) {
-//         const res = await callApi("post", "/login-google", { token });
-//         localStorage.setItem("token", res?.data?.token);
-//         router.push("/");
-//         dispatch(loginRedux(res?.data));
-//       }
-//     } catch (e: any) {
-//       console.error("Error during Google sign-in or API request:", e);
-//     }
-//   }, [callApi, dispatch, router]);
+  //   const loginGoogle = useCallback(async () => {
+  //     try {
+  //       const result = await signInWithPopup(auth, ggProvider);
+  //       const token = await result.user?.getIdToken();
+  //       if (token) {
+  //         const res = await callApi("post", "/login-google", { token });
+  //         localStorage.setItem("token", res?.data?.token);
+  //         router.push("/");
+  //         dispatch(loginRedux(res?.data));
+  //       }
+  //     } catch (e: any) {
+  //       console.error("Error during Google sign-in or API request:", e);
+  //     }
+  //   }, [callApi, dispatch, router]);
 
   return { register, login, loading, setIsLoading };
 };

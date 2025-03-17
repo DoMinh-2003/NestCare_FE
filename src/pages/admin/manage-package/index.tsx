@@ -1,20 +1,40 @@
 import { useEffect, useState } from "react";
-import { Button, message, Table, Tag } from "antd";
+import { Button, Input, message, Table, Tag } from "antd";
 import usePackageService, { Package, PackageService } from "../../../services/usePackageService";
 import ModalServiceOfPackage from "../../../components/organisms/modal-services-of-package/ModalServiceOfPackage";
 import ModalCreateUpdatePackage, { PackageCreateUpdate } from "../../../components/organisms/modal-create-update-package/ModalCreateUpdatePackage";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, SearchOutlined } from "@ant-design/icons";
+import { formatMoney } from "../../../utils/formatMoney";
 
 const ManagePackage = () => {
     const [packages, setPackages] = useState<Package[]>([]);
     const { getPackages, createPackage, updatePackage } = usePackageService();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [searchText, setSearchText] = useState<string>("");
     const [servicesOfPackage, setServicesOfPackage] = useState<PackageService[]>([]);
     const [isModalOpenCreateUpdate, setIsModalOpenCreateUpdate] = useState(false);
     const [editingPackage, setEditingPackage] = useState<Package | null>(null);
+    const [modalWidth, setModalWidth] = useState<number | string>(800);
 
     useEffect(() => {
         getPackagesFromAdmin();
+    }, []);
+
+    useEffect(() => {
+        getPackagesFromAdmin();
+        // Update modal width based on screen size
+        const updateWidth = () => {
+            if (window.innerWidth < 768) {
+                setModalWidth("90%");
+            } else if (window.innerWidth < 1024) {
+                setModalWidth(400);
+            } else {
+                setModalWidth(600);
+            }
+        };
+        updateWidth();
+        window.addEventListener("resize", updateWidth);
+        return () => window.removeEventListener("resize", updateWidth);
     }, []);
 
     const handleOpenModal = (packageServices: PackageService[]) => {
@@ -61,6 +81,10 @@ const ManagePackage = () => {
         setIsModalOpenCreateUpdate(true);
     };
 
+    const handleSearch = (value: string) => {
+        setSearchText(value);
+    };
+
     const columns = [
         {
             title: "Tên gói",
@@ -68,21 +92,37 @@ const ManagePackage = () => {
             key: "name",
         },
         {
-            title: "Giá (USD)",
+            title: "Giá (VND)",
             dataIndex: "price",
             key: "price",
+            render: (price: number) => formatMoney(price)
         },
         {
             title: "Chu kỳ",
             dataIndex: "period",
             key: "period",
+            render: (period: string) => {
+                switch (period) {
+                    case "WEEKLY":
+                        return "Hàng tuần";
+                    case "FULL":
+                        return "Toàn thời gian";
+                    case "MONTHLY":
+                        return "Hàng tháng";
+                    case "DAILY":
+                        return "Hàng ngày";
+                    default:
+                        return period;
+                }
+            },
         },
-        {
-            title: "Giao hàng",
-            dataIndex: "delivery_included",
-            key: "delivery_included",
-            render: (value: number) => (value ? <Tag color="green">Có</Tag> : <Tag color="red">Không</Tag>),
-        },
+
+        // {
+        //     title: "Giao hàng",
+        //     dataIndex: "delivery_included",
+        //     key: "delivery_included",
+        //     render: (value: number) => (value ? <Tag color="green">Có</Tag> : <Tag color="red">Không</Tag>),
+        // },
         {
             title: "Cảnh báo",
             dataIndex: "alerts_included",
@@ -118,14 +158,27 @@ const ManagePackage = () => {
 
     return (
         <div>
-            <Button onClick={()=>handleOpenModalCreateUpdate()} type="primary" style={{ marginBottom: 16 }}>
-                Tạo gói
-            </Button>
+            <h1 className="text-5xl font-extrabold text-center mb-5">
+                Quản lí gói dịch vụ
+            </h1>
+            <div className="mb-4 flex items-center justify-between">
+                <Input
+                    placeholder="Tìm theo tên dịch vụ"
+                    value={searchText}
+                    onChange={(e) => handleSearch(e.target.value)}
+                    style={{ width: 200, marginRight: 8 }}
+                    suffix={<SearchOutlined />}
+                />
+                <Button type="primary" onClick={() => handleOpenModalCreateUpdate()}>
+                    Thêm gói dịch vụ
+                </Button>
+            </div>
             <ModalCreateUpdatePackage
                 visible={isModalOpenCreateUpdate}
                 onCancel={() => setIsModalOpenCreateUpdate(false)}
                 onSubmit={handleSubmit}
                 initialValues={editingPackage}
+                width={modalWidth}
             />
             <ModalServiceOfPackage
                 services={servicesOfPackage}
