@@ -3,6 +3,7 @@ import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useApiService from "../hooks/useApi";
 import { toast } from "react-toastify";
+import { useCurrentUser } from "../utils/getcurrentUser";
 
 const useAuthService = () => {
   const { callApi, loading, setIsLoading } = useApiService();
@@ -31,8 +32,12 @@ const useAuthService = () => {
       try {
         const response = await callApi("post", "auth/login", values);
         console.log("login: ", response)
+
         localStorage.setItem("token", response?.token);
-        toast.success("Đăng nhập thành công");
+        localStorage.setItem('USER', JSON.stringify(response));
+        console.log(localStorage.getItem('USER'));
+        toast.success("Login Successfully");
+
         router("/");
         // dispatch(loginRedux(response?.data));
         return response?.data;

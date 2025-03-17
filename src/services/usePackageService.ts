@@ -26,9 +26,9 @@ export interface Package {
     price: string;
     description: string;
     period: string;
-    delivery_included: number; // 0 hoặc 1
-    alerts_included: number; // 0 hoặc 1
-    isDeleted: number; // 0 hoặc 1
+    delivery_included: number;
+    alerts_included: number;
+    isDeleted: number;
     createdAt: string;
     updatedAt: string;
     packageServices: PackageService[];
@@ -43,7 +43,7 @@ const usePackageService = () => {
         async () => {
             try {
                 const response = await callApi("get", "packages");
-                return response;
+                return response?.data;
             } catch (e: any) {
                 toast.error(e?.response?.data);
             }

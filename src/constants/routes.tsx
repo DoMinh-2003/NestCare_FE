@@ -7,7 +7,7 @@ export enum USER_ROUTES {
   CONTACT = "contact",
   DOCTORS = "doctors",
   ABOUT_PAGE = "about",
-  SERVICES_PAGE = "services",
+  SERVICES_PAGE = "/goi-dich-vu",
   SPECIALTY = "specialty",
   NEWS_PAGE = "news",
   NEWS_DETAIL_PAGE = "news/detail",
@@ -18,9 +18,13 @@ export enum USER_ROUTES {
   RIGHTS_OF_PATIENTS_PAGE = "/rights-of-patients",
   PRIVACY_POLICY_PAGE = "/privacy-policy",
   METHOD_OF_PAYING_HOSPITAL_FEES = "/method-of-paying-hospital-fees",
-  PREGNANCY_CHECK_UP_PACKAGE="/services/pregnancy-check-up-package",
-  FULL_BIRTH_PACKAGE="/services/full-birth-package",
+  PREGNANCY_CHECK_UP_PACKAGE = "/services/pregnancy-check-up-package",
+  FULL_BIRTH_PACKAGE = "/services/full-birth-package",
   AUTH = "auth",
+  PAYMENT = "/payment/result",
+  PAYMENT_SUCCESS = "/payment/result/success",
+  PAYMENT_FAILURE = "/payment/result/failure",
+  PAYMENT_CANCEL = "/payment/result/cancel"
 }
 
 export enum DOCTOR_ROUTES {
