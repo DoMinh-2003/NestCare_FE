@@ -67,7 +67,7 @@ const Navbar = () => {
         switch (e.key) {
             case '1':
                 // Navigate to a page for viewing purchased packages
-                navigate('/purchased-packages');
+                navigate(USER_ROUTES.PURCHASED_HISTORY);
                 break;
             case '2':
                 // No action needed here since it's a link (handled by <a> tag)

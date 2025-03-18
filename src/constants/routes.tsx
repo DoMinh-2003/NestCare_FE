@@ -24,7 +24,8 @@ export enum USER_ROUTES {
   PAYMENT = "/payment/result",
   PAYMENT_SUCCESS = "/payment/result/success",
   PAYMENT_FAILURE = "/payment/result/failure",
-  PAYMENT_CANCEL = "/payment/result/cancel"
+  PAYMENT_CANCEL = "/payment/result/cancel",
+  PURCHASED_HISTORY = "/purchased-history"
 }
 
 export enum DOCTOR_ROUTES {

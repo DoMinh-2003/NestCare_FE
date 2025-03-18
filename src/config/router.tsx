@@ -36,6 +36,7 @@ import NurseManageOrders from "../pages/nurse/manage-orders";
 import NurseManageUsers from "../pages/nurse/manage-users";
 import RegisterPage from "../pages/register";
 import { useCurrentUser } from "../utils/getcurrentUser";
+import PurchasedHistory from "../pages/customer/purchased-history";
 
 interface ProtectedRouteByRoleProps {
   children: ReactNode;
@@ -148,6 +149,10 @@ export const router = createBrowserRouter([
         path: USER_ROUTES.NEWS_DETAIL_PAGE,
         element: <NewsDetail />,
       },
+      {
+        path: USER_ROUTES.PURCHASED_HISTORY,
+        element: <PurchasedHistory />,
+      }
     ],
   },
   {
