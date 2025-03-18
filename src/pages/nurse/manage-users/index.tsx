@@ -5,6 +5,7 @@ import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import ModalCreateUpdateUser, { UserData } from "../../../components/organisms/modal-create-update-user/ModalCreateUpdateUser";
 import ModalDelete from "../../../components/organisms/modal-delete";
 import { tableText } from "../../../constants/function";
+import { Link } from "react-router-dom";
 
 
 const NurseManageUsers: React.FC = () => {
@@ -97,6 +98,14 @@ const NurseManageUsers: React.FC = () => {
             title: "Số điện thoại",
             dataIndex: "phone",
             key: "phone",
+        },
+        {
+            title: "Hồ Sơ thai nhi",
+            render:(record:UserData)=>(
+                <Link to={`fetals/${record.id}`} className="text-blue">
+                    Xem hồ sơ
+                </Link>
+            )
         },
         {
             title: "Vai trò",
