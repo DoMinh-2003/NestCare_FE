@@ -30,7 +30,7 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
     const { getServices } = useServiceService();
     const [services, setServices] = useState<Service[]>([]);
     const [discountedPrice, setDiscountedPrice] = useState<number>(initialValues?.price || 0);
-
+    const [totalPrice, setTotalPrice] = useState(0);
     const [oldServices, setOldServices] = useState<PackageService[]>([]);
     useEffect(() => {
         getServicesFromCustomer();
@@ -54,7 +54,18 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
         setDiscountedPrice(calculatedPrice);
     };
 
+    const handleChange = (value: string[]) => {
+        console.log(`Selected: `, value);
 
+        // Lọc danh sách service đã chọn
+        const selectedServices = services.filter(service => value.includes(service.id));
+
+        // Tính tổng giá
+        const total = selectedServices.reduce((sum, service) => sum + Number(service.price), 0);
+
+        setTotalPrice(total); // Cập nhật tổng giá
+        console.log(`price: `, totalPrice);
+    };
     const getServicesFromCustomer = async () => {
         const response = await getServices();
         if (response && Array.isArray(response.data)) {
@@ -68,11 +79,9 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
     const handleOk = async () => {
         try {
             const values = await form.validateFields();
-
-            const originalPrice = initialValues?.price || 0; // Giá gốc
             const discount = values.discount || 0; // Phần trăm giảm giá
 
-            const calculatedPrice = originalPrice - (originalPrice * discount) / 100; // Giá sau giảm
+            const calculatedPrice = totalPrice - (totalPrice * discount) / 100; // Giá sau giảm
 
             const formattedValues = {
                 ...values,
@@ -174,6 +183,7 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
                             mode="multiple"
                             style={{ width: '100%' }}
                             placeholder="Chọn gói dịch vụ"
+                            onChange={handleChange}
                             options={
                                 services.map((item) => (
                                     { value: item.id, label: item.name }
@@ -211,7 +221,7 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
                             <InputNumber min={0} max={100} style={{ width: "100%" }} placeholder="Nhập % giảm giá" onChange={handleDiscountChange} />
                         </Form.Item>
                         <div>
-                            Tổng giá gói dịch vụ: {formatMoney(discountedPrice)}
+                            Tổng giá gói dịch vụ: {formatMoney(totalPrice)}
                         </div>
                         {
                             initialValues && <Table columns={columns} dataSource={oldServices} rowKey="id" />
