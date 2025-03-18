@@ -2,8 +2,8 @@
 export enum USER_ROUTES {
   HOME = "/",
   HOME_PAGE = "",
-  LOGIN = "login",
-  REGISTER = "register",
+  LOGIN = "/auth/login",
+  REGISTER = "/auth/register",
   CONTACT = "contact",
   DOCTORS = "doctors",
   ABOUT_PAGE = "about",
@@ -25,7 +25,8 @@ export enum USER_ROUTES {
   PAYMENT = "/payment/result",
   PAYMENT_SUCCESS = "/payment/result/success",
   PAYMENT_FAILURE = "/payment/result/failure",
-  PAYMENT_CANCEL = "/payment/result/cancel"
+  PAYMENT_CANCEL = "/payment/result/cancel",
+  PURCHASED_HISTORY = "/purchased-history"
 }
 
 export enum DOCTOR_ROUTES {
