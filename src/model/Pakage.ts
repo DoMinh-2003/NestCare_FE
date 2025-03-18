@@ -7,6 +7,9 @@ export interface Package {
 	description?: string;
 	packageServices: Services[];
 	image: string;
+	delivery_included: number;
+	alerts_included: number;
+	period: string;
 	isDeleted: number;
 	createdAt: string;
 	updatedAt: string;

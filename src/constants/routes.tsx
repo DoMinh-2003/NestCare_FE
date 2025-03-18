@@ -8,6 +8,7 @@ export enum USER_ROUTES {
   DOCTORS = "doctors",
   ABOUT_PAGE = "about",
   SERVICES_PAGE = "/goi-dich-vu",
+  PACKAGE_DETAIL = "/goi-dich-vu/:id",
   SPECIALTY = "specialty",
   NEWS_PAGE = "news",
   NEWS_DETAIL_PAGE = "news/detail",

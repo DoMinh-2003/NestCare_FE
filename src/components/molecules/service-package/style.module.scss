@@ -5,14 +5,13 @@
 	display: flex;
 	flex-wrap: wrap;
 	align-items: stretch;
-	margin-bottom: 2rem;
-	width: 'fit';
 	flex-direction: column;
 	border-radius: 1rem;
-	color: whitesmoke;
+	color: rgb(8, 8, 8);
 	padding: 1.5rem;
-	background: rgb(209, 58, 189);
-	background: linear-gradient(313deg, rgba(209, 58, 189, 1) 53%, rgba(238, 189, 137, 1) 92%);
+	background: #FFAFBD;
+	background: -webkit-linear-gradient(to right, #ffc3a0, #FFAFBD);
+	background: linear-gradient(to right, #ffc3a0, #FFAFBD);
 }
 
 .header {
@@ -24,21 +23,21 @@
 	font-size: 1.5rem;
 	line-height: 2rem;
 	font-weight: 700;
-	color: #fff
+	color: #080808
 }
 
 .price {
 	font-size: 3.75rem;
 	line-height: 1;
 	font-weight: 700;
-	color: #fff
+	color: #202020
 }
 
 .desc {
 	margin-top: 0.75rem;
 	margin-bottom: 0.75rem;
 	line-height: 1.625;
-	color: rgb(255, 255, 255);
+	color: rgb(22, 22, 22);
 }
 
 .lists {

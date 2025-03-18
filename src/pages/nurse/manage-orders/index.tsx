@@ -38,9 +38,9 @@ const NurseManageOrders = () => {
 
     const getPackagesFromAdmin = async () => {
         const response = await getPackages();
-        console.log("response: ", response.data);
-        if (response && response.data) {
-            setPackages(response.data);
+        console.log("getPackagesFromAdmin: ", response);
+        if (response) {
+            setPackages(response);
         }
     };
 

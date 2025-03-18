@@ -65,6 +65,7 @@ const ManagerServices = () => {
 
     const getServicesFromCustomer = async () => {
         const response = await getServices();
+        console.log("getServicesFromCustomer: ", response)
         console.log(response);
         if (response && Array.isArray(response.data)) {
             const sortData = formatCreatedAt(response);

@@ -48,9 +48,9 @@ const ManagePackage = () => {
 
     const getPackagesFromAdmin = async () => {
         const response = await getPackages();
-        console.log("response: ", response.data);
-        if (response && response.data) {
-            setPackages(response.data);
+        console.log("response: ", response);
+        if (response && response) {
+            setPackages(response);
         }
     };
 
