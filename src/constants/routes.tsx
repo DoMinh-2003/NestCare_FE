@@ -2,8 +2,8 @@
 export enum USER_ROUTES {
   HOME = "/",
   HOME_PAGE = "",
-  LOGIN = "login",
-  REGISTER = "register",
+  LOGIN = "/auth/login",
+  REGISTER = "/auth/register",
   CONTACT = "contact",
   DOCTORS = "doctors",
   ABOUT_PAGE = "about",
