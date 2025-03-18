@@ -65,6 +65,18 @@ const usePackageService = () => {
         [callApi, router]
     );
 
+    const getPackageById = useCallback(
+        async (id: string) => {
+            try {
+                const response = await callApi("get", `packages/${id}`);
+                return response;
+            } catch (e: any) {
+                toast.error(e?.response?.data);
+            }
+        },
+        [callApi, router]
+    );
+
     const updatePackage = useCallback(
         async (values: any) => {
             try {
@@ -94,7 +106,7 @@ const usePackageService = () => {
         [callApi, router]
     );
 
-    return { getPackages, deleteServices, createPackage, updatePackage, loading, setIsLoading };
+    return { getPackages, deleteServices, createPackage, getPackageById, updatePackage, loading, setIsLoading };
 };
 
 export default usePackageService;
