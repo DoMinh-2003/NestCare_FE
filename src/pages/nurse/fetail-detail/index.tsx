@@ -1,11 +1,22 @@
 import { useParams } from 'react-router-dom';
 import useFetalService from '../../../services/useFetalService';
 import { useEffect, useState } from 'react';
-import { Table, Button, Popconfirm, message } from 'antd';
+import { Table, Button, Popconfirm, message, Form } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import ModalCreateUpdateFetal from '../../../components/organisms/modal-create-update-fetal/ModalCreateUpdateFetal';
 import { tableText } from '../../../constants/function';
 
+export interface FetalData {
+    id?: string
+    name: string;
+    note: string;
+    dateOfPregnancyStart: string; // ISO date string (YYYY-MM-DD)
+    expectedDeliveryDate: string; // ISO date string (YYYY-MM-DD)
+    actualDeliveryDate?: string
+    healthStatus: string;
+    status: "PREGNANT, BORN, MISSED, STILLBIRTH, ABORTED, MISCARRIAGE"
+    motherId?: string; // UUID
+}
 export interface FetalRecord {
     id: string;
     name: string;
@@ -20,15 +31,16 @@ export interface FetalRecord {
     updatedAt: string;
     checkupRecords: any[];
     appointments: any[];
+
 }
 
 const FetalDetail = () => {
     const { id } = useParams();
-    const { getFetalsByMotherId } = useFetalService();
+    const { getFetalsByMotherId, createFetal, updateFetal, deleteFetal } = useFetalService();
     const [fetals, setFetals] = useState<FetalRecord[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [currentFetal, setCurrentFetal] = useState<FetalRecord | null>(null);
-
+    const [currentFetal, setCurrentFetal] = useState<FetalData | null>(null);
+    const [form] = Form.useForm()
     useEffect(() => {
         if (id) {
             getFetalsByMotherIdFromNurse();
@@ -41,21 +53,40 @@ const FetalDetail = () => {
     };
 
     const handleDelete = async (fetalId: string) => {
-        // const response = await deleteFetalRecord(fetalId);
-        // if (response) {
-        //     message.success("Fetal record deleted successfully");
-        //     setFetals(fetals.filter(fetal => fetal.id !== fetalId)); // Update the state
-        // } else {
-        //     message.error("Failed to delete fetal record");
-        // }
+        await deleteFetal(fetalId);
+        message.success("Fetal record deleted successfully");
+        getFetalsByMotherIdFromNurse()
     };
 
-    const handleAddOrUpdateFetal = async (values: FetalRecord) => {
+    const handleAddOrUpdateFetal = async (values: FetalData) => {
+        console.log("values: ", values)
         // Implement the logic to add or update fetal records
         // After adding or updating, refresh the fetal list
+        const valuesSubmit = {
+            ...values,
+            motherId: id
+        }
+        if (currentFetal) {
+            const response = await updateFetal(values, currentFetal.id + "")
+            if (response) {
+                console.log("res: ", response)
+                setIsModalOpen(false); // Close the modal
+            }
+            message.success("Chỉnh sửa hồ sơ thai nhi thành công")
+            setIsModalOpen(false); // Close the modal
+            setCurrentFetal(null)
+        } else {
+            const response = await createFetal(valuesSubmit)
+            if (response) {
+                message.success("Tạo hồ sơ thai nhi thành công")
+                setIsModalOpen(false); // Close the modal
+            }
+        }
+        form.resetFields()
         getFetalsByMotherIdFromNurse();
-        setIsModalOpen(false); // Close the modal
+
     };
+
 
     const columns = [
         {
@@ -80,8 +111,7 @@ const FetalDetail = () => {
         },
         {
             title: 'Action',
-            key: 'action',
-            render: (text: string, record: FetalRecord) => (
+            render: (record: FetalData) => (
                 <>
                     <Button
                         type="link"
@@ -104,7 +134,7 @@ const FetalDetail = () => {
     return (
         <div>
             <div className='text-3xl font-semibold text-center'>
-                Hồ sơ thai nhi
+                Hồ sơ thai nhi của mẹ {fetals[0]?.mother?.fullName}
             </div>
             <Button
                 type="primary"
@@ -127,7 +157,8 @@ const FetalDetail = () => {
                 rowKey="id" // Assuming 'id' is the unique identifier for each fetal record
             />
             <ModalCreateUpdateFetal
-                fetal={currentFetal}
+                form={form}
+                fetal={currentFetal || null}
                 isModalOpen={isModalOpen}
                 handleCancel={() => setIsModalOpen(false)}
                 onSubmit={handleAddOrUpdateFetal}
