@@ -5,7 +5,9 @@ import AdminLayout from "../components/layouts/admin-layout";
 import AuthLayout from "../components/layouts/auth-layout";
 import CustomerLayout from "../components/layouts/customer-layout";
 import NurseLayout from "../components/layouts/nurse-layout";
+import PackageDetail from "../components/molecules/package-detail";
 import { ADMIN_ROUTES, NURSE_ROUTES, USER_ROUTES } from "../constants/routes";
+import FetalRecord from "../pages/admin/fetal-record";
 import ManageOverview from "../pages/admin/manage-overview";
 import ManagePackage from "../pages/admin/manage-package";
 import ManagerServices from "../pages/admin/manage-services";
@@ -21,6 +23,7 @@ import HomePage from "../pages/customer/home";
 import Knowledge from "../pages/customer/knowledge";
 import News from "../pages/customer/news";
 import NewsDetail from "../pages/customer/news-detail";
+import PurchasedHistory from "../pages/customer/purchased-history";
 import Recruitment from "../pages/customer/recruitment";
 import ResultPayment from "../pages/customer/result-payment";
 import PaymentCancel from "../pages/customer/result-payment/payment-cancel";
@@ -32,13 +35,11 @@ import ServicesPage from "../pages/customer/services-page";
 import Specialty from "../pages/customer/specialty";
 import TeamOfDoctor from "../pages/customer/team-of-doctors";
 import LoginPage from "../pages/login";
+import FetalDetail from "../pages/nurse/fetail-detail";
 import NurseManageOrders from "../pages/nurse/manage-orders";
 import NurseManageUsers from "../pages/nurse/manage-users";
 import RegisterPage from "../pages/register";
 import { useCurrentUser } from "../utils/getcurrentUser";
-import FetalDetail from "../pages/nurse/fetail-detail";
-import PurchasedHistory from "../pages/customer/purchased-history";
-import PackageDetail from "../components/molecules/package-detail";
 
 
 interface ProtectedRouteByRoleProps {
