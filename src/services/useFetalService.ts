@@ -13,7 +13,7 @@ const useFetalService = () => {
   const createOrder = useCallback(
     async (values: any) => {
       try {
-        const response = await callApi("post", "order",{
+        const response = await callApi("post", "order", {
           ...values
         });
         console.log("createOrder: ", response)
@@ -41,7 +41,7 @@ const useFetalService = () => {
   const deleteUser = useCallback(
     async (id: any) => {
       try {
-        const response = await callApi("put", `users/${id}/toggle-delete`,{
+        const response = await callApi("put", `users/${id}/toggle-delete`, {
           isDeleted: true
         });
         console.log("createUser: ", response)
@@ -53,7 +53,7 @@ const useFetalService = () => {
     [callApi, dispatch, router]
   );
 
-  return {  loading, getFetalsByMotherId,deleteUser, createOrder, setIsLoading };
+  return { loading, getFetalsByMotherId, deleteUser, createOrder, setIsLoading };
 };
 
 export default useFetalService;

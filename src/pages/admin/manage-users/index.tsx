@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from "react";
-import userUserService from "../../../services/userUserService";
-import { Button, message, Table, Form, Image } from "antd";
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { Button, Form, Image, message, Table } from "antd";
+import React, { useEffect, useState } from "react";
 import ModalCreateUpdateUser, { UserData } from "../../../components/organisms/modal-create-update-user/ModalCreateUpdateUser";
 import ModalDelete from "../../../components/organisms/modal-delete";
 import { tableText } from "../../../constants/function";
-import { Link } from "react-router-dom";
+import userUserService from "../../../services/userUserService";
+import FetalProfileModal from "./fetal-model";
 
 
 const AdminManageUsers: React.FC = () => {
@@ -15,6 +15,8 @@ const AdminManageUsers: React.FC = () => {
     const { createUser, updateUser, deleteUser, getUsers } = userUserService();
     const [form] = Form.useForm(); // Create a form reference
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
+    const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+    const [isFetalProfileModalVisible, setIsFetalProfileModalVisible] = useState(false);
     const showModal = (user: UserData | null = null) => {
         if (user) {
             setCurrentUser(user);
@@ -102,9 +104,15 @@ const AdminManageUsers: React.FC = () => {
         {
             title: "Hồ Sơ thai nhi",
             render: (record: UserData) => (
-                <Link to={`fetals/${record.id}`} className="text-blue">
+                <span
+                    className="text-blue cursor-pointer"
+                    onClick={() => {
+                        setSelectedUserId(record.id);
+                        setIsFetalProfileModalVisible(true);
+                    }}
+                >
                     Xem hồ sơ
-                </Link>
+                </span>
             )
         },
         {
@@ -150,6 +158,11 @@ const AdminManageUsers: React.FC = () => {
                 onCancel={handleCancel}
                 user={currentUser}
                 form={form} // Pass the form reference to the modal
+            />
+            <FetalProfileModal
+                visible={isFetalProfileModalVisible}
+                onCancel={() => setIsFetalProfileModalVisible(false)}
+                userId={selectedUserId}
             />
             <Button onClick={() => showModal()} type="primary" style={{ marginBottom: 16 }}>
                 Thêm người dùng
