@@ -31,6 +31,7 @@ const items: MenuItem[] = [
   getItem("Người dùng", "user", <SlCalender />),
   getItem("Dịch vụ", "services", <SlCalender />),
   getItem("Gói dịch vụ", "packages", <SlCalender />),
+  getItem("Thuốc", "medicines", <SlCalender />),
 ];
 const AdminLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);

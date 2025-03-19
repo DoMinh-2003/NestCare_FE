@@ -47,5 +47,6 @@ export enum ADMIN_ROUTES {
   OVERVIEW = "overview",
   SERVICES = "services",
   PACKAGES = "packages",
+  MEDICINES = "medicines",
   FEATALS_RECORD = "fetals/:id",
 }

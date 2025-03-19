@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Modal, Form, Input, DatePicker, Select, message, Button } from 'antd';
 import moment from 'moment';
-import { FetalData } from '../../../pages/nurse/fetail-detail';
+import { FetalData } from '../../../pages/nurse/fetal-detail';
 import dayjs from 'dayjs';
 
 export interface FetalRecord {
