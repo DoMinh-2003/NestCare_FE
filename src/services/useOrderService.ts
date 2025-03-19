@@ -53,6 +53,21 @@ const useOrderService = () => {
     [callApi, dispatch, router]
   );
 
+  const userUpdateOrder = useCallback(
+    async (orderId: string, status: 'PAID' | 'PENDING' | 'CANCELED') => {
+      try {
+        const response = await callApi("put", `order/${orderId}/status`, {
+          status: status
+        });
+        console.log("update order: ", response)
+        return response;
+      } catch (e: any) {
+        console.log("e: ", e)
+      }
+    },
+    [callApi, dispatch, router]
+  );
+
   const getOrderStatus = useCallback((
     async (status: 'PAID' | 'PENDING' | 'COMPLETED' | 'CANCELED') => {
       try {
@@ -64,7 +79,7 @@ const useOrderService = () => {
     }
   ), [callApi]);
 
-  return { loading, getOrderByUserId, deleteUser, createOrder, getOrderStatus, setIsLoading };
+  return { loading, userUpdateOrder, getOrderByUserId, deleteUser, createOrder, getOrderStatus, setIsLoading };
 };
 
 export default useOrderService;

@@ -10,7 +10,7 @@ const PaymentResult = () => {
 
 	useEffect(() => {
 		const responseCode = searchParams.get('vnp_ResponseCode');
-		const orderId = searchParams.get('orderId');
+		const orderId = searchParams.get('order');
 		const transactionStatus = searchParams.get('vnp_TransactionStatus');
 
 		console.log('Search Params:', Object.fromEntries(searchParams));

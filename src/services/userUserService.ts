@@ -92,7 +92,28 @@ const userUserService = () => {
     [callApi, dispatch, router]
   );
 
-  return { getUsers, loading, updateUser, deleteUser, createUser, setIsLoading, getUsersSearch };
+  const getUserByRole = useCallback(
+    async (role: "user" | "doctor" | "nurse") => {
+      try {
+        const response = await callApi("get", `users/role/${role}`);
+        return response;
+      } catch (e: any) {
+        toast.error(e?.response?.data || "GetUsers failed");
+      }
+    }, [callApi]);
+
+  const getUserById = useCallback(
+    async (id: any) => {
+      try {
+        const response = await callApi("get", `users/${id}`);
+        return response;
+      } catch (e: any) {
+        toast.error(e?.response?.data || "GetUsers failed");
+      }
+    }, [callApi],
+  )
+
+  return { getUserById, getUsers, getUserByRole, loading, updateUser, deleteUser, createUser, setIsLoading };
 };
 
 export default userUserService;

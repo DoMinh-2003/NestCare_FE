@@ -27,7 +27,7 @@ function PurchasedHistory() {
 
 	const statusMap: { [key: string]: string } = {
 		PENDING: 'Chờ xử lý',
-		COMPLETED: 'Hoàn thành',
+		PAID: 'Hoàn thành',
 		CANCELLED: 'Đã hủy',
 	};
 
@@ -72,7 +72,7 @@ function PurchasedHistory() {
 					case 'PENDING':
 						color = 'orange';
 						break;
-					case 'COMPLETED':
+					case 'PAID':
 						color = 'green';
 						break;
 					case 'CANCELLED':

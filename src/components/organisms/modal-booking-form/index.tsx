@@ -11,7 +11,7 @@ const ModalBookingForm = ({ isModalOpen, handleCancel }: iModalBookingForm) => {
     return (
         <Modal
             footer=""
-            closeIcon={<span style={{ fontSize: '14px' }}>×</span>} 
+            closeIcon={<span style={{ fontSize: '14px' }}>×</span>}
             width={1200}
             open={isModalOpen}
             onCancel={handleCancel}

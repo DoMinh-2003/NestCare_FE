@@ -1,11 +1,31 @@
 
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import paymentSuccessImg from '../../../../../public/images/paySuccess.png';
+import { useEffect } from 'react';
+import useOrderService from '../../../../services/useOrderService';
 
 const PaymentSuccess = () => {
 
+	const { orderId } = useParams();
+
+	const { userUpdateOrder } = useOrderService();
+
+	const updateStatus = async (orderId: string, status: "PENDING" | "PAID" | "CANCELED") => {
+		try {
+			await userUpdateOrder(orderId, status);
+		} catch (err) {
+			console.error('Error updating order status:', err);
+		}
+	}
+
+	useEffect(() => {
+		if (orderId) {
+			updateStatus(orderId, 'PAID');
+		}
+	}, [orderId])
+
 	return (
-		<div className="border border-solid h-fit p-5 flex flex-col items-center gap-5 max-w-[550px] mx-auto rounded-md bg-[#fff3f3]" style={{ boxShadow: "15px 15px 30px #bebebe, -15px -15px 30px #ffffff" }}>
+		<div className="border border-solid p-5 flex flex-col items-center justify-center gap-5 max-w-[550px] mt-52 mx-auto rounded-md bg-[#fff3f3]" style={{ boxShadow: "15px 15px 30px #bebebe, -15px -15px 30px #ffffff" }}>
 			<img src={paymentSuccessImg} alt="payment-success" className='' />
 			<h1 className="text-2xl font-bold text-green-600">Thanh Toán Thành Công!</h1>
 			<p className='text-xl font-sans'>Chúc mừng bạn đã trở thành hội viên PRO của chúng tôi.</p>
