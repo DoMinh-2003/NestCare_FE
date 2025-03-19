@@ -107,7 +107,7 @@ const AdminManageUsers: React.FC = () => {
                 <span
                     className="text-blue cursor-pointer"
                     onClick={() => {
-                        setSelectedUserId(record.id);
+                        setSelectedUserId(record.id+"");
                         setIsFetalProfileModalVisible(true);
                     }}
                 >

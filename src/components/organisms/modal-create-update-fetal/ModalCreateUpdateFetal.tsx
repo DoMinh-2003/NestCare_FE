@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { Modal, Form, Input, DatePicker, Select, message, Button } from 'antd';
 import moment from 'moment';
+import { FetalData } from '../../../pages/nurse/fetail-detail';
+import dayjs from 'dayjs';
 
 export interface FetalRecord {
     id?: string; // Optional for new records
@@ -19,23 +21,24 @@ export interface FetalRecord {
 }
 
 interface ModalCreateUpdateFetalProps {
-    fetal: FetalRecord | null; // For updating an existing record
+    form: any
+    fetal: FetalData | null; // For updating an existing record
     isModalOpen: boolean; // Controls the visibility of the modal
     handleCancel: () => void; // Function to close the modal
-    onSubmit: (values: FetalRecord) => void; // Function to handle form submission
+    onSubmit: (values: FetalData) => void; // Function to handle form submission
 }
 
-const ModalCreateUpdateFetal: React.FC<ModalCreateUpdateFetalProps> = ({ fetal, isModalOpen, handleCancel, onSubmit }) => {
-    const [form] = Form.useForm();
+const ModalCreateUpdateFetal: React.FC<ModalCreateUpdateFetalProps> = ({ fetal, isModalOpen, handleCancel, onSubmit, form }) => {
 
     useEffect(() => {
         if (fetal) {
+            console.log("fetal: ", fetal)
             form.setFieldsValue({
                 name: fetal.name,
                 note: fetal.note,
-                dateOfPregnancyStart: moment(fetal.dateOfPregnancyStart),
-                expectedDeliveryDate: moment(fetal.expectedDeliveryDate),
-                actualDeliveryDate: fetal.actualDeliveryDate ? moment(fetal.actualDeliveryDate) : null,
+                dateOfPregnancyStart: fetal.dateOfPregnancyStart ? dayjs(fetal.dateOfPregnancyStart) : null,
+                expectedDeliveryDate: fetal.expectedDeliveryDate ? dayjs(fetal.expectedDeliveryDate) : null,
+                actualDeliveryDate: fetal.actualDeliveryDate ? dayjs(fetal.actualDeliveryDate) : null,
                 healthStatus: fetal.healthStatus,
                 status: fetal.status,
             });
@@ -45,17 +48,21 @@ const ModalCreateUpdateFetal: React.FC<ModalCreateUpdateFetalProps> = ({ fetal, 
     }, [fetal, form]);
 
     const handleFinish = (values: any) => {
-        const record: FetalRecord = {
+        console.log("handleFinish:", values)
+        const record: FetalData = {
             ...values,
-            id: fetal ? fetal.id : undefined, // Assign an ID if updating
-            isDeleted: 0, // Adjust based on your logic
-            createdAt: fetal ? fetal.createdAt : new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            checkupRecords: [],
-            appointments: [],
+            dateOfPregnancyStart: moment(values.dateOfPregnancyStart?.$d).format('YYYY/MM/DD'),
+            expectedDeliveryDate: moment(values.expectedDeliveryDate?.$d).format('YYYY/MM/DD'),
+            actualDeliveryDate: moment(values.actualDeliveryDate?.$d).format('YYYY/MM/DD'),
+            // id: fetal ? fetal.id : undefined, // Assign an ID if updating
+            // isDeleted: 0, // Adjust based on your logic
+            // createdAt: fetal ? fetal.createdAt : new Date().toISOString(),
+            // updatedAt: new Date().toISOString(),
+            // checkupRecords: [],
+            // appointments: [],
         };
+        console.log("fetal: ", values)
         onSubmit(record);
-        message.success(fetal ? "Fetal record updated successfully" : "Fetal record created successfully");
     };
 
     return (
@@ -69,6 +76,10 @@ const ModalCreateUpdateFetal: React.FC<ModalCreateUpdateFetalProps> = ({ fetal, 
                 form={form}
                 layout="vertical"
                 onFinish={handleFinish}
+                initialValues={!fetal && {
+                    ...form,
+                    status: "PREGNANT"
+                }}
             >
                 <Form.Item
                     label="Name"
@@ -77,11 +88,12 @@ const ModalCreateUpdateFetal: React.FC<ModalCreateUpdateFetalProps> = ({ fetal, 
                 >
                     <Input />
                 </Form.Item>
+
                 <Form.Item
                     label="Note"
                     name="note"
                 >
-                    <Input.TextArea />
+                    <Input />
                 </Form.Item>
                 <Form.Item
                     label="Date of Pregnancy Start"
@@ -97,12 +109,14 @@ const ModalCreateUpdateFetal: React.FC<ModalCreateUpdateFetalProps> = ({ fetal, 
                 >
                     <DatePicker />
                 </Form.Item>
-                <Form.Item
-                    label="Actual Delivery Date"
-                    name="actualDeliveryDate"
-                >
-                    <DatePicker />
-                </Form.Item>
+                {fetal
+                    && <Form.Item
+                        label="Actual Delivery Date"
+                        name="actualDeliveryDate"
+                    >
+                        <DatePicker />
+                    </Form.Item>
+                }
                 <Form.Item
                     label="Health Status"
                     name="healthStatus"
@@ -110,16 +124,35 @@ const ModalCreateUpdateFetal: React.FC<ModalCreateUpdateFetalProps> = ({ fetal, 
                 >
                     <Input />
                 </Form.Item>
-                <Form.Item
-                    label="Status"
-                    name="status"
-                    rules={[{ required: true, message: 'Please select the status!' }]}
-                >
-                    <Select>
-                        <Select.Option value="PREGNANT">Pregnant</Select.Option>
-                        <Select.Option value="DELIVERED">Delivered</Select.Option>
-                    </Select>
-                </Form.Item>
+                {
+                    fetal && <div>
+                        <Form.Item
+                            label="Status"
+                            name="status"
+                            rules={[{ required: true, message: 'Please select the status!' }]}
+                        >
+                            <Select>
+                                <Select.Option value="PREGNANT">Pregnant</Select.Option>
+                                {
+                                    status.map((item) => (
+                                        <Select.Option value={item}>{item}</Select.Option>
+                                    ))
+                                }
+                            </Select>
+                        </Form.Item>
+
+                    </div>
+
+                }
+                {
+                    !fetal && <Form.Item
+                        label="Status"
+                        name="status"
+                        rules={[{ required: true, message: 'Please select the status!' }]}
+                    >
+                        <Input type="text" disabled />
+                    </Form.Item>
+                }
                 <Form.Item>
                     <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
                         {fetal ? "Update" : "Create"}
@@ -129,5 +162,5 @@ const ModalCreateUpdateFetal: React.FC<ModalCreateUpdateFetalProps> = ({ fetal, 
         </Modal>
     );
 };
-
+const status = ["PREGNANT", "BORN", "MISSED", "STILLBIRTH", "ABORTED", "MISCARRIAGE"]
 export default ModalCreateUpdateFetal;
