@@ -163,6 +163,9 @@ const AdminManageUsers: React.FC = () => {
     const roles = [{"role": "user", "name": "User"}, {"role":"doctor", "name": "Doctor"}, {"role": "", "name": "Tất cả"}]
     return (
         <div>
+            <div className='text-3xl font-semibold text-center mb-5'>
+                Quản lý người dùng
+            </div>
             <div className='flex gap-2'>
                 <Search placeholder="Tìm kiếm bằng tên" className='w-[200px]' onSearch={onSearch} enterButton />
                 <Button onClick={() => showModal()} type="primary" style={{ marginBottom: 16 }}>

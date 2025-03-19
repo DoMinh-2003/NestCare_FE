@@ -1,22 +1,25 @@
-import { DeleteOutlined, EditOutlined, EyeOutlined, PlusOutlined } from '@ant-design/icons';
+import { EyeOutlined, PlusOutlined } from '@ant-design/icons';
 import { UserData } from '../../../components/organisms/modal-create-update-user/ModalCreateUpdateUser';
-import { Form, Image, Table } from 'antd';
+import { Button, Form, Image, Table } from 'antd';
 import { useEffect, useState } from 'react';
 import userUserService from '../../../services/userUserService';
 import { tableText } from '../../../constants/function';
 import usePackageService, { Package } from '../../../services/usePackageService';
 import ModalCreateOrder from '../../../components/organisms/modal-create-order/ModalCreateOrder';
 import useOrderService from '../../../services/useOrderService';
-
+import { Input } from 'antd';
+type SearchProps = GetProps<typeof Input.Search>;
+const { Search } = Input;
 import ModalOrderDetail, { OrderDetail } from '../../../components/organisms/modal-order-detail/ModalOrderDetail';
+import { GetProps } from 'react-redux';
 const NurseManageOrders = () => {
     const [users, setUsers] = useState<UserData[]>([]);
     const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
-    const { getUsers } = userUserService();
+    const { getUsers, getUsersSearch } = userUserService();
     const { getPackages } = usePackageService();
     const [packages, setPackages] = useState<Package[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const {createOrder, getOrderByUserId} = useOrderService()
+    const { createOrder, getOrderByUserId } = useOrderService()
     const [form] = Form.useForm()
     const [isModalOpenOrderDetail, setIsModalOpenOrderDetail] = useState(false);
     const [orderDetail, setOrderDetail] = useState<OrderDetail[]>([])
@@ -26,14 +29,14 @@ const NurseManageOrders = () => {
         getPackagesFromAdmin();
     }, []);
 
-    const handleCreateOrder = async(data: { userId: string; packageId: string }) => {
+    const handleCreateOrder = async (data: { userId: string; packageId: string }) => {
         console.log("Order Created:", data);
-       const response = await createOrder(data)
-       if(response) {
-        setIsModalOpen(false); // Đóng modal sau khi tạo đơn hàng
-        form.resetFields()
-        window.location.href = response
-       }
+        const response = await createOrder(data)
+        if (response) {
+            setIsModalOpen(false); // Đóng modal sau khi tạo đơn hàng
+            form.resetFields()
+            window.location.href = response
+        }
     };
 
     const getPackagesFromAdmin = async () => {
@@ -45,14 +48,14 @@ const NurseManageOrders = () => {
     };
 
     const getUsersFromAdmin = async () => {
-        const response = await getUsers();
+        const response = await getUsersSearch("", "");
         console.log("response: ", response);
         if (response) {
-            setUsers(response.filter((item: UserData) => item.role === "user" && !item.isDeleted));
+            setUsers(response.users.filter((item: UserData) => item.role === "user" && !item.isDeleted));
         }
     };
 
-    const showModalCraeteOrder = (record: UserData)=>{
+    const showModalCraeteOrder = (record: UserData) => {
         setIsModalOpen(true)
         setSelectedUser(record)
     }
@@ -98,7 +101,7 @@ const NurseManageOrders = () => {
             render: (record: UserData) => (
                 <div className="flex gap-2 text-xl">
                     <PlusOutlined onClick={() => showModalCraeteOrder(record)} className="text-yellow-500" />
-                    <EyeOutlined onClick={()=> showModalOrderDetail(record)} className='text-purple-500'/>
+                    <EyeOutlined onClick={() => showModalOrderDetail(record)} className='text-purple-500' />
                     {/* <EditOutlined onClick={() => showModal(record)} className="text-blue" />
                     <DeleteOutlined onClick={() => handleOpenModalDelete(record)} className="text-red-500" /> */}
                 </div>
@@ -106,26 +109,40 @@ const NurseManageOrders = () => {
         },
     ];
 
-    const getOrderDetail = async(id: string)=>{
+    const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
+        const response = await getUsersSearch(value, "");
+        console.log("response: ", response);
+        if (response) {
+            setUsers(response.users.filter((item: UserData) => item.role === "user" && !item.isDeleted));
+        }
+    }
+
+    const getOrderDetail = async (id: string) => {
         const response = await getOrderByUserId(id)
-        if(response){
+        if (response) {
             setOrderDetail(response)
         }
     }
 
-    const showModalOrderDetail =(record: UserData)=>{
-        getOrderDetail(record.id+"")
+    const showModalOrderDetail = (record: UserData) => {
+        getOrderDetail(record.id + "")
         setIsModalOpenOrderDetail(true);
     }
     const handleCancel = () => {
         setIsModalOpenOrderDetail(false);
-      };
+    };
     return (
         <div>
+            <div className='text-3xl font-semibold text-center my-3'>
+                Quản lý Orders
+            </div>
+            <div className='flex gap-2 mb-2'>
+                <Search placeholder="Tìm kiếm bằng tên" className='w-[200px]' onSearch={onSearch} enterButton />
+            </div>
             <ModalOrderDetail
-            order={orderDetail}
-            isModalOpen={isModalOpenOrderDetail}
-            handleCancel={handleCancel}
+                order={orderDetail}
+                isModalOpen={isModalOpenOrderDetail}
+                handleCancel={handleCancel}
             />
             {/* modal create order */}
             <ModalCreateOrder
