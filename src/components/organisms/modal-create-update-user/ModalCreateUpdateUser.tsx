@@ -8,7 +8,7 @@ export interface UserData {
   email: string;
   fullName: string;
   phone: string;
-  role: 'user';
+  role: 'user' | "admin";
   image: string; // Tùy chọn
   id?: string;
   isDeleted?: boolean;

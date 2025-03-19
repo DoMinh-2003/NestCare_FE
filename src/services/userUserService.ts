@@ -21,6 +21,31 @@ const userUserService = () => {
     [callApi, dispatch, router]
   );
 
+  const getUsersSearch = useCallback(
+    async (name: string, role: string) => {
+      try {
+        let url = ""; // Khởi tạo biến url với giá trị mặc định là chuỗi rỗng
+
+        if (name !== "" && role !== "") {
+          url = `?query=${name}&role=${role}`; // Sử dụng toán tử gán
+        } else if (name !== "") {
+          url = `?query=${name}`; // Sử dụng toán tử gán
+        } else if (role !== "") {
+          url = `?role=${role}`; // Sử dụng toán tử gán
+        } else {
+          url = ""; // Sử dụng toán tử gán
+        }
+
+        // Gọi API với URL đã được tạo
+        const response = await callApi("get", `users/search/1/100${url}`);
+        return response;
+      } catch (e: any) {
+        toast.error(e?.response?.data || "getUsersSearch failed");
+      }
+    },
+    [callApi, dispatch, router]
+  );
+
   const createUser = useCallback(
     async (values: any) => {
       try {
@@ -67,7 +92,7 @@ const userUserService = () => {
     [callApi, dispatch, router]
   );
 
-  return { getUsers, loading, updateUser, deleteUser, createUser, setIsLoading };
+  return { getUsers, loading, updateUser, deleteUser, createUser, setIsLoading, getUsersSearch };
 };
 
 export default userUserService;
