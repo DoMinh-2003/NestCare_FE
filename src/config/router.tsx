@@ -7,7 +7,6 @@ import CustomerLayout from "../components/layouts/customer-layout";
 import NurseLayout from "../components/layouts/nurse-layout";
 import PackageDetail from "../components/molecules/package-detail";
 import { ADMIN_ROUTES, NURSE_ROUTES, USER_ROUTES } from "../constants/routes";
-import FetalRecord from "../pages/admin/fetal-record";
 import ManageOverview from "../pages/admin/manage-overview";
 import ManagePackage from "../pages/admin/manage-package";
 import ManagerServices from "../pages/admin/manage-services";
@@ -35,11 +34,12 @@ import ServicesPage from "../pages/customer/services-page";
 import Specialty from "../pages/customer/specialty";
 import TeamOfDoctor from "../pages/customer/team-of-doctors";
 import LoginPage from "../pages/login";
-import FetalDetail from "../pages/nurse/fetail-detail";
+import FetalDetail from "../pages/nurse/fetal-detail";
 import NurseManageOrders from "../pages/nurse/manage-orders";
 import NurseManageUsers from "../pages/nurse/manage-users";
 import RegisterPage from "../pages/register";
 import { useCurrentUser } from "../utils/getcurrentUser";
+import AdminManageMedicines from "../pages/admin/manage-medicines";
 
 
 interface ProtectedRouteByRoleProps {
@@ -208,6 +208,10 @@ export const router = createBrowserRouter([
       {
         path: ADMIN_ROUTES.PACKAGES,
         element: <ManagePackage />,
+      },
+      {
+        path: ADMIN_ROUTES.MEDICINES,
+        element: <AdminManageMedicines />,
       },
     ],
   },
