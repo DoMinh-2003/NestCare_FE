@@ -36,8 +36,10 @@ import NurseManageOrders from "../pages/nurse/manage-orders";
 import NurseManageUsers from "../pages/nurse/manage-users";
 import RegisterPage from "../pages/register";
 import { useCurrentUser } from "../utils/getcurrentUser";
+import FetalDetail from "../pages/nurse/fetail-detail";
 import PurchasedHistory from "../pages/customer/purchased-history";
 import PackageDetail from "../components/molecules/package-detail";
+
 
 interface ProtectedRouteByRoleProps {
   children: ReactNode;
@@ -223,6 +225,10 @@ export const router = createBrowserRouter([
       {
         path: NURSE_ROUTES.ORDER,
         element: <NurseManageOrders />,
+      },
+      {
+        path: NURSE_ROUTES.FETALS_DETAIL,
+        element: <FetalDetail />,
       },
     ],
   },
