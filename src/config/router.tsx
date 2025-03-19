@@ -40,6 +40,8 @@ import NurseManageOrders from "../pages/nurse/manage-orders";
 import NurseManageUsers from "../pages/nurse/manage-users";
 import RegisterPage from "../pages/register";
 import { useCurrentUser } from "../utils/getcurrentUser";
+import BookingDoctor from "../pages/customer/booking-doctor";
+import AppointmentHistory from "../pages/customer/appointment-history";
 
 
 interface ProtectedRouteByRoleProps {
@@ -160,7 +162,15 @@ export const router = createBrowserRouter([
       {
         path: USER_ROUTES.PURCHASED_HISTORY,
         element: <PurchasedHistory />,
-      }
+      },
+      {
+        path: USER_ROUTES.BOOKING_DOCTOR,
+        element: <BookingDoctor />,
+      },
+      {
+        path: USER_ROUTES.APPOINTMENT_HISTORY,
+        element: <AppointmentHistory />,
+      },
     ],
   },
   {
