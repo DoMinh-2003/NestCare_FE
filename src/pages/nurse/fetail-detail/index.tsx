@@ -5,6 +5,7 @@ import { Table, Button, Popconfirm, message, Form } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import ModalCreateUpdateFetal from '../../../components/organisms/modal-create-update-fetal/ModalCreateUpdateFetal';
 import { tableText } from '../../../constants/function';
+import ModalCheckUpRecord, { CheckupRecord } from '../../../components/organisms/modal-checkup-records/ModalCheckupRecord';
 
 export interface FetalData {
     id?: string
@@ -39,6 +40,8 @@ const FetalDetail = () => {
     const { getFetalsByMotherId, createFetal, updateFetal, deleteFetal } = useFetalService();
     const [fetals, setFetals] = useState<FetalRecord[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpenCheckUpRecords, setIsModalOpenCheckUpRecords] = useState(false);
+    const [checkUpRecords, setCheckUpRecords] = useState<CheckupRecord[]>([]);
     const [currentFetal, setCurrentFetal] = useState<FetalData | null>(null);
     const [form] = Form.useForm()
     useEffect(() => {
@@ -88,11 +91,27 @@ const FetalDetail = () => {
     };
 
 
+
     const columns = [
         {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
+        },
+        {
+            title: 'Hồ sơ kiểm tra',
+            dataIndex: 'checkupRecords',
+            key: 'checkupRecords',
+            render: (record: CheckupRecord[]) => (
+                <div className='flex gap-2'>
+                    <div className='Hồ sơ kiểm tra text-blue cursor-pointer' onClick={()=>showModalCheckUpRecord(record)}>
+                        Hồ sơ kiểm tra
+                    </div>
+                    <div>
+                        <PlusOutlined className='text-yellow-500'/>
+                    </div>
+                </div>
+            )
         },
         {
             title: 'Note',
@@ -130,9 +149,13 @@ const FetalDetail = () => {
             ),
         },
     ];
-
+    const showModalCheckUpRecord = (records: CheckupRecord[])=>{
+        setCheckUpRecords(records)
+        setIsModalOpenCheckUpRecords(true)
+    }
     return (
         <div>
+            <ModalCheckUpRecord records={checkUpRecords} isModalOpen={isModalOpenCheckUpRecords}/>
             <div className='text-3xl font-semibold text-center'>
                 Hồ sơ thai nhi của mẹ {fetals[0]?.mother?.fullName}
             </div>
