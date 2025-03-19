@@ -1,20 +1,27 @@
 import React, { useEffect, useState } from "react";
 import userUserService from "../../../services/userUserService";
-import { Button, message, Table, Form, Image } from "antd";
+import { Button, message, Table, Form, Image, Select, GetProps } from "antd";
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import ModalCreateUpdateUser, { UserData } from "../../../components/organisms/modal-create-update-user/ModalCreateUpdateUser";
 import ModalDelete from "../../../components/organisms/modal-delete";
 import { tableText } from "../../../constants/function";
 import { Link } from "react-router-dom";
-
+import { Input } from 'antd';
+type SearchProps = GetProps<typeof Input.Search>;
+const { Search } = Input;
 
 const NurseManageUsers: React.FC = () => {
     const [users, setUsers] = useState<UserData[]>([]);
     const [currentUser, setCurrentUser] = useState<UserData | null>(null);
     const [visible, setVisible] = useState(false);
-    const { createUser, updateUser, deleteUser, getUsers } = userUserService();
+    const { createUser, updateUser, deleteUser, getUsers, getUsersSearch } = userUserService();
     const [form] = Form.useForm(); // Create a form reference
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
+
+    useEffect(() => {
+        getUsersFromAdmin();
+    }, []);
+
     const showModal = (user: UserData | null = null) => {
         if (user) {
             setCurrentUser(user);
@@ -52,15 +59,11 @@ const NurseManageUsers: React.FC = () => {
         setVisible(false);
     };
 
-    useEffect(() => {
-        getUsersFromAdmin();
-    }, []);
-
     const getUsersFromAdmin = async () => {
-        const response = await getUsers();
+        const response = await getUsersSearch("", "");;
         console.log("response: ", response);
         if (response) {
-            setUsers(response.filter((item: UserData) => item.role === "user" && !item.isDeleted));
+            setUsers(response.users.filter((item: UserData) => item.role === "user" && !item.isDeleted));
         }
     };
     const handleOpenModalDelete = (record: UserData) => {
@@ -101,7 +104,7 @@ const NurseManageUsers: React.FC = () => {
         },
         {
             title: "Hồ Sơ thai nhi",
-            render:(record:UserData)=>(
+            render: (record: UserData) => (
                 <Link to={`fetals/${record.id}`} className="text-blue">
                     Xem hồ sơ
                 </Link>
@@ -136,8 +139,20 @@ const NurseManageUsers: React.FC = () => {
         setIsModalDeleteOpen(false);
         getUsersFromAdmin(); // Refresh the service list after deletion
     };
+
+    const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
+        const response = await getUsersSearch(value, "");
+        console.log("response: ", response);
+        if (response) {
+            setUsers(response.users.filter((item: UserData) => item.role === "user" && !item.isDeleted));
+        }
+    }
+
     return (
         <div>
+            <div className='text-3xl font-semibold text-center my-5'>
+                Quản lý người dùng
+            </div>
             <ModalDelete
                 handleCancelModalDelete={handleCancelModalDelete}
                 handleOkModalDelete={handleOkModalDelete}
@@ -151,11 +166,14 @@ const NurseManageUsers: React.FC = () => {
                 user={currentUser}
                 form={form} // Pass the form reference to the modal
             />
-            <Button onClick={() => showModal()} type="primary" style={{ marginBottom: 16 }}>
-                Thêm người dùng
-            </Button>
+            <div className='flex gap-2'>
+                <Search placeholder="Tìm kiếm bằng tên" className='w-[200px]' onSearch={onSearch} enterButton />
+                <Button onClick={() => showModal()} type="primary" style={{ marginBottom: 16 }}>
+                    Thêm người dùng
+                </Button>
+            </div>
 
-            <Table rowClassName={() => tableText()}  columns={columns} dataSource={users} rowKey="id" />
+            <Table rowClassName={() => tableText()} columns={columns} dataSource={users} rowKey="id" />
         </div>
     );
 };
