@@ -28,7 +28,7 @@ function PackageDetail() {
 				console.error("Error fetching package:", error);
 				setLoading(false);
 			});
-	}, [id]);
+	}, []);
 
 	// Show loading state while fetching data
 	if (loading) {
@@ -43,17 +43,17 @@ function PackageDetail() {
 	// Dynamic breadcrumbs using package name
 	const breadcrumbItems: BreadcrumbsProps[] = [
 		{ title: "Trang chủ", link: "/" },
-		{ title: "Dịch vụ", link: "/goi-dich-vu" },
+		{ title: "Dịch vụ", link: "/services" },
 		{ title: data.name },
 	];
 
 	const handleBookingPackage = async () => {
-		console.log(id);
+		console.log('orderid:-=--------------------', id);
 		const storedUser = localStorage.getItem('USER');
 		if (storedUser) {
 			const userObject = JSON.parse(storedUser);
 			console.log(userObject);
-			const response = await createOrder({ userId: userObject.id, id });
+			const response = await createOrder({ userId: userObject.id, packageId: id });
 			if (response) {
 				window.location.href = response;
 			}

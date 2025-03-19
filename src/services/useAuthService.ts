@@ -1,9 +1,8 @@
+import { useCallback } from "react";
 import { useDispatch } from "react-redux";
-import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useApiService from "../hooks/useApi";
 import { toast } from "react-toastify";
-import { useCurrentUser } from "../utils/getcurrentUser";
+import useApiService from "../hooks/useApi";
 
 const useAuthService = () => {
   const { callApi, loading, setIsLoading } = useApiService();

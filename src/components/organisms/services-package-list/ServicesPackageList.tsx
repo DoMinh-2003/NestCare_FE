@@ -19,7 +19,7 @@ const ServicesPackageList = () => {
             <div className='w-full rounded-e-md rounded-s-lg bg-[#cdbbfd] bg-gradient-to-r from-[#eaafc8] to-[#654ea3]'>
                 <p className='text-4xl font-bold font-sans py-10 text-center text-slate-100'>Các gói dịch vụ</p>
             </div>
-            <div className=''>
+            <div className='grid grid-cols-3 gap-5'>
                 {servicePackages.map((item: Package) => (
                     <div key={item.id}>
                         <ServicePackage

@@ -30,7 +30,7 @@ const ServicePackage = ({ servicePackage }: ServicePackageProps) => {
 
     return (
         <>
-            <div className='card w-fit max-w-prose mx-auto p-6 rounded-xl bg-[#FFAFBD] bg-gradient-to-r from-[#ffc3a0] to-[#FFAFBD] text-gray-900 flex flex-col items-stretch'>
+            <div className='card w-fit text-white max-w-prose mx-auto p-6 rounded-xl bg-[#FFAFBD] bg-gradient-to-r from-[#ffc3a0] to-[#FFAFBD] flex flex-col items-stretch'>
                 <div className={style.header}>
                     <span className={style.title}>{name}</span>
                     <span className={style.price}>{formatMoney(Number(price))}</span>

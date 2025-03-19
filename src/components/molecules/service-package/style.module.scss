@@ -7,7 +7,7 @@
 	align-items: stretch;
 	flex-direction: column;
 	border-radius: 1rem;
-	color: rgb(8, 8, 8);
+	color: rgb(255, 255, 255);
 	padding: 1.5rem;
 	background: #FFAFBD;
 	background: -webkit-linear-gradient(to right, #ffc3a0, #FFAFBD);
@@ -23,21 +23,21 @@
 	font-size: 1.5rem;
 	line-height: 2rem;
 	font-weight: 700;
-	color: #080808
+	color: rgb(255, 255, 255);
 }
 
 .price {
 	font-size: 3.75rem;
 	line-height: 1;
 	font-weight: 700;
-	color: #202020
+	color: #ffffff
 }
 
 .desc {
 	margin-top: 0.75rem;
 	margin-bottom: 0.75rem;
 	line-height: 1.625;
-	color: rgb(22, 22, 22);
+	color: rgb(255, 255, 255);
 }
 
 .lists {
@@ -61,6 +61,7 @@
 }
 
 .action {
+	font-family: Arial, Helvetica, sans-serif;
 	border: none;
 	outline: none;
 	display: inline-block;

@@ -15,7 +15,7 @@ const specialties: InstructProps[] = [
 ];
 
 const services: InstructProps[] = [
-  { title: "Gói dịch vụ", link: "/goi-dich-vu" },
+  { title: "Gói dịch vụ", link: "/services" },
   { title: "Tất cả dịch vụ", link: "/tat-ca-dich-vu" },
 ];
 

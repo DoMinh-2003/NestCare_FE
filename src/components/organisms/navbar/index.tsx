@@ -1,4 +1,4 @@
-import { SmileOutlined, UserOutlined } from '@ant-design/icons';
+import { ShoppingCartOutlined, SmileOutlined, UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Avatar, Dropdown } from 'antd';
 import { useEffect, useState } from "react";
@@ -23,7 +23,7 @@ const Navbar = () => {
         if (userString) {
             setUser(JSON.parse(userString));
         }
-    }, [user, setUser]);
+    }, []);
 
     const handleLogout = () => {
         localStorage.removeItem("USER");
@@ -34,8 +34,9 @@ const Navbar = () => {
         {
             key: '1',
             label: (
-                <p>Xem các gói đã mua</p>
+                <p>Dịch vụ đã đăng ký</p>
             ),
+            icon: <ShoppingCartOutlined />
         },
         {
             key: '2',
@@ -50,10 +51,10 @@ const Navbar = () => {
             key: '3',
             label: (
                 <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
-                    3rd menu item (disabled)
+                    Thông tin tài khoản
                 </a>
             ),
-            disabled: true,
+            icon: <UserOutlined />,
         },
         {
             key: '4',

@@ -8,7 +8,7 @@ interface NavMenuProps {
   hasDropdown?: boolean;
   className?: string;
   link: string;
-  onClick?:()=>void;
+  onClick?: () => void;
 }
 
 const NavMenu = ({ label, hasDropdown, className, link }: NavMenuProps) => {

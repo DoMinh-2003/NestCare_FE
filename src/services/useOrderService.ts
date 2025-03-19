@@ -1,8 +1,7 @@
-import { useDispatch } from "react-redux";
 import { useCallback } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import useApiService from "../hooks/useApi";
-import { toast } from "react-toastify";
 
 
 const useOrderService = () => {
@@ -14,7 +13,7 @@ const useOrderService = () => {
   const createOrder = useCallback(
     async (values: any) => {
       try {
-        const response = await callApi("post", "order",{
+        const response = await callApi("post", "order", {
           ...values
         });
         console.log("createOrder: ", response)
@@ -42,7 +41,7 @@ const useOrderService = () => {
   const deleteUser = useCallback(
     async (id: any) => {
       try {
-        const response = await callApi("put", `users/${id}/toggle-delete`,{
+        const response = await callApi("put", `users/${id}/toggle-delete`, {
           isDeleted: true
         });
         console.log("createUser: ", response)
@@ -54,7 +53,18 @@ const useOrderService = () => {
     [callApi, dispatch, router]
   );
 
-  return {  loading, getOrderByUserId,deleteUser, createOrder, setIsLoading };
+  const getOrderStatus = useCallback((
+    async (status: 'PAID' | 'PENDING' | 'COMPLETED' | 'CANCELED') => {
+      try {
+        const response = await callApi('get', `order/status/${status}`);
+        return response;
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  ), [callApi]);
+
+  return { loading, getOrderByUserId, deleteUser, createOrder, getOrderStatus, setIsLoading };
 };
 
 export default useOrderService;
