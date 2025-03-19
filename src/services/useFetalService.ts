@@ -10,13 +10,13 @@ const useFetalService = () => {
   const dispatch = useDispatch();
 
 
-  const createOrder = useCallback(
+  const createFetal = useCallback(
     async (values: any) => {
       try {
-        const response = await callApi("post", "order", {
+        const response = await callApi("post", "fetal-records", {
           ...values
         });
-        console.log("createOrder: ", response)
+        console.log("createFetal: ", response)
         return response;
       } catch (e: any) {
         console.log("e: ", e)
@@ -25,6 +25,21 @@ const useFetalService = () => {
     [callApi, dispatch, router]
   );
 
+  const updateFetal = useCallback(
+    async (values: any, id: string) => {
+      try {
+        const response = await callApi("put", `fetal-records/${id}`, {
+          ...values
+        });
+        console.log("updateFetal: ", response)
+        return response;
+      } catch (e: any) {
+        console.log("e: ", e)
+      }
+    },
+    [callApi, dispatch, router]
+  );
+  
   const getFetalsByMotherId = useCallback(
     async (motherId: any) => {
       try {
@@ -38,13 +53,13 @@ const useFetalService = () => {
     [callApi, dispatch, router]
   );
 
-  const deleteUser = useCallback(
+  const deleteFetal = useCallback(
     async (id: any) => {
       try {
-        const response = await callApi("put", `users/${id}/toggle-delete`, {
+        const response = await callApi("delete", `fetal-records/${id}`, {
           isDeleted: true
         });
-        console.log("createUser: ", response)
+        console.log("deleteFetal: ", response)
         return response;
       } catch (e: any) {
         console.log("e: ", e)
@@ -53,7 +68,7 @@ const useFetalService = () => {
     [callApi, dispatch, router]
   );
 
-  return { loading, getFetalsByMotherId, deleteUser, createOrder, setIsLoading };
+  return { loading, getFetalsByMotherId, deleteFetal, createFetal, setIsLoading, updateFetal };
 };
 
 export default useFetalService;
