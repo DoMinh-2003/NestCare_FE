@@ -27,7 +27,7 @@ function getItem(
 const items: MenuItem[] = [
     getItem("Overview", "overview", <FaChartPie />),
     getItem("Danh sách lịch hẹn", "appointments", <SlCalender />),
-    getItem("Orders", "orders", <SlCalender />),
+    getItem("Yêu cầu lịch hẹn", "request/appointments", <SlCalender />),
 ];
 
 const DoctorLayout: React.FC = () => {
