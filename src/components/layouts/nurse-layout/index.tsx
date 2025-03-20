@@ -79,7 +79,7 @@ const NurseLayout: React.FC = () => {
       >
         <Header style={{ padding: 0, background: colorBgContainer }} />
         <Content style={{ margin: "0 16px" }}>
-        <Outlet />
+          <Outlet />
         </Content>
         <Footer style={{ textAlign: "center" }}>
           NestCare ©{new Date().getFullYear()} Created by Minh

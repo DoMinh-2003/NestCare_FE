@@ -91,7 +91,33 @@ const useAppointmentService = () => {
 		[callApi, router]
 	);
 
-	return { getAppointments, createReminder, getHistoryFetal, userCreateAppointments, loading, setIsLoading };
+	const getAppointmentsByStatus = useCallback(
+		async (status: string) => {
+			try {
+				const response = await callApi("get", `appointments/by-status/${status}`);
+				console.log("getAppointmentsByStatus: ", response)
+				return response;
+			} catch (e: any) {
+				toast.error(e?.response?.data);
+			}
+		},
+		[callApi, router]
+	);
+
+	const updateAppointmentsByStatus = useCallback(
+		async (status: string, id: string) => {
+			try {
+				const response = await callApi("put", `appointments/${id}/${status}`);
+				console.log("updateAppointmentsByStatus: ", response)
+				return response;
+			} catch (e: any) {
+				toast.error(e?.response?.data);
+			}
+		},
+		[callApi, router]
+	);
+
+	return {updateAppointmentsByStatus,  getAppointments, createReminder, getHistoryFetal, userCreateAppointments, loading, setIsLoading, getAppointmentsByStatus };
 };
 
 export default useAppointmentService;
