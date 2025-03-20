@@ -5,9 +5,10 @@ interface AuthFieldProps {
   placeholder?: string;
   name?: string;
   message?: string;
+  type?: string;
 }
 
-function AuthField({ label, placeholder, name, message }: AuthFieldProps) {
+function AuthField({ label, placeholder, name, message, type = "text" }: AuthFieldProps) {
   return (
     <Form.Item
       name={name}
@@ -20,7 +21,7 @@ function AuthField({ label, placeholder, name, message }: AuthFieldProps) {
       labelCol={{ span: 24 }}
     >
 
-      <Input className="p-1 w-full" placeholder={placeholder} />
+      <Input className="p-1 w-full" placeholder={placeholder} type={type} />
     </Form.Item>
   );
 }

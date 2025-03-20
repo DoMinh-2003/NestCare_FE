@@ -6,7 +6,8 @@ import AuthLayout from "../components/layouts/auth-layout";
 import CustomerLayout from "../components/layouts/customer-layout";
 import NurseLayout from "../components/layouts/nurse-layout";
 import PackageDetail from "../components/molecules/package-detail";
-import { ADMIN_ROUTES, NURSE_ROUTES, USER_ROUTES } from "../constants/routes";
+import FetalRecord from "../pages/admin/fetal-record";
+import { ADMIN_ROUTES, DOCTOR_ROUTES, NURSE_ROUTES, USER_ROUTES } from "../constants/routes";
 import ManageOverview from "../pages/admin/manage-overview";
 import ManagePackage from "../pages/admin/manage-package";
 import ManagerServices from "../pages/admin/manage-services";
@@ -39,9 +40,13 @@ import NurseManageOrders from "../pages/nurse/manage-orders";
 import NurseManageUsers from "../pages/nurse/manage-users";
 import RegisterPage from "../pages/register";
 import { useCurrentUser } from "../utils/getcurrentUser";
+import DoctorLayout from "../components/layouts/doctor-layout";
+import DoctorManageAppointments from "../pages/doctor/manage-appointments";
+import FetailDetail from "../pages/doctor/fetal-detail";
 import BookingDoctor from "../pages/customer/booking-doctor";
 import AppointmentHistory from "../pages/customer/appointment-history";
 import AdminManageMedicines from "../pages/admin/manage-medicines";
+import NurseCheckIn from "../pages/nurse/appointment";
 import FetalChart from "../pages/customer/fetal-chart";
 
 
@@ -250,6 +255,10 @@ export const router = createBrowserRouter([
         path: NURSE_ROUTES.FETALS_DETAIL,
         element: <FetalDetail />,
       },
+      {
+        path: NURSE_ROUTES.NURSE_APPOINTMENT,
+        element: <NurseCheckIn />,
+      },
     ],
   },
   {
@@ -270,23 +279,28 @@ export const router = createBrowserRouter([
   },
 
 
-  // {
-  //   path: DOCTOR_ROUTES.DOCTOR,
-  //   element: (
-  //     // <ProtectedRouteByRole allowedRoles={["ADMIN"]}>
-  //       <DashboardLayout />
-  //     // </ProtectedRouteByRole>
-  //   ),
-  //   children: [
-  //     {
-  //       path: DOCTOR_ROUTES.USER,
-  //       element: <ManageUser />,
-  //     },
-  //     // {
-  //     //   path: ADMIN_ROUTES.OVERVIEW,
-  //     //   element: <ManageOverview />,
-  //     // },
-  //   ],
-  // },
+  {
+    path: DOCTOR_ROUTES.DOCTOR,
+    element: (
+      // <ProtectedRouteByRole allowedRoles={["ADMIN"]}>
+      <DoctorLayout />
+      // </ProtectedRouteByRole>
+    ),
+    children: [
+      {
+        path: DOCTOR_ROUTES.APPOINTMENT,
+        element: <DoctorManageAppointments />,
+
+      },
+      {
+        path: DOCTOR_ROUTES.FETALS_DETAIL,
+        element: <FetailDetail />,
+      }
+      // {
+      //   path: ADMIN_ROUTES.OVERVIEW,
+      //   element: <ManageOverview />,
+      // },
+    ],
+  },
 
 ]);
