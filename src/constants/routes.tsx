@@ -32,6 +32,8 @@ export enum USER_ROUTES {
 export enum DOCTOR_ROUTES {
   DOCTOR = "doctor",
   USER = "user",
+  FETALS_DETAIL = "appointments/fetals/:id",
+  APPOINTMENT = "appointments",
 }
 export enum NURSE_ROUTES {
   NURSE = "nurse",

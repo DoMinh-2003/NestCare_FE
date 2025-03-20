@@ -146,7 +146,7 @@ const ManagePackage = () => {
             ),
         },
         {
-            title: 'Action',
+            title: 'Hành động',
             render: (record: Package) => (
                 <div className="flex gap-2">
                     <EditOutlined onClick={() => handleOpenModalCreateUpdate(record)} className="text-blue" />
