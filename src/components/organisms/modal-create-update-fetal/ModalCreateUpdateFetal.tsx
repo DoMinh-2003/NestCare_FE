@@ -132,7 +132,6 @@ const ModalCreateUpdateFetal: React.FC<ModalCreateUpdateFetalProps> = ({ fetal, 
                             rules={[{ required: true, message: 'Please select the status!' }]}
                         >
                             <Select>
-                                <Select.Option value="PREGNANT">Pregnant</Select.Option>
                                 {
                                     status.map((item) => (
                                         <Select.Option value={item}>{item}</Select.Option>

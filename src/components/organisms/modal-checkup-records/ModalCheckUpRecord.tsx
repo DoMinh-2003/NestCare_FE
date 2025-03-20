@@ -12,7 +12,7 @@ export interface CheckupRecord {
   warning: string;
 }
 
-const ModalCheckUpRecord = ({isModalOpen, records}:{isModalOpen: boolean, records: CheckupRecord[]}) => {
+const ModalCheckUpRecord = ({isModalOpen, records, handleCancelModalCheckUpRecord}:{isModalOpen: boolean, records: CheckupRecord[], handleCancelModalCheckUpRecord:()=>void}) => {
 
   const columns = [
     {
@@ -66,6 +66,7 @@ const ModalCheckUpRecord = ({isModalOpen, records}:{isModalOpen: boolean, record
         visible={isModalOpen}
         footer={null}
         width={1200} // Đặt chiều rộng cho modal
+        onCancel={handleCancelModalCheckUpRecord}
       >
         <Table
           dataSource={records}
