@@ -28,6 +28,7 @@ const items: MenuItem[] = [
   getItem("Overview", "overview", <FaChartPie />),
   getItem("User", "users", <SlCalender />),
   getItem("Orders", "orders", <SlCalender />),
+  getItem("Appointments", "appointments", <SlCalender />),
 ];
 
 const NurseLayout: React.FC = () => {
