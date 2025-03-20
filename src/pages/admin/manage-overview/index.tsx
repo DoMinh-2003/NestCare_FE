@@ -1,110 +1,42 @@
-// import { Card, Col, Row, Statistic } from "antd";
-// import { ArrowDownOutlined, ArrowUpOutlined } from "@ant-design/icons";
-// import React, { useEffect, useState } from "react";
-// import {
-//   Bar,
-//   BarChart,
-//   CartesianGrid,
-//   Cell,
-//   Legend,
-//   Pie,
-//   PieChart,
-//   Tooltip,
-//   XAxis,
-//   YAxis,
-// } from "recharts";
-// import useAdminService from "../../../services/useAdminService";
-// import api from "../../../config/api";
-
-// function Overview() {
-//   const [data, setData] = useState([]);
-//   const [top5Mentor, seTop5Mentor] = useState([]);
-//   const { getStats } = useAdminService();
-//   const fetchData = async () => {
-//     const response = await getStats();
-//     console.log(response);
-//     const formatData = response.top5MostBookedMentors.map((item) => ({
-//       name: item?.userResponse.fullName,
-//       totalBooking: item?.bookingCount,
-//     }));
-//     seTop5Mentor(formatData);
-//     setData(response);
-//   };
-
-//   useEffect(() => {
-//     fetchData();
-//   }, []);
-
-//   const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
-//   return (
-//     <div>
-//       <Row gutter={16}>
-//         <Col span={12}>
-//           <Card bordered={false}>
-//             <Statistic
-//               title="Total Mentor"
-//               value={data?.mentorCount}
-//               valueStyle={{
-//                 color: "#cf1322",
-//               }}
-//               prefix={<ArrowDownOutlined />}
-//               suffix=""
-//             />
-//           </Card>
-//         </Col>
-//         <Col span={12}>
-//           <Card bordered={false}>
-//             <Statistic
-//               title="Student Customer"
-//               value={data?.studentCount}
-//               valueStyle={{
-//                 color: "#cf1322",
-//               }}
-//               prefix={<ArrowDownOutlined />}
-//               suffix=""
-//             />
-//           </Card>
-//         </Col>
-//       </Row>
-//       <PieChart width={400} height={200}>
-//         <Pie
-//           data={data?.topProduct}
-//           dataKey="totalSold"
-//           nameKey="productName"
-//           cx="50%"
-//           cy="50%"
-//           outerRadius={50}
-//           fill="#8884d8"
-//           label
-//         >
-//           {data?.topProduct?.map((item, index) => (
-//             <Cell key={index} fill={COLORS[index % COLORS.length]} />
-//           ))}
-//         </Pie>
-//         <Tooltip />
-//         <Legend />
-//       </PieChart>
-//       <BarChart width={500} height={250} data={top5Mentor}>
-//         <CartesianGrid strokeDasharray="3 3" />
-//         <XAxis dataKey="name" />
-//         <YAxis />
-//         <Tooltip />
-//         <Legend />
-//         <Bar dataKey="totalBooking" fill="#8884d8" />
-//       </BarChart>
-//     </div>
-//   );
-// }
-
-// export default Overview;
+import PageMeta from "../../../components/molecules/common/PageMeta";
+import DemographicCard from "../../../components/organisms/ecommerce/DemographicCard";
+import EcommerceMetrics from "../../../components/organisms/ecommerce/EcommerceMetrics";
+import MonthlySalesChart from "../../../components/organisms/ecommerce/MonthlySalesChart";
+import MonthlyTarget from "../../../components/organisms/ecommerce/MonthlyTarget";
+import RecentOrders from "../../../components/organisms/ecommerce/RecentOrders";
+import StatisticsChart from "../../../components/organisms/ecommerce/StatisticsChart";
 
 
-import React from 'react'
-
-function Overview() {
+export default function Overview() {
   return (
-    <div>Overview</div>
-  )
-}
+    <>
+      <PageMeta
+        title="React.js Ecommerce Dashboard | TailAdmin - React.js Admin Dashboard Template"
+        description="This is React.js Ecommerce Dashboard page for TailAdmin - React.js Tailwind CSS Admin Dashboard Template"
+      />
+      <div className="grid grid-cols-12 gap-4 md:gap-6">
+        <div className="col-span-12 space-y-6 xl:col-span-7">
+          <EcommerceMetrics />
 
-export default Overview
+          <MonthlySalesChart />
+        </div>
+
+        <div className="col-span-12 xl:col-span-5">
+          <MonthlyTarget />
+        </div>
+
+        <div className="col-span-12">
+          <StatisticsChart />
+        </div>
+
+        <div className="col-span-12 xl:col-span-5">
+          <DemographicCard />
+        </div>
+
+        <div className="col-span-12 xl:col-span-7">
+          <RecentOrders />
+        </div>
+      </div>
+    </>
+  );
+}

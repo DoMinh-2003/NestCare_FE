@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 
 const useApiService = () => {
   const [loading, setIsLoading] = useState<boolean>(false);
-
   const callApi = useCallback(
     async (
       method: "get" | "post" | "put" | "delete",
