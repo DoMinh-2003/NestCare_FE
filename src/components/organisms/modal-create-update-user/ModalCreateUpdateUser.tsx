@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, Upload, message, Image } from 'antd';
-import { uploadToCloudinary } from '../../../constants/function';
+import { Modal, Form, Input, Upload, message, Image, Select } from 'antd';
+import { getUserDataFromLocalStorage, uploadToCloudinary } from '../../../constants/function';
 import { PlusOutlined } from '@ant-design/icons';
 export interface UserData {
   username: string;
@@ -83,6 +83,7 @@ const ModalCreateUpdateUser: React.FC<UserModalProps> = ({ visible, onCreate, on
   const handleRemove = () => {
     setFile(null);
   };
+  const userData = getUserDataFromLocalStorage();
 
   return (
     <Modal
@@ -144,13 +145,29 @@ const ModalCreateUpdateUser: React.FC<UserModalProps> = ({ visible, onCreate, on
         >
           <Input />
         </Form.Item>
-        <Form.Item
-          name="role"
-          label="Vai trò"
-          rules={[{ required: true, message: 'Vui lòng chọn vai trò!' }]}
-        >
-          <Input disabled />
-        </Form.Item>
+        {
+          userData.role === 'admin' ?
+            <Form.Item
+              name="role"
+              label="Vai trò"
+              rules={[{ required: true, message: 'Vui lòng chọn vai trò!' }]}
+            >
+              <Select
+              >
+                 <Select.Option value={"user"}>{"User"}</Select.Option>
+                 <Select.Option value={"doctor"}>{"Doctor"}</Select.Option>
+                 <Select.Option value={"nurse"}>{"Nurse"}</Select.Option>
+              </Select>
+            </Form.Item>
+            :
+            <Form.Item
+              name="role"
+              label="Vai trò"
+              rules={[{ required: true, message: 'Vui lòng chọn vai trò!' }]}
+            >
+              <Input disabled />
+            </Form.Item>
+        }
         <Form.Item
           name="image"
           label="Ảnh đại diện"
@@ -158,7 +175,7 @@ const ModalCreateUpdateUser: React.FC<UserModalProps> = ({ visible, onCreate, on
           <Upload
             listType="picture-card"
             customRequest={handleUpload}
-            fileList={ file ? [file] : []}
+            fileList={file ? [file] : []}
             onPreview={() => window.open(file?.url, "_blank")}
             onRemove={handleRemove}
             showUploadList={{
