@@ -138,6 +138,15 @@ const ModalCreateUpdateUser: React.FC<UserModalProps> = ({ visible, onCreate, on
         >
           <Input />
         </Form.Item>
+        {
+          !user && <Form.Item
+            name="password"
+            label="Mật khẩu"
+            rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
+          >
+            <Input />
+          </Form.Item>
+        }
         <Form.Item
           name="phone"
           label="Số điện thoại"
@@ -154,9 +163,9 @@ const ModalCreateUpdateUser: React.FC<UserModalProps> = ({ visible, onCreate, on
             >
               <Select
               >
-                 <Select.Option value={"user"}>{"User"}</Select.Option>
-                 <Select.Option value={"doctor"}>{"Doctor"}</Select.Option>
-                 <Select.Option value={"nurse"}>{"Nurse"}</Select.Option>
+                <Select.Option value={"user"}>{"User"}</Select.Option>
+                <Select.Option value={"doctor"}>{"Doctor"}</Select.Option>
+                <Select.Option value={"nurse"}>{"Nurse"}</Select.Option>
               </Select>
             </Form.Item>
             :
