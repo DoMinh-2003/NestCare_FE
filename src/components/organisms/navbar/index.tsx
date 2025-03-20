@@ -1,4 +1,4 @@
-import { ShoppingCartOutlined, SmileOutlined, UserOutlined } from '@ant-design/icons';
+import { AreaChartOutlined, CalendarOutlined, ShoppingCartOutlined, SmileOutlined, UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Avatar, Dropdown } from 'antd';
 import { useEffect, useState } from "react";
@@ -38,31 +38,13 @@ const Navbar = () => {
             icon: <ShoppingCartOutlined />
         },
         {
-            key: '2',
-            label: (
-                <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
-                    2nd menu item (disabled)
-                </a>
-            ),
-            icon: <SmileOutlined />,
-        },
-        {
-            key: '3',
-            label: (
-                <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
-                    Thông tin tài khoản
-                </a>
-            ),
-            icon: <UserOutlined />,
-        },
-        {
             key: '5',
             label: (
                 <p>
                     Xem Lịch Khám
                 </p>
             ),
-            icon: <UserOutlined />,
+            icon: <CalendarOutlined />,
         },
         {
             key: '6',
@@ -71,7 +53,7 @@ const Navbar = () => {
                     Biểu đồ phát triển
                 </p>
             ),
-            icon: <UserOutlined />,
+            icon: <AreaChartOutlined />,
         },
         {
             key: '4',

@@ -28,7 +28,7 @@ function PurchasedHistory() {
 	const statusMap: { [key: string]: string } = {
 		PENDING: 'Chờ xử lý',
 		PAID: 'Hoàn thành',
-		CANCELLED: 'Đã hủy',
+		CANCELED: 'Đã hủy',
 	};
 
 	const columns = [
@@ -62,8 +62,8 @@ function PurchasedHistory() {
 			key: 'status',
 			filters: [
 				{ text: 'Chờ xử lý', value: 'PENDING' },
-				{ text: 'Hoàn thành', value: 'COMPLETED' },
-				{ text: 'Đã hủy', value: 'CANCELLED' }
+				{ text: 'Hoàn thành', value: 'PAID' },
+				{ text: 'Đã hủy', value: 'CANCELED' }
 			],
 			onFilter: (value: string | number | boolean, record: Purchase) => record.status === value,
 			render: (status: string) => {
@@ -75,7 +75,7 @@ function PurchasedHistory() {
 					case 'PAID':
 						color = 'green';
 						break;
-					case 'CANCELLED':
+					case 'CANCELED':
 						color = 'red';
 						break;
 					default:
@@ -94,7 +94,6 @@ function PurchasedHistory() {
 				dataSource={purchases}
 				columns={columns}
 				rowKey="id"
-				pagination={{ pageSize: 10 }}
 			/>
 		</div>
 	);

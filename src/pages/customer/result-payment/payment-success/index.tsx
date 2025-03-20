@@ -12,7 +12,12 @@ const PaymentSuccess = () => {
 
 	const updateStatus = async (orderId: string, status: "PENDING" | "PAID" | "CANCELED") => {
 		try {
-			await userUpdateOrder(orderId, status);
+			console.log('====================================');
+			console.log("ORderId-------", orderId, status);
+			console.log('====================================');
+			const response = await userUpdateOrder(orderId, status);
+			console.log(response);
+
 		} catch (err) {
 			console.error('Error updating order status:', err);
 		}

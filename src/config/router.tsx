@@ -42,6 +42,7 @@ import { useCurrentUser } from "../utils/getcurrentUser";
 import BookingDoctor from "../pages/customer/booking-doctor";
 import AppointmentHistory from "../pages/customer/appointment-history";
 import AdminManageMedicines from "../pages/admin/manage-medicines";
+import FetalChart from "../pages/customer/fetal-chart";
 
 
 interface ProtectedRouteByRoleProps {
@@ -170,6 +171,10 @@ export const router = createBrowserRouter([
       {
         path: USER_ROUTES.APPOINTMENT_HISTORY,
         element: <AppointmentHistory />,
+      },
+      {
+        path: USER_ROUTES.FETAL_CHART,
+        element: <FetalChart />,
       },
     ],
   },
