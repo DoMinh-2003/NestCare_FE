@@ -15,6 +15,7 @@ const useApiService = () => {
       try {
         setIsLoading(true);
         const response = await api[method](url, data);
+        console.log(response);
         return response.data;
       } catch (e: any) {
         console.error(e);

@@ -6,3 +6,12 @@ export enum AppointmentStatus {
     COMPLETED = 'COMPLETED', // Đã hoàn tất
     CANCELED = 'CANCELED', // Đã hủy
 }
+
+export enum PregnancyStatus {
+    PREGNANT = 'PREGNANT', // Đang mang thai
+    BORN = 'BORN', // Đã sinh
+    MISSED = 'MISSED', // Mất thai không có dấu hiệu
+    STILLBIRTH = 'STILLBIRTH', // Thai chết lưu
+    ABORTED = 'ABORTED', // Phá thai
+    MISCARRIAGE = 'MISCARRIAGE', // Thai chết lưu tự nhiên
+}

@@ -76,7 +76,6 @@ const DoctorLayout: React.FC = () => {
                     overflowY: "auto",
                 }}
             >
-                <Header style={{ padding: 0, background: colorBgContainer }} />
                 <Content style={{ margin: "0 16px" }}>
                     <div
                         style={{

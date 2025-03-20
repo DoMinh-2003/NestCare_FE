@@ -1,36 +1,29 @@
 import React, { useEffect, useState } from "react";
-import userUserService from "../../../services/userUserService";
-import { Button, message, Table, Form, Image, Tag, Modal } from "antd";
-import { EditOutlined } from '@ant-design/icons';
-import ModalCreateUpdateUser, { UserData } from "../../../components/organisms/modal-create-update-user/ModalCreateUpdateUser";
-import { tableText } from "../../../constants/function";
+import { Button, message, Table, Form, Tag, Modal } from "antd";
 import { Link, Outlet } from "react-router-dom";
 import userAppointmentService from "../../../services/useAppointmentService";
 import { formatDate } from "../../../utils/formatDate";
 import { AppointmentStatus } from "../../../constants/status";
-
+import { tableText } from "../../../constants/function";
+import { formatMoney } from "../../../utils/formatMoney";
+import ModalCreateReminder from "../../../components/organisms/modal-create-reminder/ModalCreateReminder";
+import userReminderService from "../../../services/useReminders";
 
 const DoctorManageAppointments: React.FC = () => {
     const [appointments, setAppointments] = useState<[]>([]);
     const [currentUser, setCurrentUser] = useState(null);
     const [currentDoctor, setCurrentDoctor] = useState(null);
     const [visible, setVisible] = useState(false);
-    const { createUser, updateUser, getUsers } = userUserService();
     const { getAppointmentsByDoctor } = userAppointmentService();
-    const [form] = Form.useForm(); // Create a form reference
+    const [form] = Form.useForm();
     const [modalVisible, setModalVisible] = useState(false);
     const [modalData, setModalData] = useState<any[]>([]);
     const [modalTitle, setModalTitle] = useState("");
-    const showModal = (user: UserData | null = null) => {
-        if (user) {
-            setCurrentUser(user);
-        } else {
-            setCurrentUser(null); // Reset currentUser  when adding a new user
-            form.resetFields(); // Reset form fields when opening modal
-        }
-        setVisible(true);
-    };
+    const { createReminderByDoctor } = userReminderService();
+    const [reminderModalVisible, setReminderModalVisible] = useState(false);
+    const [motherId, setMotherId] = useState<string | null>(null);
 
+    // Hàm mở modal chi tiết với dữ liệu dạng bảng
     const showDetails = (title: string, details: any[]) => {
         setModalTitle(title);
         setModalData(details);
@@ -38,56 +31,36 @@ const DoctorManageAppointments: React.FC = () => {
     };
 
 
-    const handleCreateOrUpdate = async (values: UserData) => {
-        console.log("handleCreateOrUpdate:", values);
-        if (currentUser) {
-            // Update user logic can be added here
-            const response = await updateUser(values);
-            if (response) {
-                message.success("Cập nhật dùng thành công");
-                getAppointmentFromDoctor();
-                setVisible(false); // Close the modal only after successful creation
-                form.resetFields(); // Reset the form fields
-            }
-        } else {
-            // Create new user
-            const response = await createUser(values);
-            if (response) {
-                message.success("Tạo người dùng thành công");
-                getAppointmentFromDoctor();
-                setVisible(false); // Close the modal only after successful creation
-                form.resetFields(); // Reset the form fields
-            }
-        }
-    };
-
     const handleCancel = () => {
         setVisible(false);
     };
 
     useEffect(() => {
-        const userString = localStorage.getItem("user");
-
+        const userString = localStorage.getItem("USER");
         if (userString) {
             try {
                 const user = JSON.parse(userString);
-                setCurrentDoctor(user)
-                console.log("User object:", user);
+                setCurrentDoctor(user);
             } catch (error) {
                 console.error("Error parsing user data:", error);
             }
         }
-        getAppointmentFromDoctor();
     }, []);
 
+    useEffect(() => {
+        if (currentDoctor) {
+            getAppointmentFromDoctor();
+        }
+    }, [currentDoctor]);
+
     const getAppointmentFromDoctor = async () => {
-        const response = await getAppointmentsByDoctor("b11b4011-06a4-40cd-8191-ffe915baba5b");
-        console.log("response: ", response);
+        if (!currentDoctor) return;
+        const response = await getAppointmentsByDoctor(currentDoctor.id);
+        console.log(response)
         if (response) {
             setAppointments(response.filter((item) => !item.isDeleted));
         }
     };
-
 
     const getStatusTag = (status: AppointmentStatus) => {
         switch (status) {
@@ -107,9 +80,19 @@ const DoctorManageAppointments: React.FC = () => {
                 return <Tag color="default">Không xác định</Tag>;
         }
     };
-    // Cấu hình cột cho bảng
-    const columns = [
 
+    const handleCreateReminder = async (values: any) => {
+        const response = await createReminderByDoctor(values);
+        if (response) {
+            message.success("Tạo nhắc nhở thành công!");
+            setReminderModalVisible(false);
+        } else {
+            message.error("Tạo nhắc nhở thất bại!");
+        }
+    };
+
+    // Cấu hình cột cho bảng chính
+    const columns = [
         {
             title: "Hồ Sơ thai nhi",
             render: (record: any) => (
@@ -119,9 +102,9 @@ const DoctorManageAppointments: React.FC = () => {
             )
         },
         {
-            title: 'Được tạo vào',
-            dataIndex: 'appointmentDate',
-            key: 'appointmentDate',
+            title: "Được tạo vào",
+            dataIndex: "appointmentDate",
+            key: "appointmentDate",
             render: (date: string) => formatDate(date),
         },
         {
@@ -161,40 +144,95 @@ const DoctorManageAppointments: React.FC = () => {
             ),
         },
         {
-            title: 'Hành động',
-            render: (record: UserData) => (
+            title: "Hành động",
+            render: (record: any) => (
                 <div className="flex gap-2 text-xl">
-                    <EditOutlined onClick={() => showModal(record)} className="text-blue" />
+                    <Button
+                        type="primary"
+                        onClick={() => {
+                            // Lấy motherId từ record
+                            const mId = record.fetalRecord?.mother?.id;
+                            if (mId) {
+                                setMotherId(mId);
+                            }
+                            setReminderModalVisible(true);
+                        }}
+                    >
+                        Tạo nhắc nhở
+                    </Button>
                 </div>
             )
-        },
+        }
+
     ];
 
+    // Hàm xác định cấu hình cột cho Modal dựa trên modalTitle
+    const getModalColumns = () => {
+        switch (modalTitle) {
+            case "Dịch vụ khám":
+                return [
+                    { title: "Tên dịch vụ", dataIndex: "notes", key: "notes" },
+                    { title: "Giá", dataIndex: "price", key: "price", render: (value: number) => formatMoney(value) },
+                ];
+            case "Hóa đơn thuốc":
+                return [
+                    { title: "Tên thuốc", dataIndex: "medicationName", key: "medicationName" },
+                    { title: "Liều lượng", dataIndex: "dosage", key: "dosage" },
+                    { title: "Giá", dataIndex: "price", key: "price" },
+                ];
+            case "Lịch sử khám":
+                return [
+                    { title: "Ngày khám", dataIndex: "createdAt", key: "createdAt", render: (text: string) => formatDate(text) },
+                    { title: "Nhịp tim thai nhi (bpm)", dataIndex: "fetalHeartbeat", key: "fetalHeartbeat" },
+                    { title: "Chiều cao thai nhi (cm)", dataIndex: "fetalHeight", key: "fetalHeight" },
+                    { title: "Trọng lượng thai nhi (kg)", dataIndex: "fetalWeight", key: "fetalWeight" },
+                    { title: "Huyết áp mẹ (mmHg)", dataIndex: "motherBloodPressure", key: "motherBloodPressure" },
+                    { title: "Sức khỏe mẹ", dataIndex: "motherHealthStatus", key: "motherHealthStatus" },
+                    { title: "Cân nặng mẹ (kg)", dataIndex: "motherWeight", key: "motherWeight" },
+                    { title: "Cảnh báo", dataIndex: "warning", key: "warning" },
+                ];
+            default:
+                return [];
+        }
+    };
 
     return (
         <div>
-            <ModalCreateUpdateUser
-                visible={visible}
-                onCreate={handleCreateOrUpdate}
-                onCancel={handleCancel}
-                user={currentUser}
-                form={form} // Pass the form reference to the modal
-            />
-            <Button onClick={() => showModal()} type="primary" style={{ marginBottom: 16 }}>
-                Thêm người dùng
-            </Button>
-            <Modal title={modalTitle} visible={modalVisible} onCancel={() => setModalVisible(false)} footer={null}>
+
+
+            {/* Modal hiển thị dữ liệu dạng bảng */}
+            <Modal
+                title={modalTitle}
+                visible={modalVisible}
+                onCancel={() => setModalVisible(false)}
+                footer={null}
+                width={1400}  // Tùy chỉnh kích thước Modal nếu cần
+            >
                 {modalData.length ? (
-                    <ul>
-                        {modalData.map((item, index) => (
-                            <li key={index}>{JSON.stringify(item)}</li>
-                        ))}
-                    </ul>
+                    <Table
+                        dataSource={modalData}
+                        columns={getModalColumns()}
+                        rowKey="id"  // Đảm bảo dữ liệu có thuộc tính id hoặc thay đổi theo dữ liệu của bạn
+                        pagination={false}
+                    />
                 ) : (
                     <p>Không có dữ liệu</p>
                 )}
             </Modal>
-            <Table rowClassName={() => tableText()} columns={columns} dataSource={appointments} rowKey="id" />
+
+            <ModalCreateReminder
+                visible={reminderModalVisible}
+                onCancel={() => setReminderModalVisible(false)}
+                onCreate={handleCreateReminder}
+                motherId={motherId}
+            />
+
+            <Table
+                rowClassName={() => tableText()}
+                columns={columns}
+                dataSource={appointments}
+                rowKey="id"
+            />
             <Outlet />
         </div>
     );
