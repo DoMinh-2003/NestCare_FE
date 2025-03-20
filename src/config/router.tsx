@@ -46,6 +46,7 @@ import FetailDetail from "../pages/doctor/fetal-detail";
 import BookingDoctor from "../pages/customer/booking-doctor";
 import AppointmentHistory from "../pages/customer/appointment-history";
 import AdminManageMedicines from "../pages/admin/manage-medicines";
+import NurseCheckIn from "../pages/nurse/appointment";
 
 
 interface ProtectedRouteByRoleProps {
@@ -248,6 +249,10 @@ export const router = createBrowserRouter([
       {
         path: NURSE_ROUTES.FETALS_DETAIL,
         element: <FetalDetail />,
+      },
+      {
+        path: NURSE_ROUTES.NURSE_APPOINTMENT,
+        element: <NurseCheckIn />,
       },
     ],
   },

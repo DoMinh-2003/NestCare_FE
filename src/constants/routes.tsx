@@ -42,6 +42,7 @@ export enum NURSE_ROUTES {
   NURSE = "nurse",
   USER = "users",
   ORDER = "orders",
+  NURSE_APPOINTMENT = "appointments",
   FETALS_DETAIL = "users/fetals/:id",
 }
 // Admin Routes

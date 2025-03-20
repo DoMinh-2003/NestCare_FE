@@ -3,14 +3,12 @@ import type { MenuProps } from "antd";
 import { Layout, Menu, theme } from "antd";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 const { Header, Content, Footer, Sider } = Layout;
-import { MdOutlineTopic } from "react-icons/md";
 import { SlCalender } from "react-icons/sl";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { Button } from "../../atoms/button/Button";
 import { LogoutOutlined } from "@ant-design/icons";
 import { logout } from "../../../redux/features/userSlice";
-import { FcDataConfiguration } from "react-icons/fc";
 import { FaChartPie } from "react-icons/fa";
 type MenuItem = Required<MenuProps>["items"][number];
 function getItem(
@@ -47,7 +45,7 @@ const AdminLayout: React.FC = () => {
   };
 
   return (
-    <Layout style={{ height: "100vh" }}>
+    <Layout style={{   height: "auto", }}>
       <Sider
         collapsible
         collapsed={collapsed}
@@ -84,8 +82,8 @@ const AdminLayout: React.FC = () => {
           <div
             style={{
               padding: 24,
-              minHeight: 360,
-              height: "100%",
+              minHeight:"720px",
+              flexGrow: 1,
               background: colorBgContainer,
               borderRadius: borderRadiusLG,
             }}
