@@ -1,0 +1,61 @@
+/* Container chính của FetalChart để chứa hai biểu đồ */
+.fetal-charts-wrapper {
+  display: flex; /* Sử dụng Flexbox để chia đôi */
+  flex-wrap: wrap; /* Cho phép xuống dòng nếu không đủ chỗ */
+  gap: 20px; /* Khoảng cách giữa hai biểu đồ */
+  justify-content: center; /* Căn giữa các biểu đồ */
+  max-width: 1200px; /* Giới hạn chiều rộng tối đa của toàn bộ wrapper */
+  margin: 0 auto; /* Căn giữa wrapper */
+}
+
+/* Định dạng container chính của biểu đồ */
+.fetal-chart-container {
+  flex: 1; /* Mỗi container chiếm đều không gian */
+  min-width: 400px; /* Chiều rộng tối thiểu */
+  max-width: 700px; /* Chiều rộng tối đa */
+  margin: 20px 0; /* Chỉ giữ margin trên/dưới, không cần căn giữa nữa */
+  padding: 20px; /* Khoảng cách bên trong */
+  background-color: #ffffff; /* Màu nền trắng */
+  border-radius: 10px; /* Bo góc */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Hiệu ứng bóng đổ nhẹ */
+  font-family: 'Arial', sans-serif; /* Font chữ mặc định */
+}
+
+/* Định dạng tiêu đề (h2) bên trong container */
+.fetal-chart-container h2 {
+  text-align: center; /* Căn giữa tiêu đề */
+  color: #333; /* Màu chữ tối */
+  margin-bottom: 20px; /* Khoảng cách dưới tiêu đề */
+}
+
+/* Định dạng wrapper của biểu đồ */
+.fetal-chart-container .chart-wrapper {
+  position: relative; /* Để biểu đồ có thể responsive */
+  width: 100%; /* Chiếm toàn bộ chiều rộng container */
+  height: 400px; /* Chiều cao cố định cho biểu đồ */
+}
+
+/* Định dạng thông báo khi không có dữ liệu */
+.fetal-chart-container p {
+  text-align: center; /* Căn giữa thông báo */
+  color: #666; /* Màu chữ nhạt hơn */
+  font-size: 16px; /* Cỡ chữ */
+  margin-top: 20px; /* Khoảng cách phía trên */
+}
+
+/* Responsive cho màn hình nhỏ hơn */
+@media (max-width: 900px) {
+  .fetal-chart-container {
+    max-width: 100%; /* Chiếm toàn bộ chiều rộng trên thiết bị nhỏ */
+    margin: 10px 0; /* Giảm margin */
+    padding: 10px; /* Giảm padding */
+  }
+
+  .fetal-chart-container .chart-wrapper {
+    height: 300px; /* Giảm chiều cao biểu đồ */
+  }
+
+  .fetal-chart-container h2 {
+    font-size: 1.5rem; /* Giảm cỡ chữ tiêu đề */
+  }
+}

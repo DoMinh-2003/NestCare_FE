@@ -48,6 +48,7 @@ import AppointmentHistory from "../pages/customer/appointment-history";
 import AdminManageMedicines from "../pages/admin/manage-medicines";
 import NurseCheckIn from "../pages/nurse/appointment";
 import WeekCheckup from "../pages/admin/week-checkup";
+import FetalChart from "../pages/customer/fetal-chart";
 
 
 interface ProtectedRouteByRoleProps {
@@ -176,6 +177,10 @@ export const router = createBrowserRouter([
       {
         path: USER_ROUTES.APPOINTMENT_HISTORY,
         element: <AppointmentHistory />,
+      },
+      {
+        path: USER_ROUTES.FETAL_CHART,
+        element: <FetalChart />,
       },
     ],
   },
