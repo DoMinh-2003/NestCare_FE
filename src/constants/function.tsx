@@ -44,6 +44,16 @@ export const uploadToCloudinary = async (file: File) => {
     }
 };
 
-export const tableText = ()=>{
+export const tableText = () => {
     return "text-lg"
+}
+
+
+export const getUserDataFromLocalStorage = () => {
+    const user = localStorage.getItem("USER");
+    console.log("user", user)
+    if (user) {
+        const userData = JSON.parse(user)
+        return userData;
+    }
 }
