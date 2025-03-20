@@ -1,10 +1,28 @@
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import paymentCancelImg from '../../../../../public/images/cancel.png';
+import { useEffect } from 'react';
+import useOrderService from '../../../../services/useOrderService';
 
 
 const PaymentCancel = () => {
-	// const { state } = useLocation();
-	// const { orderId, errorCode } = state || {};
+
+	const { orderId } = useParams();
+
+	const { userUpdateOrder } = useOrderService();
+
+	const updateStatus = async (orderId: string, status: "PENDING" | "PAID" | "CANCELED") => {
+		try {
+			await userUpdateOrder(orderId, status);
+		} catch (err) {
+			console.error('Error updating order status:', err);
+		}
+	}
+
+	useEffect(() => {
+		if (orderId) {
+			updateStatus(orderId, 'CANCELED');
+		}
+	}, [orderId])
 
 	return (
 		<>

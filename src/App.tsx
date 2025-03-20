@@ -10,7 +10,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ConfigProvider } from "antd";
 import { themeAntd } from "./config/antd";
-
+import { HelmetProvider } from 'react-helmet-async';
 // AOS.init({
 //   // initialise with other settings
 //   duration: 1000,
@@ -23,7 +23,9 @@ function App() {
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
             <StateProvider>
-              <RouterProvider router={router} />
+              <HelmetProvider>
+                <RouterProvider router={router} />
+              </HelmetProvider>
               <ToastContainer />
             </StateProvider>
           </PersistGate>

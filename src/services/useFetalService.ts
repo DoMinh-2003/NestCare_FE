@@ -10,13 +10,28 @@ const useFetalService = () => {
   const dispatch = useDispatch();
 
 
-  const createOrder = useCallback(
+  const createFetal = useCallback(
     async (values: any) => {
       try {
-        const response = await callApi("post", "order", {
+        const response = await callApi("post", "fetal-records", {
           ...values
         });
-        console.log("createOrder: ", response)
+        console.log("createFetal: ", response)
+        return response;
+      } catch (e: any) {
+        console.log("e: ", e)
+      }
+    },
+    [callApi, dispatch, router]
+  );
+
+  const updateFetal = useCallback(
+    async (values: any, id: string) => {
+      try {
+        const response = await callApi("put", `fetal-records/${id}`, {
+          ...values
+        });
+        console.log("updateFetal: ", response)
         return response;
       } catch (e: any) {
         console.log("e: ", e)
@@ -52,12 +67,13 @@ const useFetalService = () => {
   )
 
   const deleteUser = useCallback(
+  const deleteFetal = useCallback(
     async (id: any) => {
       try {
-        const response = await callApi("put", `users/${id}/toggle-delete`, {
+        const response = await callApi("delete", `fetal-records/${id}`, {
           isDeleted: true
         });
-        console.log("createUser: ", response)
+        console.log("deleteFetal: ", response)
         return response;
       } catch (e: any) {
         console.log("e: ", e)
@@ -66,7 +82,23 @@ const useFetalService = () => {
     [callApi, dispatch, router]
   );
 
-  return { loading, getFetalsByMotherId, deleteUser, createOrder, setIsLoading, getFetailAndMotherDetail };
+  const getFetalsRecords = useCallback(
+    async (id: string) => {
+      try {
+        const response = await callApi("get", `fetal-records/${id}`);
+        console.log("getFetalsRecords: ", response)
+        return response;
+      } catch (error) {
+        console.log('====================================');
+        console.log(error);
+        console.log('====================================');
+      }
+    },
+    [useCallback]
+  );
+
+
+  return { loading, getFetalsRecords, getFetalsByMotherId, deleteFetal, createFetal, setIsLoading, updateFetal, getFetailAndMotherDetail };
 };
 
 export default useFetalService;

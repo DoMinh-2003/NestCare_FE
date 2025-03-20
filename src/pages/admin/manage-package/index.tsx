@@ -158,7 +158,7 @@ const ManagePackage = () => {
 
     return (
         <div>
-            <h1 className="text-5xl font-extrabold text-center mb-5">
+            <h1 className="text-3xl font-extrabold text-center mb-5">
                 Quản lí gói dịch vụ
             </h1>
             <div className="mb-4 flex items-center justify-between">

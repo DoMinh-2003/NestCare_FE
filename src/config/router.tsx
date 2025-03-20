@@ -35,7 +35,7 @@ import ServicesPage from "../pages/customer/services-page";
 import Specialty from "../pages/customer/specialty";
 import TeamOfDoctor from "../pages/customer/team-of-doctors";
 import LoginPage from "../pages/login";
-import FetalDetail from "../pages/nurse/fetail-detail";
+import FetalDetail from "../pages/nurse/fetal-detail";
 import NurseManageOrders from "../pages/nurse/manage-orders";
 import NurseManageUsers from "../pages/nurse/manage-users";
 import RegisterPage from "../pages/register";
@@ -43,6 +43,9 @@ import { useCurrentUser } from "../utils/getcurrentUser";
 import DoctorLayout from "../components/layouts/doctor-layout";
 import DoctorManageAppointments from "../pages/doctor/manage-appointments";
 import FetailDetail from "../pages/doctor/fetal-detail";
+import BookingDoctor from "../pages/customer/booking-doctor";
+import AppointmentHistory from "../pages/customer/appointment-history";
+import AdminManageMedicines from "../pages/admin/manage-medicines";
 
 
 interface ProtectedRouteByRoleProps {
@@ -163,7 +166,15 @@ export const router = createBrowserRouter([
       {
         path: USER_ROUTES.PURCHASED_HISTORY,
         element: <PurchasedHistory />,
-      }
+      },
+      {
+        path: USER_ROUTES.BOOKING_DOCTOR,
+        element: <BookingDoctor />,
+      },
+      {
+        path: USER_ROUTES.APPOINTMENT_HISTORY,
+        element: <AppointmentHistory />,
+      },
     ],
   },
   {
@@ -211,6 +222,10 @@ export const router = createBrowserRouter([
       {
         path: ADMIN_ROUTES.PACKAGES,
         element: <ManagePackage />,
+      },
+      {
+        path: ADMIN_ROUTES.MEDICINES,
+        element: <AdminManageMedicines />,
       },
     ],
   },

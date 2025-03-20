@@ -1,22 +1,26 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, Form, Image, message, Table } from "antd";
+import { Button, Form, Image, message, Select, Table } from "antd";
 import React, { useEffect, useState } from "react";
 import ModalCreateUpdateUser, { UserData } from "../../../components/organisms/modal-create-update-user/ModalCreateUpdateUser";
 import ModalDelete from "../../../components/organisms/modal-delete";
 import { tableText } from "../../../constants/function";
 import userUserService from "../../../services/userUserService";
 import FetalProfileModal from "./fetal-model";
-
+import type { GetProps } from 'antd';
+import { Input } from 'antd';
+type SearchProps = GetProps<typeof Input.Search>;
+const { Search } = Input;
 
 const AdminManageUsers: React.FC = () => {
     const [users, setUsers] = useState<UserData[]>([]);
     const [currentUser, setCurrentUser] = useState<UserData | null>(null);
     const [visible, setVisible] = useState(false);
-    const { createUser, updateUser, deleteUser, getUsers } = userUserService();
+    const { createUser, updateUser, deleteUser, getUsers, getUsersSearch } = userUserService();
     const [form] = Form.useForm(); // Create a form reference
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
     const [isFetalProfileModalVisible, setIsFetalProfileModalVisible] = useState(false);
+    const [roleToFilter, setRoleToFilter] =  useState<string>('')
     const showModal = (user: UserData | null = null) => {
         if (user) {
             setCurrentUser(user);
@@ -59,12 +63,13 @@ const AdminManageUsers: React.FC = () => {
     }, []);
 
     const getUsersFromAdmin = async () => {
-        const response = await getUsers();
+        const response = await getUsersSearch("", "");
         console.log("response: ", response);
         if (response) {
-            setUsers(response.filter((item: UserData) => item.role === "user" && !item.isDeleted));
+            setUsers(response.users.filter((item: UserData) => item.role != "admin" && !item.isDeleted));
         }
     };
+
     const handleOpenModalDelete = (record: UserData) => {
         console.log("record: ", record)
         setCurrentUser(record);
@@ -107,7 +112,7 @@ const AdminManageUsers: React.FC = () => {
                 <span
                     className="text-blue cursor-pointer"
                     onClick={() => {
-                        setSelectedUserId(record.id);
+                        setSelectedUserId(record.id + "");
                         setIsFetalProfileModalVisible(true);
                     }}
                 >
@@ -144,8 +149,39 @@ const AdminManageUsers: React.FC = () => {
         setIsModalDeleteOpen(false);
         getUsersFromAdmin(); // Refresh the service list after deletion
     };
+
+    const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
+        const response = await getUsersSearch(value, roleToFilter);
+        console.log("response: ", response);
+        if (response) {
+            setUsers(response.users.filter((item: UserData) => item.role != "admin" && !item.isDeleted));
+        }
+    }
+    const handleChange = (value: string) => {
+        setRoleToFilter(value);
+    }   
+    const roles = [{"role": "user", "name": "User"}, {"role":"doctor", "name": "Doctor"}, {"role": "", "name": "Tất cả"}]
     return (
         <div>
+            <div className='text-3xl font-semibold text-center mb-5'>
+                Quản lý người dùng
+            </div>
+            <div className='flex gap-2'>
+                <Search placeholder="Tìm kiếm bằng tên" className='w-[200px]' onSearch={onSearch} enterButton />
+                <Button onClick={() => showModal()} type="primary" style={{ marginBottom: 16 }}>
+                    Thêm người dùng
+                </Button>
+                <Select
+                    placeholder="Chọn gói dịch vụ"
+                    onChange={handleChange}
+                    className='w-[100px]'
+                    options={
+                        roles.map((item) => (
+                            { value: item.role, label: item.name }
+                        ))
+                    }
+                />
+            </div>
             <ModalDelete
                 handleCancelModalDelete={handleCancelModalDelete}
                 handleOkModalDelete={handleOkModalDelete}
@@ -164,9 +200,7 @@ const AdminManageUsers: React.FC = () => {
                 onCancel={() => setIsFetalProfileModalVisible(false)}
                 userId={selectedUserId}
             />
-            <Button onClick={() => showModal()} type="primary" style={{ marginBottom: 16 }}>
-                Thêm người dùng
-            </Button>
+
 
             <Table rowClassName={() => tableText()} columns={columns} dataSource={users} rowKey="id" />
         </div>

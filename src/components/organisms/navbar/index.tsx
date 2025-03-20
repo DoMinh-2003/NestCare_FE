@@ -15,7 +15,6 @@ const Navbar = () => {
     const [user, setUser] = useState(null);
     const showModal = () => {
         setIsModalOpen(true);
-        console.log("a")
     };
 
     useEffect(() => {
@@ -57,6 +56,24 @@ const Navbar = () => {
             icon: <UserOutlined />,
         },
         {
+            key: '5',
+            label: (
+                <p>
+                    Xem Lịch Khám
+                </p>
+            ),
+            icon: <UserOutlined />,
+        },
+        {
+            key: '6',
+            label: (
+                <p>
+                    Biểu đồ phát triển
+                </p>
+            ),
+            icon: <UserOutlined />,
+        },
+        {
             key: '4',
             danger: true,
             label: 'Đăng xuất',
@@ -79,6 +96,13 @@ const Navbar = () => {
             case '4':
                 // Logout action
                 handleLogout();
+                break;
+            case '5':
+                // Logout action
+                navigate(USER_ROUTES.APPOINTMENT_HISTORY);
+                break;
+            case '6':
+                navigate(USER_ROUTES.FETAL_CHART)
                 break;
             default:
                 break;
@@ -114,7 +138,7 @@ const Navbar = () => {
                             </Button>)
                     }
                     <Button
-                        onClick={showModal}
+                        onClick={() => navigate(USER_ROUTES.BOOKING_DOCTOR)}
                         type="button"
                         status="pending"
                         styleClass="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
