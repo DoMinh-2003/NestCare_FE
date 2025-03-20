@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, message, Table, Form, Tag, Modal } from "antd";
+import { Button, message, Table, Form, Modal, Select, Tag } from "antd";
 import { Link, Outlet } from "react-router-dom";
 import userAppointmentService from "../../../services/useAppointmentService";
 import { formatDate } from "../../../utils/formatDate";
@@ -9,12 +9,13 @@ import { formatMoney } from "../../../utils/formatMoney";
 import ModalCreateReminder from "../../../components/organisms/modal-create-reminder/ModalCreateReminder";
 import userReminderService from "../../../services/useReminders";
 
+const { Option } = Select;
+
 const DoctorManageAppointments: React.FC = () => {
     const [appointments, setAppointments] = useState<[]>([]);
-    const [currentUser, setCurrentUser] = useState(null);
     const [currentDoctor, setCurrentDoctor] = useState(null);
     const [visible, setVisible] = useState(false);
-    const { getAppointmentsByDoctor } = userAppointmentService();
+    const { getAppointmentsByDoctor, updateAppointmentStatus } = userAppointmentService();
     const [form] = Form.useForm();
     const [modalVisible, setModalVisible] = useState(false);
     const [modalData, setModalData] = useState<any[]>([]);
@@ -23,13 +24,43 @@ const DoctorManageAppointments: React.FC = () => {
     const [reminderModalVisible, setReminderModalVisible] = useState(false);
     const [motherId, setMotherId] = useState<string | null>(null);
 
-    // Hàm mở modal chi tiết với dữ liệu dạng bảng
+    // Lấy danh sách cuộc hẹn
+    const getAppointmentFromDoctor = async () => {
+        if (!currentDoctor) return;
+        const response = await getAppointmentsByDoctor(currentDoctor.id);
+        if (response) {
+            setAppointments(response.filter((item) => !item.isDeleted));
+        }
+    };
+
+    // Khi đổi trạng thái
+    const handleChangeStatus = async (record: any, newStatus: AppointmentStatus) => {
+        try {
+            await updateAppointmentStatus(record.id, newStatus);
+            message.success("Cập nhật trạng thái thành công!");
+            getAppointmentFromDoctor(); // gọi lại để refresh danh sách
+        } catch (error) {
+            message.error("Cập nhật trạng thái thất bại!");
+        }
+    };
+
+    // Hiển thị chi tiết (Modal bảng con)
     const showDetails = (title: string, details: any[]) => {
         setModalTitle(title);
         setModalData(details);
         setModalVisible(true);
     };
 
+    // Tạo nhắc nhở
+    const handleCreateReminder = async (values: any) => {
+        const response = await createReminderByDoctor(values);
+        if (response) {
+            message.success("Tạo nhắc nhở thành công!");
+            setReminderModalVisible(false);
+        } else {
+            message.error("Tạo nhắc nhở thất bại!");
+        }
+    };
 
     const handleCancel = () => {
         setVisible(false);
@@ -53,15 +84,6 @@ const DoctorManageAppointments: React.FC = () => {
         }
     }, [currentDoctor]);
 
-    const getAppointmentFromDoctor = async () => {
-        if (!currentDoctor) return;
-        const response = await getAppointmentsByDoctor(currentDoctor.id);
-        console.log(response)
-        if (response) {
-            setAppointments(response.filter((item) => !item.isDeleted));
-        }
-    };
-
     const getStatusTag = (status: AppointmentStatus) => {
         switch (status) {
             case AppointmentStatus.PENDING:
@@ -81,16 +103,6 @@ const DoctorManageAppointments: React.FC = () => {
         }
     };
 
-    const handleCreateReminder = async (values: any) => {
-        const response = await createReminderByDoctor(values);
-        if (response) {
-            message.success("Tạo nhắc nhở thành công!");
-            setReminderModalVisible(false);
-        } else {
-            message.error("Tạo nhắc nhở thất bại!");
-        }
-    };
-
     // Cấu hình cột cho bảng chính
     const columns = [
         {
@@ -99,7 +111,7 @@ const DoctorManageAppointments: React.FC = () => {
                 <Link to={`fetals/${record.fetalRecord.id}`} className="text-blue">
                     Xem hồ sơ
                 </Link>
-            )
+            ),
         },
         {
             title: "Được tạo vào",
@@ -111,7 +123,34 @@ const DoctorManageAppointments: React.FC = () => {
             title: "Trạng thái",
             dataIndex: "status",
             key: "status",
-            render: (value: AppointmentStatus) => getStatusTag(value),
+            // Thay Tag bằng Select
+            render: (value: AppointmentStatus, record: any) => (
+                <Select
+                    style={{ width: 180 }}
+                    value={value}
+                    onChange={(newStatus) => handleChangeStatus(record, newStatus)}
+                >
+                    <Option value={AppointmentStatus.PENDING}>
+                        {getStatusTag(AppointmentStatus.PENDING)}
+                    </Option>
+                    <Option value={AppointmentStatus.CONFIRMED}>
+                        {getStatusTag(AppointmentStatus.CONFIRMED)}
+                    </Option>
+                    <Option value={AppointmentStatus.CHECKED_IN}>
+                        {getStatusTag(AppointmentStatus.CHECKED_IN)}
+                    </Option>
+                    <Option value={AppointmentStatus.IN_PROGRESS}>
+                        {getStatusTag(AppointmentStatus.IN_PROGRESS)}
+                    </Option>
+                    <Option value={AppointmentStatus.COMPLETED}>
+                        {getStatusTag(AppointmentStatus.COMPLETED)}
+                    </Option>
+                    <Option value={AppointmentStatus.CANCELED}>
+                        {getStatusTag(AppointmentStatus.CANCELED)}
+                    </Option>
+                </Select>
+
+            ),
         },
         {
             title: "Dịch vụ",
@@ -161,18 +200,22 @@ const DoctorManageAppointments: React.FC = () => {
                         Tạo nhắc nhở
                     </Button>
                 </div>
-            )
-        }
-
+            ),
+        },
     ];
 
-    // Hàm xác định cấu hình cột cho Modal dựa trên modalTitle
+    // Cấu hình cột cho Modal (bảng con)
     const getModalColumns = () => {
         switch (modalTitle) {
             case "Dịch vụ khám":
                 return [
                     { title: "Tên dịch vụ", dataIndex: "notes", key: "notes" },
-                    { title: "Giá", dataIndex: "price", key: "price", render: (value: number) => formatMoney(value) },
+                    {
+                        title: "Giá",
+                        dataIndex: "price",
+                        key: "price",
+                        render: (value: number) => formatMoney(value),
+                    },
                 ];
             case "Hóa đơn thuốc":
                 return [
@@ -182,7 +225,12 @@ const DoctorManageAppointments: React.FC = () => {
                 ];
             case "Lịch sử khám":
                 return [
-                    { title: "Ngày khám", dataIndex: "createdAt", key: "createdAt", render: (text: string) => formatDate(text) },
+                    {
+                        title: "Ngày khám",
+                        dataIndex: "createdAt",
+                        key: "createdAt",
+                        render: (text: string) => formatDate(text),
+                    },
                     { title: "Nhịp tim thai nhi (bpm)", dataIndex: "fetalHeartbeat", key: "fetalHeartbeat" },
                     { title: "Chiều cao thai nhi (cm)", dataIndex: "fetalHeight", key: "fetalHeight" },
                     { title: "Trọng lượng thai nhi (kg)", dataIndex: "fetalWeight", key: "fetalWeight" },
@@ -198,21 +246,19 @@ const DoctorManageAppointments: React.FC = () => {
 
     return (
         <div>
-
-
             {/* Modal hiển thị dữ liệu dạng bảng */}
             <Modal
                 title={modalTitle}
                 visible={modalVisible}
                 onCancel={() => setModalVisible(false)}
                 footer={null}
-                width={1400}  // Tùy chỉnh kích thước Modal nếu cần
+                width={1400}
             >
                 {modalData.length ? (
                     <Table
                         dataSource={modalData}
                         columns={getModalColumns()}
-                        rowKey="id"  // Đảm bảo dữ liệu có thuộc tính id hoặc thay đổi theo dữ liệu của bạn
+                        rowKey="id"
                         pagination={false}
                     />
                 ) : (

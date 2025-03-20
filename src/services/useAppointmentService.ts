@@ -3,6 +3,7 @@ import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import useApiService from "../hooks/useApi";
 import { toast } from "react-toastify";
+import { AppointmentStatus } from "../constants/status";
 
 const userAppointmentService = () => {
     const { callApi, loading, setIsLoading } = useApiService();
@@ -22,8 +23,17 @@ const userAppointmentService = () => {
         [callApi]
     );
 
+    const updateAppointmentStatus = useCallback(
+        async (appointmentId: string, status: AppointmentStatus) => {
 
-    return { getAppointmentsByDoctor, setIsLoading };
+            const response = await callApi("put", `appointments/${appointmentId}/${status}`);
+            return response;
+        },
+        [callApi]
+    );
+
+
+    return { getAppointmentsByDoctor, setIsLoading, updateAppointmentStatus };
 };
 
 export default userAppointmentService;
