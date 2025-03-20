@@ -8,21 +8,27 @@ import { tableText } from "../../../constants/function";
 import { formatMoney } from "../../../utils/formatMoney";
 import ModalCreateReminder from "../../../components/organisms/modal-create-reminder/ModalCreateReminder";
 import userReminderService from "../../../services/useReminders";
+import useServiceService from "../../../services/useServiceService";
+import ModalAddServices from "../../../components/organisms/modal-add-service-of-appointment";
 
 const { Option } = Select;
 
 const DoctorManageAppointments: React.FC = () => {
     const [appointments, setAppointments] = useState<[]>([]);
+    const [services, setServices] = useState<[]>([]);
     const [currentDoctor, setCurrentDoctor] = useState(null);
     const [visible, setVisible] = useState(false);
     const { getAppointmentsByDoctor, updateAppointmentStatus } = userAppointmentService();
     const [form] = Form.useForm();
+    const { getServices } = useServiceService();
     const [modalVisible, setModalVisible] = useState(false);
     const [modalData, setModalData] = useState<any[]>([]);
     const [modalTitle, setModalTitle] = useState("");
     const { createReminderByDoctor } = userReminderService();
     const [reminderModalVisible, setReminderModalVisible] = useState(false);
     const [motherId, setMotherId] = useState<string | null>(null);
+    const [addServiceModalVisible, setAddServiceModalVisible] = useState(false);
+    const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null);
 
     // Lấy danh sách cuộc hẹn
     const getAppointmentFromDoctor = async () => {
@@ -43,6 +49,13 @@ const DoctorManageAppointments: React.FC = () => {
             message.error("Cập nhật trạng thái thất bại!");
         }
     };
+
+    const openAddServiceModal = (record: any) => {
+        setSelectedAppointmentId(record.id); // Lưu id cuộc hẹn
+        setAddServiceModalVisible(true);
+    };
+
+
 
     // Hiển thị chi tiết (Modal bảng con)
     const showDetails = (title: string, details: any[]) => {
@@ -66,8 +79,16 @@ const DoctorManageAppointments: React.FC = () => {
         setVisible(false);
     };
 
+
+
     useEffect(() => {
         const userString = localStorage.getItem("USER");
+        const fetchService = async () => {
+            const response = await getServices();
+            console.log(response);
+            setServices(response.data);
+        }
+        fetchService();
         if (userString) {
             try {
                 const user = JSON.parse(userString);
@@ -156,10 +177,19 @@ const DoctorManageAppointments: React.FC = () => {
             title: "Dịch vụ",
             dataIndex: "appointmentServices",
             key: "appointmentServices",
-            render: (services: any[]) => (
-                <Button onClick={() => showDetails("Dịch vụ khám", services)} disabled={!services.length}>
-                    Xem
-                </Button>
+            render: (services: any[], record: any) => (
+                <>
+                    <Button onClick={() => showDetails("Dịch vụ khám", services)} disabled={!services.length}>
+                        Xem
+                    </Button>
+
+                    <Button
+                        style={{ marginLeft: 8 }}
+                        onClick={() => openAddServiceModal(record)}
+                    >
+                        Thêm dịch vụ
+                    </Button>
+                </>
             ),
         },
         {
@@ -204,6 +234,10 @@ const DoctorManageAppointments: React.FC = () => {
         },
     ];
 
+    const handleRefresh = () => {
+        getAppointmentFromDoctor();
+    };
+
     // Cấu hình cột cho Modal (bảng con)
     const getModalColumns = () => {
         switch (modalTitle) {
@@ -246,6 +280,12 @@ const DoctorManageAppointments: React.FC = () => {
 
     return (
         <div>
+            <ModalAddServices
+                visible={addServiceModalVisible}
+                onCancel={() => setAddServiceModalVisible(false)}
+                appointmentId={selectedAppointmentId}
+                onSuccess={handleRefresh}
+            />
             {/* Modal hiển thị dữ liệu dạng bảng */}
             <Modal
                 title={modalTitle}

@@ -32,8 +32,21 @@ const userAppointmentService = () => {
         [callApi]
     );
 
+    const addServicesToAppointment = useCallback(
+        async (appointmentId: string, serviceIds: []) => {
+            try {
+                const response = await callApi("post", `appointments/in-progress/${appointmentId}`, {
+                    serviceIds,
+                });
+                return response;
+            } catch (error) {
+                throw error;
+            }
+        }, [callApi]
+    )
 
-    return { getAppointmentsByDoctor, setIsLoading, updateAppointmentStatus };
+
+    return { getAppointmentsByDoctor, setIsLoading, updateAppointmentStatus, addServicesToAppointment };
 };
 
 export default userAppointmentService;
