@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import { getUserDataFromLocalStorage } from "../../../constants/function";
 import useFetalService from "../../../services/useFetalService";
+import './styles.css'
 
 // Register required Chart.js components
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
@@ -182,7 +183,7 @@ function FetalChart() {
 	}, []);
 
 	return (
-		<div>
+		<div className="flex justify-center gap-6">
 			<FetalHeightChart fetalRecords={fetalRecords} />
 			<FetalWeightChart fetalRecords={fetalRecords} />
 		</div>
