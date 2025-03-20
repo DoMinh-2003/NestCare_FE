@@ -153,9 +153,12 @@ const FetalDetail = () => {
         setCheckUpRecords(records)
         setIsModalOpenCheckUpRecords(true)
     }
+    const handleCancelModalCheckUpRecord = ()=>{
+        setIsModalOpenCheckUpRecords(false)
+    }
     return (
         <div>
-            <ModalCheckUpRecord records={checkUpRecords} isModalOpen={isModalOpenCheckUpRecords}/>
+            <ModalCheckUpRecord records={checkUpRecords} handleCancelModalCheckUpRecord={handleCancelModalCheckUpRecord} isModalOpen={isModalOpenCheckUpRecords}/>
             <div className='text-3xl font-semibold text-center'>
                 Hồ sơ thai nhi của mẹ {fetals[0]?.mother?.fullName}
             </div>
