@@ -113,7 +113,7 @@ const userUserService = () => {
     }, [callApi],
   )
 
-  return { getUserById, getUsers, getUserByRole, loading, updateUser, deleteUser, createUser, setIsLoading };
+  return { getUserById, getUsers, getUserByRole, loading, updateUser, deleteUser, createUser, setIsLoading, getUsersSearch };
 };
 
 export default userUserService;
