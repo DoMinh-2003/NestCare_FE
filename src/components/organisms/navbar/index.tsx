@@ -65,6 +65,15 @@ const Navbar = () => {
             icon: <UserOutlined />,
         },
         {
+            key: '6',
+            label: (
+                <p>
+                    Biểu đồ phát triển
+                </p>
+            ),
+            icon: <UserOutlined />,
+        },
+        {
             key: '4',
             danger: true,
             label: 'Đăng xuất',
@@ -91,6 +100,9 @@ const Navbar = () => {
             case '5':
                 // Logout action
                 navigate(USER_ROUTES.APPOINTMENT_HISTORY);
+                break;
+            case '6':
+                navigate(USER_ROUTES.FETAL_CHART)
                 break;
             default:
                 break;
