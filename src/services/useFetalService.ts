@@ -85,7 +85,6 @@ const useFetalService = () => {
     async (id: string) => {
       try {
         const response = await callApi("get", `fetal-records/${id}`);
-        console.log("getFetalsRecords: ", response)
         return response;
       } catch (error) {
         console.log('====================================');
@@ -93,7 +92,7 @@ const useFetalService = () => {
         console.log('====================================');
       }
     },
-    [useCallback]
+    [callApi, router, dispatch]
   );
 
 
