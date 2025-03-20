@@ -65,6 +65,7 @@ function RegisterPage() {
               placeholder="Your password"
               name="password"
               message="Please enter your password"
+              type='password'
             />
           </Col>
           <Col span={12}>

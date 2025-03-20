@@ -280,6 +280,9 @@ const DoctorManageAppointments: React.FC = () => {
 
     return (
         <div>
+            <h1 className="text-3xl font-extrabold text-center mb-5">
+                Quản lí lịch khám
+            </h1>
             <ModalAddServices
                 visible={addServiceModalVisible}
                 onCancel={() => setAddServiceModalVisible(false)}
