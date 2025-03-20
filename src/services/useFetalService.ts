@@ -66,7 +66,6 @@ const useFetalService = () => {
     [callApi, dispatch, router]
   )
 
-  const deleteUser = useCallback(
   const deleteFetal = useCallback(
     async (id: any) => {
       try {
