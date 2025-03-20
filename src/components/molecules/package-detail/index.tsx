@@ -67,8 +67,10 @@ function PackageDetail() {
 			</div>
 			<div className="mt-6 relative shadow-md max-w-2xl mx-auto background-card p-6 bg-gradient-to-br from-[#fafaff] to-[#e7e7e7] bg-[length:200%_200%] animate-gradient-shift select-none">
 				{/* Package Header */}
-				<h1 className="text-2xl font-bold text-gray-800 mb-2">{data.name}</h1>
-				<p className="text-gray-600 mb-4">{data.description}</p>
+				<div className=''>
+					<h1 className="text-2xl font-bold text-gray-800 mb-2">{data.name}</h1>
+					<p className="text-gray-600 mb-4">{data.description}</p>
+				</div>
 
 				{/* Package Details */}
 				<div className="flex flex-col sm:flex-row sm:items-center mb-4">
@@ -82,7 +84,7 @@ function PackageDetail() {
 
 				{/* Included Services */}
 				<h2 className="text-xl font-semibold text-gray-800 mb-2">Dịch vụ bao gồm</h2>
-				<ul className="space-y-4">
+				<ul className="flex justify-center gap-10">
 					{data?.packageServices?.map((pkgService) => (
 						<li
 							key={pkgService.id}

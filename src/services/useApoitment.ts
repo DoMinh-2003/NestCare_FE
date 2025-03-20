@@ -75,9 +75,23 @@ const useAppointmentService = () => {
 			}
 		},
 		[callApi, router]
-	)
+	);
 
-	return { getAppointments, getHistoryFetal, userCreateAppointments, loading, setIsLoading };
+	const createReminder = useCallback(
+		async (values: any) => {
+			try {
+				const response = await callApi("post", `reminders`, {
+					...values
+				});
+				return response;
+			} catch (e: any) {
+				toast.error(e?.response?.data);
+			}
+		},
+		[callApi, router]
+	);
+
+	return { getAppointments, createReminder, getHistoryFetal, userCreateAppointments, loading, setIsLoading };
 };
 
 export default useAppointmentService;

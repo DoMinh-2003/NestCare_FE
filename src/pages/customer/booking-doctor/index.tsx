@@ -7,6 +7,7 @@ import { FetalRecord } from '../../../model/Fetal';
 import { User } from '../../../model/User';
 import useAppointmentService from '../../../services/useApoitment';
 import { toast } from 'react-toastify';
+import dayjs from 'dayjs';
 const { Option } = Select;
 
 function BookingDoctor() {
@@ -147,7 +148,7 @@ function BookingDoctor() {
 				{/* Doctor Selection */}
 				<Form.Item
 					name="doctor"
-					label="Doctor"
+					label="Bác sĩ"
 					rules={[{ required: true, message: "Hãy lựa chọn bác sĩ khám!" }]}
 				>
 					<Select placeholder="Chọn bác sĩ">
@@ -163,14 +164,22 @@ function BookingDoctor() {
 				<Form.Item
 					name="date"
 					label="Ngày hẹn khám"
-					rules={[{ required: true, message: "Hãy chọn ngày khám!" }]}
+					rules={[{ required: true, message: "Hãy chọn ngày khám!" },
+					() => ({
+						validator(_, value) {
+							if (!value || dayjs(value).isSame(dayjs(), 'days') || dayjs(value).isAfter(dayjs(), 'days')) {
+								return Promise.resolve();
+							}
+							return Promise.reject(new Error('Không được chọn ngày quá khứ!'));
+						},
+					}),]}
 				>
-					<DatePicker onChange={handleDateChange} format="YYYY-MM-DD" />
+					<DatePicker onChange={handleDateChange} format="DD-MM-YYYY" />
 				</Form.Item>
 
 				{/* Time Selection */}
 				{selectedDate && (
-					<Form.Item label="Chọn thời gian" required>
+					<Form.Item label="Chọn thời gian" required rules={[{ required: true, message: 'Hãy chọn thời gian khám!' },]}>
 						<Select
 							showSearch
 							placeholder="Chọn giờ khám"
