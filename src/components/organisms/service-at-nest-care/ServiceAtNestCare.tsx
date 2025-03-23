@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import ModalBookingForm from '../modal-booking-form';
+import { useState } from 'react';
+import FetalCreation from '../../../pages/customer/create-fetals';
 import Title from '../../atoms/text/Title';
 
 const ServiceAtNestCare = () => {
@@ -10,16 +10,17 @@ const ServiceAtNestCare = () => {
         console.log("a");
     };
 
+    const handleClose = () => {
+        setIsModalOpen(false);
+    };
+
     return (
         <div className="py-8">
-            <ModalBookingForm
-                isModalOpen={isModalOpen}
-                handleCancel={() => setIsModalOpen(false)}
-            />
+            <FetalCreation open={isModalOpen} onClose={handleClose} />
             <div className="grid grid-cols-1 md:grid-cols-12 gap-12 items-center mt-14">
                 {/* Left side: Content */}
                 <div className="md:col-span-5 flex flex-col justify-center">
-                    <Title text="Dịch vụ tại NextCare" className="mb-6" />
+                    <Title text="Dịch vụ tại NestCare" className="mb-6" />
                     <p className="mb-6 text-gray-700 leading-relaxed">
                         Tại NestCare, chúng tôi cung cấp đa dạng các dịch vụ từ hỗ trợ sinh sản cho đến các dịch vụ chăm sóc mẹ và bé sau sinh, bao gồm: Phụ khoa; Khám thai; Hiếm muộn; Sanh; Chăm sóc mẹ & bé; Nhi – sơ sinh; Kế hoạch hóa gia đình, Cận lâm sàng.
                     </p>
@@ -29,7 +30,7 @@ const ServiceAtNestCare = () => {
                             type="button"
                             className="flex-1 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
                         >
-                            Đặt lịch ngay
+                            Tạo Hồ Sơ Thai Nhi Ngay
                         </button>
                         <button
                             type="button"

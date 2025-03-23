@@ -6,6 +6,17 @@ interface Appointment {
 	isFollow: boolean;
 }
 
+// Fetal create appointment
+export interface FetalRecordSubmit {
+	name: string,
+	note: string,
+	dateOfPregnancyStart: string,
+	expectedDeliveryDate: string,
+	actualDeliveryDate: string,
+	healthStatus: string,
+	status: "PREGNANT" | "BORN" | "MISSED" | "STILLBIRTH" | "ABORTED" | "MISCARRIAGE";
+}
+
 // Mother model
 interface Mother {
 	id: string;

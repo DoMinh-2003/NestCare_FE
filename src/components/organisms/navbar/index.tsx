@@ -1,21 +1,18 @@
-import { AreaChartOutlined, CalendarOutlined, ShoppingCartOutlined, SmileOutlined, UserOutlined } from '@ant-design/icons';
+import { AreaChartOutlined, CalendarOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Avatar, Dropdown } from 'antd';
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { USER_ROUTES } from '../../../constants/routes';
 import { Button } from "../../atoms/button/Button";
 import MainLogo from "../../atoms/logo/MainLogo";
 import NavbarMenuList from "../../molecules/nav-menu-list/NavBarMenuList";
 import ModalBookingForm from "../modal-booking-form";
-import { USER_ROUTES } from '../../../constants/routes';
 
 const Navbar = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
-    const showModal = () => {
-        setIsModalOpen(true);
-    };
 
     useEffect(() => {
         const userString = localStorage.getItem("USER");
