@@ -5,6 +5,7 @@ import usePackageService from '../../../services/usePackageService';
 import { Package } from '../../../model/Pakage';
 import { formatMoney } from '../../../utils/formatMoney';
 import useOrderService from '../../../services/useOrderService';
+import { Image } from 'antd';
 
 function PackageDetail() {
 	// Define state with proper typing and initial value
@@ -61,54 +62,44 @@ function PackageDetail() {
 	}
 
 	return (
-		<div className='mx-10'>
-			<div className="w-full py-2 rounded-e-md rounded-s-lg bg-[#654ea3] bg-gradient-to-r from-[#eaafc8] to-[#654ea3] text-white">
-				<CustomBreadcrumbs items={breadcrumbItems} />
+		<div className="container mx-auto p-6 bg-gradient-to-tr from-blue-100 to-white">
+			{/* Header */}
+			<div className="relative bg-gradient-to-r from-indigo-500 to-purple-500 text-white p-8 rounded-xl shadow-lg">
+				<div className="breadcrumbs">
+					<span className="text-sm text-white">
+						<CustomBreadcrumbs items={breadcrumbItems} className='text-white' />
+					</span>
+				</div>
+				<h1 className="text-3xl font-bold">Khám dịch vụ VIP</h1>
+				<p className="text-xl mt-2">Giá: {formatMoney(data.price)} | Thời hạn: {data.period === 'WEEKLY' ? 'Theo Tuần' : '...'}</p>
+				<p className="text-xl mt-2">Mô tả gói dịch vụ: {data.description}</p>
 			</div>
-			<div className="mt-6 relative shadow-md max-w-2xl mx-auto background-card p-6 bg-gradient-to-br from-[#fafaff] to-[#e7e7e7] bg-[length:200%_200%] animate-gradient-shift select-none">
-				{/* Package Header */}
-				<div className=''>
-					<h1 className="text-2xl font-bold text-gray-800 mb-2">{data.name}</h1>
-					<p className="text-gray-600 mb-4">{data.description}</p>
-				</div>
 
-				{/* Package Details */}
-				<div className="flex flex-col sm:flex-row sm:items-center mb-4">
-					<span className="text-xl font-semibold text-gray-800">
-						Giá: {formatMoney(Number(data.price))}
-					</span>
-					<span className="sm:ml-4 text-gray-700">
-						Thời hạn: {data.period.toLowerCase() === 'weekly' ? 'Theo tuần' : data.period}
-					</span>
-				</div>
-
-				{/* Included Services */}
-				<h2 className="text-xl font-semibold text-gray-800 mb-2">Dịch vụ bao gồm</h2>
-				<ul className="flex justify-center gap-10">
-					{data?.packageServices?.map((pkgService) => (
-						<li
+			{/* Body */}
+			<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+				{data?.packageServices?.map((pkgService) => (
+					<div>
+						<div
 							key={pkgService.id}
-							className="p-4 border border-gray-300 rounded-md bg-gray-50"
+							className="relative p-6 rounded-lg bg-white shadow-lg hover:scale-105 transition-transform duration-300"
 						>
-							<div className="font-medium text-lg text-gray-800">
-								{pkgService.service.name}
+							<div className='flex justify-center'>
+								<Image alt='services_img' src='../../../../public/images/healthcare.png' width={40} height={40} className='object-contain text-center w-6 h-6' preview={false} />
 							</div>
-							<div className="text-gray-700">
-								Giá: {formatMoney(pkgService.service.price)}
-							</div>
-							<div className="text-gray-700">
-								Mô tả: {pkgService.service.description}
-							</div>
-						</li>
-					))}
-				</ul>
+							<h3 className="text-xl font-bold font-sans">{pkgService.service.name}</h3>
+							<p className="text-sm my-2 font-sans">{pkgService.service.description}</p>
+							<p className="text-sm my-2 font-sans">Số lượt: {pkgService.slot}</p>
+							<span className="font-semibold font-sans">Giá: {formatMoney(pkgService.service.price)}</span>
+						</div>
+					</div>
+				))}
+			</div>
 
-				{/* Call-to-Action Buttons */}
-				<div className="mt-6 flex flex-col justify-center sm:flex-row sm:space-x-4 space-y-2 sm:space-y-0">
-					<button onClick={() => handleBookingPackage()} className="w-1/2 px-20 py-4 rounded-lg bg-[#ee9ca7] bg-gradient-to-r from-[#ffdde1] to-[#ee9ca7] border-0 text-center cursor-pointer transition duration-400 hover:shadow-[7px_5px_56px_-14px_#ffb4df] active:scale-[0.97] active:shadow-[7px_5px_56px_-10px_#00c0cc]">
-						Mua ngay
-					</button>
-				</div>
+			{/* CTA */}
+			<div className="mt-8 flex justify-center">
+				<button className="px-8 py-4 rounded-lg bg-gradient-to-r from-pink-400 to-red-500 text-white shadow-lg hover:scale-105 transition-transform duration-300" onClick={handleBookingPackage}>
+					Mua ngay
+				</button>
 			</div>
 		</div>
 	);

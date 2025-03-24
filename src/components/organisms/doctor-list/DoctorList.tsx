@@ -1,45 +1,55 @@
-import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import { Autoplay } from "swiper/modules";
-import DoctorCard from "../../molecules/doctor-card/DoctorCard";
+import { Swiper, SwiperSlide } from "swiper/react";
 import Title from "../../atoms/text/Title";
-
+import DoctorCardDisplay from "../../molecules/doctor-card";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchDoctors } from "../../../redux/features/doctorsSlice";
+import { useEffect } from "react";
 
 const DoctorList = () => {
- 
+
+  const dispatch = useDispatch();
+  const doctorsList = useSelector((state) => state.doctor.doctors); // Lấy danh sách bác sĩ từ Redux
+
+  // Fetch dữ liệu khi component mount
+  useEffect(() => {
+    dispatch(fetchDoctors());
+  }, [dispatch]);
 
   return (
     <div className="">
-          <Title text="Đội ngũ bác sĩ" className="my-10"/>
-          <Swiper
-            modules={[Autoplay]}
-            autoplay={{ delay: 3000 }}
-            loop={true}
-            slidesPerView={4}
-            spaceBetween={30}
-            pagination={{ clickable: true }}
-            className="mySwiper "
-            breakpoints={{
-              320: { slidesPerView: 1 },  // Điện thoại nhỏ
-              768: { slidesPerView: 2 },  // Tablet
-              1000: { slidesPerView: 3 }, // Laptop
-              1536: { slidesPerView: 4 }, // Màn hình lớn
-            }}
-          >
-            {doctors.map((item, index) => (
-              <SwiperSlide key={index} className="justify-items-center">
-                <DoctorCard
-                  professional_qualifications={item.professional_qualifications}
-                  background_color={index % 2 === 0 ? "pink" : "blue"}
-                  name={item.name}
-                  specialty={item.specialty}
-                  image={item.image}
-                />
-              </SwiperSlide>
-            ))}
-          </Swiper>
+      <Title text="Đội ngũ bác sĩ" className="my-10" />
+      <Swiper
+        modules={[Autoplay]}
+        autoplay={{ delay: 3000 }}
+        loop={true}
+        slidesPerView={4}
+        spaceBetween={30}
+        pagination={{ clickable: true }}
+        className="mySwiper "
+        breakpoints={{
+          320: { slidesPerView: 1 },  // Điện thoại nhỏ
+          768: { slidesPerView: 2 },  // Tablet
+          1000: { slidesPerView: 3 }, // Laptop
+          1536: { slidesPerView: 4 }, // Màn hình lớn
+        }}
+      >
+        {doctorsList?.map((item, index) => (
+          <SwiperSlide key={index} className="justify-items-center">
+            {/* <DoctorCard
+              professional_qualifications={item.professional_qualifications}
+              background_color={index % 2 === 0 ? "pink" : "blue"}
+              name={item.name}
+              specialty={item.specialty}
+              image={item.image}
+            /> */}
+            <DoctorCardDisplay doctor={item} background_color={index % 2 === 0 ? "pink" : "blue"} />
+          </SwiperSlide>
+        ))}
+      </Swiper>
 
-        </div>
+    </div>
   );
 };
 
