@@ -137,7 +137,7 @@ const DoctorManageRequestAppointments: React.FC = () => {
                         title="Bạn có chắc muốn duyệt cuộc hẹn này?"
                         okText="Đồng ý"
                         cancelText="Hủy"
-                        onConfirm={() => handleChangeStatus(record, AppointmentStatus.COMPLETED)}
+                        onConfirm={() => handleChangeStatus(record, AppointmentStatus.CONFIRMED)}
                     >
                         <Button type="primary">Chấp nhận</Button>
                     </Popconfirm>

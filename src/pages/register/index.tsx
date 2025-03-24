@@ -15,7 +15,7 @@ function RegisterPage() {
         ...values,
         fullName: values.fullName,
         email: values.email,
-        username: values.email,
+        username: values.username,
         password: values.password,
         phone: values.phone
       }
@@ -39,21 +39,28 @@ function RegisterPage() {
             onClick={() => navigate(USER_ROUTES.HOME)}
           />
         </div>
+
+        <AuthField
+          label="Tên đăng nhập"
+          placeholder="Nhập tên đăng nhập của bạn"
+          name="username"
+          message="Vui lòng nhập tên đăng nhập"
+        />
         <Row gutter={15}>
           <Col span={12}>
             <AuthField
-              label="Full name"
-              placeholder="Your full name"
+              label="Họ và tên"
+              placeholder="Nhập họ và tên của bạn"
               name="fullName"
-              message="Please enter your full name"
+              message="Vui lòng nhập tên họ và tên"
             />
           </Col>
           <Col span={12}>
             <AuthField
               label="Email"
-              placeholder="Your Email"
+              placeholder="Nhập email của bạn"
               name="email"
-              message="Please enter your email"
+              message="Vui lòng nhập email của bạn"
             />
           </Col>
         </Row>
@@ -61,36 +68,45 @@ function RegisterPage() {
         <Row gutter={15}>
           <Col span={12}>
             <AuthField
-              label="Password"
-              placeholder="Your password"
+              label="Mật khẩu"
+              placeholder="Nhập mật khẩu của bạn"
               name="password"
-              message="Please enter your password"
+              message="Vui lòng nhập mật khẩu của bạn"
               type='password'
             />
           </Col>
           <Col span={12}>
             <AuthField
-              label="Confirm Password"
-              placeholder="Your confirm password"
+              label="Xác nhận mật khẩu"
+              placeholder="Nhập xác nhận mật khẩu"
               name="confirmPassword"
-              message="Please enter your confirm password"
+              message="Vui lòng nhập xác nhận mật khẩu"
+              type='password'
             />
           </Col>
         </Row>
 
-        <AuthField
-          label="Phone Number"
-          placeholder="Your phone number"
-          name="phone"
-          message="Please enter your phone number"
-        />
+        <Row gutter={15}>
 
-        <AuthField
-          label="Address"
-          placeholder="Your Address"
-          name="address"
-          message="Please enter your address"
-        />
+          <Col span={12}>
+            <AuthField
+              label="Số điện thoại"
+              placeholder="Nhập số điện thoại"
+              name="phone"
+              message="Vui lòng nhập số điện thoại"
+            />
+          </Col>
+
+          <Col span={12}>
+            <AuthField
+              label="Địa chỉ"
+              placeholder="Nhập địa chỉ"
+              name="address"
+              message="Vui lòng nhập địa chỉ"
+            />
+          </Col>
+        </Row>
+
         <Form.Item className="text-center mt-5">
           <button
             type="submit"
@@ -107,7 +123,7 @@ function RegisterPage() {
       </div>
       <div>
         <p className="text-center text-gray-500 text-lg">
-          Bạn đã có tài khoản? <Link to={USER_ROUTES.LOGIN} className="text-red-500">Đăng nhập</Link>
+          Bạn đã có tài khoản? <Link to={USER_ROUTES.LOGIN} className="text-red-500 hover:opacity-85 hover:text-red-500">Đăng nhập</Link>
         </p>
       </div>
     </div>
