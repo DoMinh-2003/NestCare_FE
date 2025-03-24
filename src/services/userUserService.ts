@@ -100,7 +100,7 @@ const userUserService = () => {
       } catch (e: any) {
         toast.error(e?.response?.data || "GetUsers failed");
       }
-    }, [callApi]);
+    }, [callApi, dispatch, router]);
 
   const getUserById = useCallback(
     async (id: any) => {

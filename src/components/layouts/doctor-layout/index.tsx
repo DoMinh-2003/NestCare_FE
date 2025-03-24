@@ -39,8 +39,9 @@ const DoctorLayout: React.FC = () => {
     const navigate = useNavigate();
     const handleLogout = () => {
         dispatch(logout());
+        localStorage.removeItem("USER");
         navigate("/");
-        toast.success("Đăng xuất thành công");
+        // toast.success("Đăng xuất thành công");
     };
 
     return (

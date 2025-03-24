@@ -16,8 +16,8 @@ const userAppointmentService = () => {
                 const response = await callApi("get", `appointments/by-doctor/${doctorId}`);
                 return response;
             } catch (e: any) {
-                toast.error(e?.response?.data?.message || "GetAppointmentsByDoctor failed");
-                throw e;
+                console.error(e?.response?.data?.message || "GetAppointmentsByDoctor failed");
+                // throw e;
             }
         },
         [callApi]
