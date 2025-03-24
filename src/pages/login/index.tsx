@@ -42,6 +42,7 @@ function CustomerLoginPage() {
           placeholder="Mật khẩu của bạn"
           name="password"
           message="Vui lòng điền mật khẩu"
+          type="password"
         />
         <Form.Item className="text-center mt-5">
           <button
@@ -59,7 +60,7 @@ function CustomerLoginPage() {
       </div>
       <div className="flex gap-6 flex-col">
         <p className="text-center text-lg text-gray-500 font-sans">
-          Bạn chưa có tài khoản? <Link to={USER_ROUTES.REGISTER} className="text-red-500 font-sans">Đăng ký tài khoản</Link>
+          Bạn chưa có tài khoản? <Link to={USER_ROUTES.REGISTER} className=" text-red-500 hover:opacity-85 hover:text-red-500 font-sans">Đăng ký tài khoản</Link>
         </p>
         <button
           className="w-full focus:outline-none text-black border border-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2
