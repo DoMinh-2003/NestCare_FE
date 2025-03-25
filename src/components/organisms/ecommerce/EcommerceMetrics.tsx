@@ -1,13 +1,21 @@
+
 import {
   ArrowDownIcon,
   ArrowUpIcon,
   BoxIconLine,
   GroupIcon,
 } from "../../../icons";
+import { Order } from "../../../pages/admin/manage-overview";
 import Badge from "../../molecules/ui/badge/Badge";
+import { UserData } from "../modal-create-update-user/ModalCreateUpdateUser";
+interface EcommerceMetricsProps{
+  orders: Order[],
+  users: UserData[]
+}
 
+export default function EcommerceMetrics({orders, users}:EcommerceMetricsProps ) {
+ 
 
-export default function EcommerceMetrics() {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
       {/* <!-- Metric Item Start --> */}
@@ -22,7 +30,7 @@ export default function EcommerceMetrics() {
               Customers
             </span>
             <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-              3,782
+              {users.length}
             </h4>
           </div>
           <Badge color="success">
@@ -44,7 +52,7 @@ export default function EcommerceMetrics() {
               Orders
             </span>
             <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-              5,359
+             {orders.length}
             </h4>
           </div>
 
