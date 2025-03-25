@@ -4,8 +4,21 @@ import { Dropdown } from "../../molecules/ui/dropdown/Dropdown";
 import { DropdownItem } from "../../molecules/ui/dropdown/DropdownItem";
 import { MoreDotIcon } from "../../../icons";
 import { useState } from "react";
+import { Order } from "../../../pages/admin/manage-overview";
 
-export default function MonthlySalesChart() {
+interface MonthlySalesChartsProps {
+  orders: Order[],
+}
+
+export default function MonthlySalesChart({ orders }: MonthlySalesChartsProps) {
+  const totalPrice = orders?.reduce((accumulator: number, currentOrder: Order) => {
+    return accumulator + parseInt(currentOrder.package.price);
+  }, 0);
+
+  // Tính toán giá trị lớn nhất trong 12 tháng
+  const maxValue = Math.ceil(totalPrice / 100) * 100; // Làm tròn lên đến bội số của 100
+  const stepValue = maxValue / 5; // Chia thành 5 bước
+
   const options: ApexOptions = {
     colors: ["#465fff"],
     chart: {
@@ -61,6 +74,9 @@ export default function MonthlySalesChart() {
       fontFamily: "Outfit",
     },
     yaxis: {
+      min: 0, // Giá trị tối thiểu
+      max: maxValue, // Giá trị tối đa
+      tickAmount: 5, // Số lượng bước trên trục Y
       title: {
         text: undefined,
       },
@@ -75,7 +91,6 @@ export default function MonthlySalesChart() {
     fill: {
       opacity: 1,
     },
-
     tooltip: {
       x: {
         show: false,
@@ -85,12 +100,14 @@ export default function MonthlySalesChart() {
       },
     },
   };
+
   const series = [
     {
-      name: "Sales",
-      data: [168, 385, 201, 298, 187, 195, 291, 110, 215, 390, 280, 112],
+      name: "Orders",
+      data: [0, 0, totalPrice, 90],
     },
   ];
+
   const [isOpen, setIsOpen] = useState(false);
 
   function toggleDropdown() {
@@ -100,11 +117,12 @@ export default function MonthlySalesChart() {
   function closeDropdown() {
     setIsOpen(false);
   }
+
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-5 pt-5 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 sm:pt-6">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-          Monthly Sales
+          Monthly Orders
         </h3>
         <div className="relative inline-block">
           <button className="dropdown-toggle" onClick={toggleDropdown}>
