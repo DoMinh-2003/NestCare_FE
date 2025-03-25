@@ -50,6 +50,7 @@ import NurseCheckIn from "../pages/nurse/appointment";
 import WeekCheckup from "../pages/admin/week-checkup";
 import FetalChart from "../pages/customer/fetal-chart";
 import DoctorManageRequestAppointments from "../pages/doctor/manage-request-appointments";
+import BlogPage from "../pages/blog";
 
 
 interface ProtectedRouteByRoleProps {
@@ -182,6 +183,10 @@ export const router = createBrowserRouter([
       {
         path: USER_ROUTES.FETAL_CHART,
         element: <FetalChart />,
+      },
+      {
+        path: USER_ROUTES.BLOG_PAGE,
+        element: <BlogPage />,
       },
     ],
   },
