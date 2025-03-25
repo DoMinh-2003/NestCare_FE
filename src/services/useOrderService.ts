@@ -9,6 +9,35 @@ const useOrderService = () => {
   const router = useNavigate();
   const dispatch = useDispatch();
 
+  const getOrders = useCallback(
+    async (status: 'PENDING' | 'PAID' | 'COMPLETED' | 'CANCEL'| '') => {
+      let url;
+      switch (status) {
+        case "PENDING":
+          url = "order?status=PENDING&limit=100&page=1";
+          break;
+        case "PAID":
+          url = "order?status=PAID&limit=100&page=1";
+          break;
+        case "COMPLETED":
+          url = "order?status=COMPLETED&limit=100&page=1";
+          break;
+        case 'CANCEL':
+          url = "order?status=CANCEL&limit=100&page=1";
+          break;
+          case '':
+          url = "order?limit=100&page=1"; // Nếu không phải là số từ 1 đến 7
+      }
+      try {
+        const response = await callApi("get", url);
+        console.log("getOrders: ", response)
+        return response;
+      } catch (e: any) {
+        console.log("e: ", e)
+      }
+    },
+    [callApi, dispatch, router]
+  );
 
   const createOrder = useCallback(
     async (values: any) => {
@@ -79,7 +108,7 @@ const useOrderService = () => {
     }
   ), [callApi]);
 
-  return { loading, userUpdateOrder, getOrderByUserId, deleteUser, createOrder, getOrderStatus, setIsLoading };
+  return { getOrders, loading, userUpdateOrder, getOrderByUserId, deleteUser, createOrder, getOrderStatus, setIsLoading };
 };
 
 export default useOrderService;
