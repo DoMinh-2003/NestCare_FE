@@ -29,7 +29,8 @@ export enum USER_ROUTES {
   PURCHASED_HISTORY = "/purchased-history",
   BOOKING_DOCTOR = "/booking-doctor",
   APPOINTMENT_HISTORY = "/appointment-history",
-  FETAL_CHART = "/fetal-chart"
+  FETAL_CHART = "/fetal-chart",
+  BLOG_PAGE = "/blog",
 }
 
 export enum DOCTOR_ROUTES {

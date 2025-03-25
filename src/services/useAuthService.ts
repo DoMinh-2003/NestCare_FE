@@ -16,7 +16,7 @@ const useAuthService = () => {
           ...values,
           avt: "https://api.dicebear.com/7.x/miniavs/svg?seed=1",
         });
-        toast.success("Sign Up Successfully, Please Check Your Mail");
+        toast.success("Đăng kí thành công. Vui lòng kiểm tra email!");
         router("/auth/login");
         return response;
       } catch (e: any) {
@@ -35,7 +35,7 @@ const useAuthService = () => {
         localStorage.setItem("token", response?.token);
         localStorage.setItem('USER', JSON.stringify(response));
         console.log(localStorage.getItem('USER'));
-        toast.success("Login Successfully");
+        toast.success("Đăng nhập thành công");
 
         router("/");
         // dispatch(loginRedux(response?.data));
