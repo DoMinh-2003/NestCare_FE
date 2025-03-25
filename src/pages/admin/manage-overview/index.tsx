@@ -10,6 +10,7 @@ import useOrderService from "../../../services/useOrderService";
 
 import { useEffect, useState } from "react";
 import { UserData } from "../../../components/organisms/modal-create-update-user/ModalCreateUpdateUser";
+import { or } from "firebase/firestore";
 // Order.ts
 export interface Package {
   id: string; // Unique identifier for the package
@@ -48,9 +49,11 @@ export interface Order {
 }
 export default function Overview() {
   const [users, setUsers] = useState<UserData[]>([]);
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [ordersByStatus, setOrdersByStatus] = useState<Order[]>([]);
   const { getUsersSearch } = userUserService();
   const { getOrderStatus } = useOrderService()
+  const {getOrders} = useOrderService();
+  const [orders, setOrders] = useState<Order[]>([])
   useEffect(() => {
     getUsersFromAdmin();
     getOrderStatusByAdmin()
@@ -63,11 +66,21 @@ export default function Overview() {
       setUsers(response.users.filter((item: UserData) => item.role != "admin" && !item.isDeleted));
     }
   };
-
   const getOrderStatusByAdmin = async () => {
     const response = await getOrderStatus('PAID')
     if (response) {
-      setOrders(response)
+      setOrdersByStatus(response)
+    }
+  }
+
+  useEffect(()=>{
+    getOrdersFromAdmin()
+  }, [])
+
+  const getOrdersFromAdmin = async()=>{
+    const response = await getOrders('')
+    if(response){
+      setOrders(response.items)
     }
   }
   return (
@@ -78,9 +91,9 @@ export default function Overview() {
       />
       <div className="grid grid-cols-12 gap-4 md:gap-6">
         <div className="col-span-12 space-y-6 xl:col-span-7">
-          <EcommerceMetrics users={users} orders={orders}/>
+          <EcommerceMetrics users={users} orders={ordersByStatus}/>
 
-          <MonthlySalesChart orders={orders}/>
+          <MonthlySalesChart orders={ordersByStatus}/>
         </div>
 
         <div className="col-span-12 xl:col-span-5">
@@ -88,15 +101,15 @@ export default function Overview() {
         </div>
 
         <div className="col-span-12">
-          <StatisticsChart />
+          <StatisticsChart orders={orders}/>
         </div>
-
+{/* 
         <div className="col-span-12 xl:col-span-5">
           <DemographicCard />
-        </div>
+        </div> */}
 
-        <div className="col-span-12 xl:col-span-7">
-          <RecentOrders />
+        <div className="col-span-12 ">
+          <RecentOrders/>
         </div>
       </div>
     </>

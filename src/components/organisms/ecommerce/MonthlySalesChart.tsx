@@ -17,7 +17,6 @@ export default function MonthlySalesChart({ orders }: MonthlySalesChartsProps) {
 
   // Tính toán giá trị lớn nhất trong 12 tháng
   const maxValue = Math.ceil(totalPrice / 100) * 100; // Làm tròn lên đến bội số của 100
-  const stepValue = maxValue / 5; // Chia thành 5 bước
 
   const options: ApexOptions = {
     colors: ["#465fff"],
@@ -104,7 +103,7 @@ export default function MonthlySalesChart({ orders }: MonthlySalesChartsProps) {
   const series = [
     {
       name: "Orders",
-      data: [0, 0, totalPrice, 90],
+      data: [0, 0, totalPrice],
     },
   ];
 
