@@ -8,6 +8,7 @@ import { User } from '../../../model/User';
 import useAppointmentService from '../../../services/useApoitment';
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
+import { getUserDataFromLocalStorage } from '../../../constants/function';
 const { Option } = Select;
 
 function BookingDoctor() {
@@ -19,6 +20,7 @@ function BookingDoctor() {
 	const [doctors, setDoctors] = useState<User[]>([]);
 	const [selectedDoctor, setSelectedDoctor] = useState<User | null>(null);
 	const [fetalRecords, setFetalRecords] = useState<FetalRecord>();
+	const user = getUserDataFromLocalStorage();
 
 	const { getFetalsByMotherId, getFetalsRecords } = useFetalService();
 	const { getUserByRole, getUserById } = userUserService();
@@ -41,10 +43,10 @@ function BookingDoctor() {
 	};
 
 	useEffect(() => {
-		const user = localStorage.getItem('USER');
-		if (user) {
-			handleGetFetalsByMotherId(JSON.parse(user).id);
-		}
+		// const user = localStorage.getItem('USER');
+		// if (user) {
+		// }
+		handleGetFetalsByMotherId(user.id);
 		handleGetDoctors();
 	}, []);
 
@@ -136,8 +138,8 @@ function BookingDoctor() {
 				>
 					<Select placeholder="Chọn thai">
 						{fetals
-							.filter((fetal) => fetal?.status === "PREGNANT")
-							.map((fetal) => (
+							?.filter((fetal) => fetal?.status === "PREGNANT")
+							?.map((fetal) => (
 								<Option key={fetal.id} value={fetal.id}>
 									{fetal.name}
 								</Option>
