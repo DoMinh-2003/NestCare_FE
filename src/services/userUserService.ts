@@ -22,6 +22,21 @@ const userUserService = () => {
     [callApi, dispatch, router]
   );
 
+  const getAvailableDoctor = useCallback(async (date: string, slotId: string) => {
+    try {
+      const queryParams = {
+        date,   // The date in YYYY-MM-DD format
+        slotId  // The ID of the time slot
+      };
+      const response = await callApi("get", "users/available-doctor", { params: queryParams });
+      return response
+    } catch (e: any) {
+      console.log('====================================');
+      console.log(e);
+      console.log('====================================');
+    }
+  }, [callApi, dispatch, router]);
+
   const getUsersSearch = useCallback(
     async (name: string, role: string) => {
       try {
@@ -114,7 +129,7 @@ const userUserService = () => {
     }, [callApi],
   )
 
-  return { getUserById, getUsers, getUserByRole, loading, updateUser, deleteUser, createUser, setIsLoading, getUsersSearch };
+  return { getUserById, getAvailableDoctor, getUsers, getUserByRole, loading, updateUser, deleteUser, createUser, setIsLoading, getUsersSearch };
 };
 
 export default userUserService;
