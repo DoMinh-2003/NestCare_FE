@@ -29,11 +29,11 @@ const useServiceService = () => {
     [callApi, router]
   );
 
-  
+
   const createServices = useCallback(
     async (values: any) => {
       try {
-        const response = await callApi("post", "services",{
+        const response = await callApi("post", "services", {
           ...values
         });
         return response;
@@ -47,7 +47,7 @@ const useServiceService = () => {
   const updateServices = useCallback(
     async (values: any) => {
       try {
-        const response = await callApi("put", `services/${values.id}`,{
+        const response = await callApi("put", `services/${values.id}`, {
           description: values.description,
           price: values.price,
           name: values.name
@@ -63,7 +63,7 @@ const useServiceService = () => {
   const deleteServices = useCallback(
     async (id: string) => {
       try {
-        const response = await callApi("put", `services/${id}/toggle-delete`,{
+        const response = await callApi("put", `services/${id}/toggle-delete`, {
           isDeleted: true
         });
         console.log("response dl: ", response)
@@ -76,7 +76,7 @@ const useServiceService = () => {
     [callApi, router]
   );
 
-  return { getServices, deleteServices ,createServices,updateServices, loading, setIsLoading };
+  return { getServices, deleteServices, createServices, updateServices, loading, setIsLoading };
 };
 
 export default useServiceService;
