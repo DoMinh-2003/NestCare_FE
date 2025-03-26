@@ -33,7 +33,7 @@ const DoctorManageAppointments: React.FC = () => {
     // Lấy danh sách cuộc hẹn
     const getAppointmentFromDoctor = async () => {
         if (!currentDoctor) return;
-        const response = await getAppointmentsByDoctor(currentDoctor.id);
+        const response = await getAppointmentsByDoctor(currentDoctor?.id);
         if (response) {
             setAppointments(response.filter((item) => !item.isDeleted));
         }

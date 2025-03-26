@@ -38,7 +38,20 @@ const useBlogService = () => {
         [callApi]
     );
 
-    return { getBlogs, loading, setIsLoading };
+    const getBlog = useCallback(async (id: string) => {
+        try {
+
+
+            const response = await callApi("get", `blogs/${id}`);
+            return response;
+        } catch (e: any) {
+            toast.error(e?.response?.data?.message || "Lấy danh sách blog thất bại");
+        }
+    },
+        [callApi]
+    );
+
+    return { getBlogs, loading, setIsLoading, getBlog };
 };
 
 export default useBlogService;

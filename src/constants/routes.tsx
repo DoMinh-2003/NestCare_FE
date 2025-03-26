@@ -31,6 +31,7 @@ export enum USER_ROUTES {
   APPOINTMENT_HISTORY = "/appointment-history",
   FETAL_CHART = "/fetal-chart",
   BLOG_PAGE = "/blog",
+  BLOG_DETAIL = "/blog/:id",
 }
 
 export enum DOCTOR_ROUTES {

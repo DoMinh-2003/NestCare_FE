@@ -49,8 +49,8 @@ import AdminManageMedicines from "../pages/admin/manage-medicines";
 import NurseCheckIn from "../pages/nurse/appointment";
 import WeekCheckup from "../pages/admin/week-checkup";
 import FetalChart from "../pages/customer/fetal-chart";
-import DoctorManageRequestAppointments from "../pages/doctor/manage-request-appointments";
-import BlogPage from "../pages/blog";
+import BlogPage from "../pages/customer/blog";
+import BlogDetail from "../pages/customer/blog-detail";
 
 
 interface ProtectedRouteByRoleProps {
@@ -188,6 +188,10 @@ export const router = createBrowserRouter([
         path: USER_ROUTES.BLOG_PAGE,
         element: <BlogPage />,
       },
+      {
+        path: USER_ROUTES.BLOG_DETAIL,
+        element: <BlogDetail />,
+      },
     ],
   },
   {
@@ -307,10 +311,7 @@ export const router = createBrowserRouter([
         path: DOCTOR_ROUTES.FETALS_DETAIL,
         element: <FetailDetail />,
       },
-      {
-        path: DOCTOR_ROUTES.REQUEST_APPOINTMENT,
-        element: <DoctorManageRequestAppointments />,
-      }
+
       // {
       //   path: ADMIN_ROUTES.OVERVIEW,
       //   element: <ManageOverview />,
