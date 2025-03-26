@@ -37,8 +37,20 @@ const useAuthService = () => {
         localStorage.setItem('USER', JSON.stringify(response));
         console.log(localStorage.getItem('USER'));
         message.success("Đăng nhập thành công");
-
-        router("/");
+        switch (response?.role) {
+          case "doctor":
+            router('/doctor')
+            break;
+          case "nurse":
+            router('/nurse')
+            break;
+          case "admin":
+            router('/admin')
+            break;
+          default:
+            router("/");
+            break;
+        }
         // dispatch(loginRedux(response?.data));
         return response?.data;
       } catch (e: any) {
