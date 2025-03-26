@@ -53,6 +53,7 @@ import BlogPage from "../pages/customer/blog";
 import BlogDetail from "../pages/customer/blog-detail";
 import { message } from "antd";
 import AdminManageCategory from "../pages/admin/manage-category";
+import AdminManageBlogs from "../pages/admin/manage-blog";
 
 
 interface ProtectedRouteByRoleProps {
@@ -253,6 +254,10 @@ export const router = createBrowserRouter([
       {
         path: ADMIN_ROUTES.CATEGORIES,
         element: <AdminManageCategory />,
+      },
+      {
+        path: ADMIN_ROUTES.BLOGS,
+        element: <AdminManageBlogs />,
       },
     ],
   },
