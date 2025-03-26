@@ -1,4 +1,4 @@
-import { Button, Form, Input, Modal, Popconfirm, Table } from "antd";
+import { Button, Form, Input, message, Modal, Popconfirm, Table } from "antd";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import api from "../../../config/api";
@@ -60,48 +60,48 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
       ...(isCustom
         ? []
         : [
-            {
-              title: "Action",
-              dataIndex: "id",
-              key: "id",
-              render: (id: string, record: any) => (
-                <div style={{ gap: "10px", display: "flex" }}>
-                  {!isNotDelete && (
-                    <>
-                      <Popconfirm
-                        title={`Delete ${title}`}
-                        onConfirm={() => handleDelete(id)}
-                      >
-                        <Button type="primary" danger>
-                          Delete
-                        </Button>
-                      </Popconfirm>
-                      <span style={{ margin: "10px 5px" }}>|</span>
-                    </>
-                  )}
-                  <Button
-                    type="primary"
-                    style={{ backgroundColor: "orange" }}
-                    onClick={() => {
-                      setIsUpdate(true);
-                      if (record?.dateTo && record.dateFrom) {
-                        formTag.setFieldsValue({
-                          ...record,
-                          dateFrom: moment(record.dateFrom),
-                          dateTo: moment(record.dateTo),
-                        });
-                      } else {
-                        formTag.setFieldsValue({ ...record, id });
-                      }
-                      handleOpenModal();
-                    }}
-                  >
-                    Update
-                  </Button>
-                </div>
-              ),
-            },
-          ]),
+          {
+            title: "Action",
+            dataIndex: "id",
+            key: "id",
+            render: (id: string, record: any) => (
+              <div style={{ gap: "10px", display: "flex" }}>
+                {!isNotDelete && (
+                  <>
+                    <Popconfirm
+                      title={`Delete ${title}`}
+                      onConfirm={() => handleDelete(id)}
+                    >
+                      <Button type="primary" danger>
+                        Delete
+                      </Button>
+                    </Popconfirm>
+                    <span style={{ margin: "10px 5px" }}>|</span>
+                  </>
+                )}
+                <Button
+                  type="primary"
+                  style={{ backgroundColor: "orange" }}
+                  onClick={() => {
+                    setIsUpdate(true);
+                    if (record?.dateTo && record.dateFrom) {
+                      formTag.setFieldsValue({
+                        ...record,
+                        dateFrom: moment(record.dateFrom),
+                        dateTo: moment(record.dateTo),
+                      });
+                    } else {
+                      formTag.setFieldsValue({ ...record, id });
+                    }
+                    handleOpenModal();
+                  }}
+                >
+                  Update
+                </Button>
+              </div>
+            ),
+          },
+        ]),
     ];
     setTableColumns(newColumns);
   }, [columns, title, formTag, isCustom]);
@@ -119,12 +119,12 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
 
       // Filter data only when the apiURI is 'admin'
       if (apiURI === "admin") {
-        formatData = formatData.filter((item:any) => item?.role !== "ADMIN"); // Ensure the condition matches only 'ADMIN' role
+        formatData = formatData.filter((item: any) => item?.role !== "ADMIN"); // Ensure the condition matches only 'ADMIN' role
       }
 
       setDataSource(formatData);
     } catch (err: any) {
-      toast.error(err.response?.data || "An error occurred");
+      message.error(err.response?.data || "An error occurred");
     } finally {
       setIsFetching(false);
     }
@@ -166,14 +166,14 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
         : api.post(apiURI, apiData);
 
       await apiCall;
-      toast.success(values.id ? "Chỉnh sửa thành công" : "Thêm thành công !!");
+      message.success(values.id ? "Chỉnh sửa thành công" : "Thêm thành công !!");
 
       formTag.resetFields();
       handleCloseModal();
       fetchData();
     } catch (error: any) {
       const errorMessage = error.response?.data || "Failed to submit form";
-      toast.error(errorMessage);
+      message.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -182,10 +182,10 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
   const handleDelete = async (id: string) => {
     try {
       await api.delete(`${apiURI}/${id}`);
-      toast.success("Deleted successfully");
+      message.success("Deleted successfully");
       fetchData();
     } catch (err: any) {
-      toast.error(err.response?.data || "Failed to delete item");
+      message.error(err.response?.data || "Failed to delete item");
     }
   };
 
@@ -221,7 +221,7 @@ export const DashboardTemplate: React.FC<DashboardTemplateProps> = ({
         )
       )} */}
 
-{
+      {
         !isRequest && (
           <Button onClick={() => handleOpenModal()} type="primary">
             Thiết lập {title}

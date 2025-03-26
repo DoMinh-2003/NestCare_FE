@@ -3,6 +3,7 @@ import { Table, Button, Modal, message, Select } from 'antd';
 import useAppointmentService from '../../../services/useApoitment';
 import type { GetProps } from 'antd';
 import { Input } from 'antd';
+import { toast } from 'react-toastify';
 type SearchProps = GetProps<typeof Input.Search>;
 const { Search } = Input;
 interface FetalRecord {
@@ -124,12 +125,12 @@ const NurseCheckIn: React.FC = () => {
 };
 
 export const appointmentStatus = [
-    { label: "PENDING", value: "PENDING" },
-    { label: "CONFIRMED", value: "CONFIRMED" },
-    { label: "CHECKED_IN", value: "CHECKED_IN" },
-    { label: "IN_PROGRESS", value: "IN_PROGRESS" },
-    { label: "COMPLETED", value: "COMPLETED" },
-    { label: "CANCELED", value: "CANCELED" },
+    { label: "Đang chờ xác nhận", value: "PENDING" },
+    { label: "Đã xác nhận", value: "CONFIRMED" },
+    { label: "Đã đến bệnh viện", value: "CHECKED_IN" },
+    { label: "Đang khám", value: "IN_PROGRESS" },
+    { label: "Hoàn tất", value: "COMPLETED" },
+    { label: "Đã hủy", value: "CANCELED" },
 ];
 
 export default NurseCheckIn;

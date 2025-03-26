@@ -3,6 +3,7 @@ import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import useApiService from "../hooks/useApi";
 import { toast } from "react-toastify";
+import { message } from "antd";
 
 export interface Service {
   id: string;
@@ -23,7 +24,7 @@ const useServiceService = () => {
         const response = await callApi("get", "services");
         return response;
       } catch (e: any) {
-        toast.error(e?.response?.data);
+        message.error(e?.response?.data);
       }
     },
     [callApi, router]
@@ -38,7 +39,7 @@ const useServiceService = () => {
         });
         return response;
       } catch (e: any) {
-        toast.error(e?.response?.data);
+        message.error(e?.response?.data);
       }
     },
     [callApi, router]
@@ -54,7 +55,7 @@ const useServiceService = () => {
         });
         return response;
       } catch (e: any) {
-        toast.error(e?.response?.data);
+        message.error(e?.response?.data);
       }
     },
     [callApi, router]
@@ -69,7 +70,7 @@ const useServiceService = () => {
         console.log("response dl: ", response)
         return response;
       } catch (e: any) {
-        toast.error(e?.response?.data);
+        message.error(e?.response?.data);
         console.log("deleteServices: ", e?.response?.data)
       }
     },

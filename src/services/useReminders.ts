@@ -3,6 +3,7 @@ import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import useApiService from "../hooks/useApi";
 import { toast } from "react-toastify";
+import { message } from "antd";
 
 const userReminderService = () => {
     const { callApi, loading, setIsLoading } = useApiService();
@@ -19,7 +20,7 @@ const userReminderService = () => {
                 console.log(response);
                 return response;
             } catch (e: any) {
-                toast.error(e?.response?.data?.message || "CreateReminderssByDoctor failed");
+                message.error(e?.response?.data?.message || "CreateReminderssByDoctor failed");
                 throw e;
             }
         },

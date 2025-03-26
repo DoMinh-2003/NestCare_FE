@@ -3,6 +3,7 @@ import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import useApiService from "../hooks/useApi";
 import { toast } from "react-toastify";
+import { message } from "antd";
 
 export interface Service {
 	id: string;
@@ -47,7 +48,7 @@ const useAppointmentService = () => {
 				});
 				return response;
 			} catch (e: any) {
-				toast.error(e?.response?.data);
+				message.error(e?.response?.data);
 			}
 		},
 		[callApi, router]
@@ -59,7 +60,7 @@ const useAppointmentService = () => {
 				const response = await callApi("get", `appointments/${id}/history`);
 				return response;
 			} catch (e: any) {
-				toast.error(e?.response?.data);
+				message.error(e?.response?.data);
 			}
 		},
 		[callApi, router]
@@ -71,7 +72,7 @@ const useAppointmentService = () => {
 				const response = await callApi("get", `appointments/${appointmentId}`);
 				return response;
 			} catch (e: any) {
-				toast.error(e?.response?.data);
+				message.error(e?.response?.data);
 			}
 		},
 		[callApi, router]
@@ -85,7 +86,7 @@ const useAppointmentService = () => {
 				});
 				return response;
 			} catch (e: any) {
-				toast.error(e?.response?.data);
+				message.error(e?.response?.data);
 			}
 		},
 		[callApi, router]
@@ -98,7 +99,7 @@ const useAppointmentService = () => {
 				console.log("getAppointmentsByStatus: ", response)
 				return response;
 			} catch (e: any) {
-				toast.error(e?.response?.data);
+				message.error(e?.response?.data);
 			}
 		},
 		[callApi, router]
@@ -111,13 +112,13 @@ const useAppointmentService = () => {
 				console.log("updateAppointmentsByStatus: ", response)
 				return response;
 			} catch (e: any) {
-				toast.error(e?.response?.data);
+				message.error(e?.response?.data);
 			}
 		},
 		[callApi, router]
 	);
 
-	return {updateAppointmentsByStatus,  getAppointments, createReminder, getHistoryFetal, userCreateAppointments, loading, setIsLoading, getAppointmentsByStatus };
+	return { updateAppointmentsByStatus, getAppointments, createReminder, getHistoryFetal, userCreateAppointments, loading, setIsLoading, getAppointmentsByStatus };
 };
 
 export default useAppointmentService;

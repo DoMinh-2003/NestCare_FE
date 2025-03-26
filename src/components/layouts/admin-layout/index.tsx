@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import type { MenuProps } from "antd";
-import { Layout, Menu, theme } from "antd";
+import { Layout, Menu, message, theme } from "antd";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 const { Header, Content, Footer, Sider } = Layout;
 import { SlCalender } from "react-icons/sl";
@@ -42,11 +42,11 @@ const AdminLayout: React.FC = () => {
   const handleLogout = () => {
     dispatch(logout());
     navigate("/login");
-    toast.success("Logged out");
+    message.success("Logged out");
   };
 
   return (
-    <Layout style={{   height: "auto", }}>
+    <Layout style={{ height: "auto", }}>
       <Sider
         collapsible
         collapsed={collapsed}
@@ -83,7 +83,7 @@ const AdminLayout: React.FC = () => {
           <div
             style={{
               padding: 24,
-              minHeight:"720px",
+              minHeight: "720px",
               flexGrow: 1,
               background: colorBgContainer,
               borderRadius: borderRadiusLG,

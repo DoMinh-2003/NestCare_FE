@@ -4,6 +4,7 @@ import ModalCreateUpdateMedicine, { Medicine } from '../../../components/organis
 import useMedicineService from '../../../services/useMedicineService';
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import ModalDelete from '../../../components/organisms/modal-delete';
+import { toast } from 'react-toastify';
 
 const AdminManageMedicines: React.FC = () => {
 
@@ -94,18 +95,18 @@ const AdminManageMedicines: React.FC = () => {
 
             ),
         },
-    ];  
+    ];
 
     const handleOkDelete = async () => {
         await deleteMedicine(currentMedicine?.id + "")
-        message.success('Xoá thuốc thành công!')
+        toast.success('Xoá thuốc thành công!')
         setIsModalDelete(false)
         getMedicine()
     }
 
     const handleCancelModalDelete = async () => {
         setIsModalDelete(false)
-    } 
+    }
 
     return (
         <div>

@@ -19,7 +19,7 @@ const useApiService = () => {
         return response.data;
       } catch (e: any) {
         console.error(e);
-        toast.error(e?.response?.data?.message || "createUser failed");
+        message.error(e?.response?.data?.message || "createUser failed");
         // toast.error(e?.response?.data || "Operation failed");
         throw e;
       } finally {
