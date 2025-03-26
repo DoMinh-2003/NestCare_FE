@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Form, Select, DatePicker, Button, Row, Col, Card } from "antd";
+import { Form, Select, DatePicker, Button, Row, Col, Card, message } from "antd";
 import { useForm } from 'antd/es/form/Form';
 import useFetalService from '../../../services/useFetalService';
 import userUserService from '../../../services/userUserService';
@@ -91,7 +91,7 @@ function BookingDoctor() {
 			const response = await userCreateAppointments(appointment);
 			if (response) {
 				console.log("Appointment created successfully:", response);
-				toast.success("Đã đặt lịch hẹn thành công!");
+				message.success("Đã đặt lịch hẹn thành công!");
 				form.resetFields();
 				setSelectedDate(null);
 				setSelectedTime(null);

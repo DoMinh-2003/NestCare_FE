@@ -1,4 +1,4 @@
-import { Button, DatePicker, Form, Input, Modal, Select } from 'antd';
+import { Button, DatePicker, Form, Input, message, Modal, Select } from 'antd';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -29,11 +29,11 @@ function FetalCreation({ open, onClose }) {
 		try {
 			const response = await createFetal(formattedValues);
 			console.log('Created fetal:', response);
-			toast.success('Tạo hồ sơ thai nhi thành công!');
+			message.success('Tạo hồ sơ thai nhi thành công!');
 			form.resetFields();
 			onClose();
 		} catch (error) {
-			toast.error('Tạo hồ sơ không thành công, hãy thử lại!');
+			message.error('Tạo hồ sơ không thành công, hãy thử lại!');
 			console.log('Error creating fetal:', error);
 		} finally {
 			setLoading(false);

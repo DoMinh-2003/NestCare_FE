@@ -3,6 +3,7 @@ import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import useApiService from "../hooks/useApi";
 import { toast } from "react-toastify";
+import { message } from "antd";
 
 export interface Service {
     id: string;
@@ -45,7 +46,7 @@ const usePackageService = () => {
                 const response = await callApi("get", "packages");
                 return response?.data;
             } catch (e: any) {
-                toast.error(e?.response?.data);
+                message.error(e?.response?.data);
             }
         },
         [callApi, router]
@@ -59,7 +60,7 @@ const usePackageService = () => {
                 });
                 return response;
             } catch (e: any) {
-                toast.error(e?.response?.data);
+                message.error(e?.response?.data);
             }
         },
         [callApi, router]
@@ -71,7 +72,7 @@ const usePackageService = () => {
                 const response = await callApi("get", `packages/${id}`);
                 return response;
             } catch (e: any) {
-                toast.error(e?.response?.data);
+                message.error(e?.response?.data);
             }
         },
         [callApi, router]
@@ -88,7 +89,7 @@ const usePackageService = () => {
                 });
                 return response;
             } catch (e: any) {
-                toast.error(e?.response?.data);
+                message.error(e?.response?.data);
             }
         },
         [callApi, router]
@@ -100,7 +101,7 @@ const usePackageService = () => {
                 const response = await callApi("delete", `services/${id}`);
                 return response;
             } catch (e: any) {
-                toast.error(e?.response?.data);
+                message.error(e?.response?.data);
             }
         },
         [callApi, router]

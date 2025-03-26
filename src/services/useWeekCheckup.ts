@@ -3,6 +3,7 @@ import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import useApiService from "../hooks/useApi";
 import { toast } from "react-toastify";
+import { message } from "antd";
 
 export interface Service {
     id: string;
@@ -24,7 +25,7 @@ const useWeekCheckupService = () => {
                 const response = await callApi("get", "week-checkup");
                 return response;
             } catch (e: any) {
-                toast.error(e?.response?.data);
+                message.error(e?.response?.data);
             }
         },
         [callApi, router]
@@ -38,34 +39,34 @@ const useWeekCheckupService = () => {
                 });
                 return response;
             } catch (e: any) {
-                toast.error(e?.response?.data);
+                message.error(e?.response?.data);
             }
         },
         [callApi, router]
     );
 
-    const updateWeekCheckup  = useCallback(
+    const updateWeekCheckup = useCallback(
         async (values: any, id: string) => {
             try {
                 const response = await callApi("put", `week-checkup/${id}`, {
-                   ...values
+                    ...values
                 });
                 return response;
             } catch (e: any) {
-                toast.error(e?.response?.data);
+                message.error(e?.response?.data);
             }
         },
         [callApi, router]
     );
 
-    const deleteWeekCheckup  = useCallback(
+    const deleteWeekCheckup = useCallback(
         async (id: string) => {
             try {
                 const response = await callApi("delete", `week-checkup/${id}`);
                 console.log("deleteWeekCheckup dl: ", response)
                 return response;
             } catch (e: any) {
-                toast.error(e?.response?.data);
+                message.error(e?.response?.data);
                 console.log("deleteWeekCheckup: ", e?.response?.data)
             }
         },

@@ -7,6 +7,7 @@ import dayjs from "dayjs"
 import AppointmentDetail from "../appointment-detail"
 import CreateReminderModal from "../modal/createRemindModal"
 import useAppointmentService from "../../../services/useApoitment"
+import { toast } from "react-toastify"
 
 const { Title, Text } = Typography
 const { TabPane } = Tabs
@@ -241,7 +242,7 @@ const AppointmentDashboard: React.FC = () => {
 				visible={isReminderModalVisible}
 				onCancel={() => setIsReminderModalVisible(false)}
 				motherId={currentUser?.id || ""}
-				onSuccess={() => message.success("Tạo ghi chú thành công")}
+				onSuccess={() => toast.success("Tạo ghi chú thành công")}
 			/>
 		</div>
 	)

@@ -1,6 +1,7 @@
 import { useCallback } from "react";
 import { toast } from "react-toastify";
 import useApiService from "../hooks/useApi";
+import { message } from "antd";
 
 const useBlogService = () => {
     const { callApi, loading, setIsLoading } = useApiService();
@@ -32,7 +33,7 @@ const useBlogService = () => {
                 const response = await callApi("post", "blogs/search", body);
                 return response;
             } catch (e: any) {
-                toast.error(e?.response?.data?.message || "Lấy danh sách blog thất bại");
+                message.error(e?.response?.data?.message || "Lấy danh sách blog thất bại");
             }
         },
         [callApi]
@@ -45,7 +46,7 @@ const useBlogService = () => {
             const response = await callApi("get", `blogs/${id}`);
             return response;
         } catch (e: any) {
-            toast.error(e?.response?.data?.message || "Lấy danh sách blog thất bại");
+            message.error(e?.response?.data?.message || "Lấy danh sách blog thất bại");
         }
     },
         [callApi]

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import type { MenuProps } from "antd";
-import { Layout, Menu, theme } from "antd";
+import { Layout, Menu, message, theme } from "antd";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 const { Header, Content, Footer, Sider } = Layout;
 import { SlCalender } from "react-icons/sl";
@@ -26,9 +26,9 @@ function getItem(
 }
 const items: MenuItem[] = [
   getItem("Overview", "overview", <FaChartPie />),
-  getItem("User", "users", <SlCalender />),
-  getItem("Orders", "orders", <SlCalender />),
-  getItem("Appointments", "appointments", <SlCalender />),
+  getItem("Quản lí người dùng", "users", <SlCalender />),
+  getItem("Quản lí thanh toán", "orders", <SlCalender />),
+  getItem("Quản lí cuộc hẹn", "appointments", <SlCalender />),
 ];
 
 const NurseLayout: React.FC = () => {
@@ -41,7 +41,7 @@ const NurseLayout: React.FC = () => {
   const handleLogout = () => {
     dispatch(logout());
     navigate("/");
-    toast.success("Đăng xuất thành công");
+    message.success("Đăng xuất thành công");
   };
 
   return (
