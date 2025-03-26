@@ -1,9 +1,14 @@
+import { message } from "antd";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { logout } from "../redux/features/userSlice";
 
 const api = axios.create({
   // baseURL: "http://14.225.217.207:8081/api/",
   baseURL: import.meta.env.VITE_API_URL,
 });
+
+let isTokenExpired = false;
 
 api.interceptors.request.use(
   function (config) {
@@ -18,6 +23,32 @@ api.interceptors.request.use(
     return Promise.reject(error);
   }
 );
+
+api.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    if (error.response) {
+      const { data } = error.response;
+      const dispatch = useDispatch();
+      console.log(error.response);
+      if (data.message === null && data.errors && data.errors.length > 0) {
+        data.errors.forEach((error: { field: string, message: string }) => {
+          message.error(`${error.field}: ${error.message}`);
+        });
+      } else {
+        if (!isTokenExpired) {
+          isTokenExpired = true
+          message.error(data.message);
+          setTimeout(() => {
+            window.location.href = '/'
+            localStorage.clear();
+            isTokenExpired = false;
+            dispatch(logout())
+          }, 1300);
+        }
+      }
+    }
+  })
 
 export default api;
 
