@@ -53,7 +53,8 @@ function BookingDoctor() {
 	const handleGetDoctors = async () => {
 		try {
 			console.log("selectedDate:", selectedDate, "selectedTime:", selectedTime)
-			const response = await getAvailableDoctor(selectedDate, selectedTime)
+			const date = selectedDate ? dayjs(selectedDate).format("YYYY-MM-DD") : null
+			const response = await getAvailableDoctor(date, selectedTime)
 			setDoctors(response)
 		} catch (error) {
 			message.error("Không thể tải danh sách bác sĩ")
