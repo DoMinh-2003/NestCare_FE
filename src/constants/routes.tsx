@@ -59,4 +59,5 @@ export enum ADMIN_ROUTES {
   MEDICINES = "medicines",
   FEATALS_RECORD = "fetals/:id",
   WEEK_CHECKUPS = "week-checkups",
+  CATEGORIES = "category"
 }
