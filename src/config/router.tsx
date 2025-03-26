@@ -55,6 +55,7 @@ import { message } from "antd";
 import AdminManageCategory from "../pages/admin/manage-category";
 import AdminManageBlogs from "../pages/admin/manage-blog";
 import ManageSlot from "../pages/admin/manage-slot";
+import Profile from "../pages/customer/profile";
 
 
 interface ProtectedRouteByRoleProps {
@@ -195,6 +196,10 @@ export const router = createBrowserRouter([
       {
         path: USER_ROUTES.BLOG_DETAIL,
         element: <BlogDetail />,
+      },
+      {
+        path: USER_ROUTES.PROFILE,
+        element: <Profile />,
       },
     ],
   },
