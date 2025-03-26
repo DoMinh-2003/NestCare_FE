@@ -40,15 +40,17 @@ function BookingDoctor() {
 
 	const handleGetFetalsByMotherId = async (userId: string) => {
 		try {
-			const response = await getFetalsByMotherId(userId)
-			setFetals(response)
+			const response = await getFetalsByMotherId(userId);
+			setFetals(response);
+			const pregnantFetals = response.filter(fetal => fetal.status === "PREGNANT");
+			form.setFieldsValue({ fetalRecords: pregnantFetals.map(fetal => fetal.id) });
 		} catch (error) {
-			message.error("Không thể tải dữ liệu thai nhi")
-			console.error("Error fetching fetals:", error)
+			message.error("Không thể tải dữ liệu thai nhi");
+			console.error("Error fetching fetals:", error);
 		} finally {
-			setLoading((prev) => ({ ...prev, fetals: false }))
+			setLoading((prev) => ({ ...prev, fetals: false }));
 		}
-	}
+	};
 
 	const handleGetDoctors = async () => {
 		try {
