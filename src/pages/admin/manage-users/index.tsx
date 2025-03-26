@@ -20,7 +20,7 @@ const AdminManageUsers: React.FC = () => {
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
     const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
     const [isFetalProfileModalVisible, setIsFetalProfileModalVisible] = useState(false);
-    const [roleToFilter, setRoleToFilter] =  useState<string>('')
+    const [roleToFilter, setRoleToFilter] = useState<string>('')
     const showModal = (user: UserData | null = null) => {
         if (user) {
             setCurrentUser(user);
@@ -107,32 +107,39 @@ const AdminManageUsers: React.FC = () => {
             key: "phone",
         },
         {
-            title: "Hồ Sơ thai nhi",
-            render: (record: UserData) => (
-                <span
-                    className="text-blue cursor-pointer"
-                    onClick={() => {
-                        setSelectedUserId(record.id + "");
-                        setIsFetalProfileModalVisible(true);
-                    }}
-                >
-                    Xem hồ sơ
-                </span>
-            )
-        },
-        {
             title: "Vai trò",
             dataIndex: "role",
             key: "role",
         },
         {
+            title: "Hồ Sơ thai nhi",
+            render: (record: UserData) => {
+                if (record.role === "user") {
+                    return <span
+                        className="text-blue cursor-pointer"
+                        onClick={() => {
+                            setSelectedUserId(record.id + "");
+                            setIsFetalProfileModalVisible(true);
+                        }}
+                    >
+                        Xem hồ sơ
+                    </span>
+                }
+                return null;
+            }
+        },
+
+        {
             title: 'Hành động',
-            render: (record: UserData) => (
-                <div className="flex gap-2 text-xl">
-                    <EditOutlined onClick={() => showModal(record)} className="text-blue" />
-                    <DeleteOutlined onClick={() => handleOpenModalDelete(record)} className="text-red-500" />
-                </div>
-            )
+            render: (record: UserData) => {
+                if (record.role === "doctor" || record.role === "nurse") {
+                    return <div className="flex gap-2 text-xl">
+                        <EditOutlined onClick={() => showModal(record)} className="text-blue" />
+                        <DeleteOutlined onClick={() => handleOpenModalDelete(record)} className="text-red-500" />
+                    </div>
+                }
+                return null;
+            }
         },
     ];
 
@@ -159,28 +166,33 @@ const AdminManageUsers: React.FC = () => {
     }
     const handleChange = (value: string) => {
         setRoleToFilter(value);
-    }   
-    const roles = [{"role": "user", "name": "User"}, {"role":"doctor", "name": "Doctor"}, {"role": "", "name": "Tất cả"}]
+    }
+    const roles = [{ "role": "user", "name": "User" }, { "role": "doctor", "name": "Doctor" }, { "role": "", "name": "Tất cả" }]
     return (
         <div>
             <div className='text-3xl font-semibold text-center mb-5'>
                 Quản lý người dùng
             </div>
-            <div className='flex gap-2'>
-                <Search placeholder="Tìm kiếm bằng tên" className='w-[200px]' onSearch={onSearch} enterButton />
-                <Button onClick={() => showModal()} type="primary" style={{ marginBottom: 16 }}>
-                    Thêm người dùng
-                </Button>
-                <Select
-                    placeholder="Chọn gói dịch vụ"
-                    onChange={handleChange}
-                    className='w-[100px]'
-                    options={
-                        roles.map((item) => (
-                            { value: item.role, label: item.name }
-                        ))
-                    }
-                />
+            <div className='flex gap-2 justify-between px-2'>
+                <div className='gap-2 flex'>
+                    <Search placeholder="Tìm kiếm bằng tên" className='w-[200px]' onSearch={onSearch} enterButton />
+
+                    <Select
+                        placeholder="Chọn vai trò"
+                        onChange={handleChange}
+                        className='w-[150px]'
+                        options={
+                            roles.map((item) => (
+                                { value: item.role, label: item.name }
+                            ))
+                        }
+                    />
+                </div>
+                <div>
+                    <Button onClick={() => showModal()} type="primary" style={{ marginBottom: 16 }}>
+                        Thêm người dùng
+                    </Button>
+                </div>
             </div>
             <ModalDelete
                 handleCancelModalDelete={handleCancelModalDelete}

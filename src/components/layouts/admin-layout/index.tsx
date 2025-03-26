@@ -27,10 +27,13 @@ function getItem(
 const items: MenuItem[] = [
   getItem("Tổng quan", "overview", <FaChartPie />),
   getItem("Người dùng", "user", <SlCalender />),
+  getItem("Quản lí danh mục", "category", <SlCalender />),
+  getItem("Quản lí blog", "blog", <SlCalender />),
   getItem("Dịch vụ", "services", <SlCalender />),
   getItem("Gói dịch vụ", "packages", <SlCalender />),
   getItem("Thuốc", "medicines", <SlCalender />),
   getItem("Lịch khám theo tuần", "week-checkups", <SlCalender />),
+  getItem("Quản lý slot", "slot", <SlCalender />),
 ];
 const AdminLayout: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
