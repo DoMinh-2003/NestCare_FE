@@ -1,9 +1,9 @@
-import { useDispatch } from "react-redux";
+/* eslint-disable no-useless-catch */
 import { useCallback } from "react";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import useApiService from "../hooks/useApi";
-import { toast } from "react-toastify";
 import { AppointmentStatus } from "../constants/status";
+import useApiService from "../hooks/useApi";
 
 const userAppointmentService = () => {
     const { callApi, loading, setIsLoading } = useApiService();
@@ -33,11 +33,9 @@ const userAppointmentService = () => {
     );
 
     const addServicesToAppointment = useCallback(
-        async (appointmentId: string, serviceIds: []) => {
+        async (appointmentId: string, services: { serviceId: string; notes: string }[]) => {
             try {
-                const response = await callApi("post", `appointments/in-progress/${appointmentId}`, {
-                    serviceIds,
-                });
+                const response = await callApi("put", `appointments/in-progress/${appointmentId}`, services);
                 return response;
             } catch (error) {
                 throw error;

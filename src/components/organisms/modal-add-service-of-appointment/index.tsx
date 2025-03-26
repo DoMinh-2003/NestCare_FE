@@ -1,8 +1,9 @@
 // components/organisms/modal-add-services/ModalAddServices.tsx
 import React, { useEffect, useState } from "react";
-import { Modal, Form, Select, Button, message } from "antd";
+import { Modal, Form, Select, Button, message, Input } from "antd";
 import userAppointmentService from "../../../services/useAppointmentService";
 import useServiceService from "../../../services/useServiceService";
+import TextArea from "antd/es/input/TextArea";
 
 const { Option } = Select;
 
@@ -23,6 +24,7 @@ const ModalAddServices: React.FC<ModalAddServicesProps> = ({
     const { getServices } = useServiceService();
     const { addServicesToAppointment } = userAppointmentService(); // Hàm cập nhật dịch vụ trong cuộc hẹn
     const [services, setServices] = useState<[]>([]);
+    const [selectedServices, setSelectedServices] = useState<string[]>([]); // Track selected service IDs
 
     useEffect(() => {
         // Gọi API lấy danh sách dịch vụ
@@ -42,12 +44,27 @@ const ModalAddServices: React.FC<ModalAddServicesProps> = ({
         }
     }, [visible, getServices, form]);
 
+    // Handle service selection change
+    const handleServiceChange = (values: string[]) => {
+        setSelectedServices(values);
+    };
+
     const handleOk = async () => {
         try {
             const values = await form.validateFields();
+            console.log("Form values:", values);
+
+            // Transform selected services and notes into the desired format
+            const serviceList = selectedServices.map((serviceId) => ({
+                serviceId,
+                notes: values.notes?.[serviceId] || "", // Get note for each service ID
+            }));
+
+            console.log("Service list to submit:", serviceList);
+
             // values.servicesSelected là mảng ID dịch vụ
             if (!appointmentId) return;
-            const response = await addServicesToAppointment(appointmentId, values.servicesSelected);
+            const response = await addServicesToAppointment(appointmentId, serviceList);
             if (response) {
                 onCancel();  // Đóng modal
                 onSuccess(); // Gọi callback refresh danh sách
@@ -70,14 +87,38 @@ const ModalAddServices: React.FC<ModalAddServicesProps> = ({
                     label="Chọn dịch vụ"
                     rules={[{ required: true, message: "Vui lòng chọn ít nhất một dịch vụ!" }]}
                 >
-                    <Select mode="multiple" placeholder="Chọn dịch vụ">
+                    <Select
+                        mode="multiple"
+                        placeholder="Chọn dịch vụ"
+                        onChange={handleServiceChange}
+                    >
                         {services.map((item) => (
                             <Option key={item.id} value={item.id}>
-                                {item.name} - {item.price}đ
+                                {item.name} - {item.price}
                             </Option>
                         ))}
                     </Select>
                 </Form.Item>
+
+                {/* Dynamic notes input for each selected service */}
+                {selectedServices.length > 0 && (
+                    <div>
+                        <h4>Ghi chú cho từng dịch vụ</h4>
+                        {selectedServices.map((serviceId) => {
+                            const service = services.find((s) => s.id === serviceId);
+                            return (
+                                <Form.Item
+                                    key={serviceId}
+                                    label={`Ghi chú cho ${service?.name}`}
+                                    name={["notes", serviceId]}
+                                    rules={[{ required: false }]}
+                                >
+                                    <Input placeholder="Nhập ghi chú (nếu có)" />
+                                </Form.Item>
+                            );
+                        })}
+                    </div>
+                )}
 
                 <div style={{ textAlign: "right" }}>
                     <Button style={{ marginRight: 8 }} onClick={onCancel}>
