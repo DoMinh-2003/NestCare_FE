@@ -3,6 +3,7 @@ import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import useApiService from "../hooks/useApi";
 import { toast } from "react-toastify";
+import { message } from "antd";
 
 const userUserService = () => {
   const { callApi, loading, setIsLoading } = useApiService();
@@ -15,7 +16,7 @@ const userUserService = () => {
         const response = await callApi("get", "users");
         return response;
       } catch (e: any) {
-        toast.error(e?.response?.data || "GetUsers failed");
+        message.error(e?.response?.data || "GetUsers failed");
       }
     },
     [callApi, dispatch, router]
@@ -40,7 +41,7 @@ const userUserService = () => {
         const response = await callApi("get", `users/search/1/100${url}`);
         return response;
       } catch (e: any) {
-        toast.error(e?.response?.data || "getUsersSearch failed");
+        message.error(e?.response?.data || "getUsersSearch failed");
       }
     },
     [callApi, dispatch, router]
@@ -98,7 +99,7 @@ const userUserService = () => {
         const response = await callApi("get", `users/role/${role}`);
         return response;
       } catch (e: any) {
-        toast.error(e?.response?.data || "GetUsers failed");
+        message.error(e?.response?.data || "GetUsers failed");
       }
     }, [callApi, dispatch, router]);
 
@@ -108,7 +109,7 @@ const userUserService = () => {
         const response = await callApi("get", `users/${id}`);
         return response;
       } catch (e: any) {
-        toast.error(e?.response?.data || "GetUsers failed");
+        message.error(e?.response?.data || "GetUsers failed");
       }
     }, [callApi],
   )

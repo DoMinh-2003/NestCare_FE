@@ -166,7 +166,7 @@ const NurseManageUsers: React.FC = () => {
                 user={currentUser}
                 form={form} // Pass the form reference to the modal
             />
-            <div className='flex gap-2'>
+            <div className='flex justify-between px-2'>
                 <Search placeholder="Tìm kiếm bằng tên" className='w-[200px]' onSearch={onSearch} enterButton />
                 <Button onClick={() => showModal()} type="primary" style={{ marginBottom: 16 }}>
                     Thêm người dùng

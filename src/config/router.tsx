@@ -51,6 +51,7 @@ import WeekCheckup from "../pages/admin/week-checkup";
 import FetalChart from "../pages/customer/fetal-chart";
 import BlogPage from "../pages/customer/blog";
 import BlogDetail from "../pages/customer/blog-detail";
+import { message } from "antd";
 
 
 interface ProtectedRouteByRoleProps {
@@ -68,7 +69,7 @@ const ProtectedRouteAuth: React.FC<ProtectedRouteAuthProps> = ({
   const user = useCurrentUser();
 
   if (!user) {
-    toast.error("You need to login first!!");
+    message.error("You need to login first!!");
     return <Navigate to="/" replace />;
   }
 
@@ -82,7 +83,7 @@ const ProtectedRouteByRole: React.FC<ProtectedRouteByRoleProps> = ({
   const user = useCurrentUser();
 
   if (!user || !allowedRoles.includes(user.role)) {
-    toast.error("You do not have permissions to access");
+    message.error("You do not have permissions to access");
     return <Navigate to="/" replace />;
   }
 
