@@ -93,7 +93,8 @@ const FETAL_STATUS_LABELS = {
 const TAB_STATUS_MAP = {
 	upcoming: ["PENDING", "CONFIRMED", "CHECKED_IN", "IN_PROGRESS"],
 	past: ["COMPLETED"],
-	canceled: ["CANCELED"]
+	canceled: ["CANCELED"],
+	failed: ["FAIL"],
 }
 
 const AppointmentDashboard: React.FC = () => {
@@ -229,6 +230,9 @@ const AppointmentDashboard: React.FC = () => {
 					{renderAppointmentList(appointments)}
 				</TabPane>
 				<TabPane tab="Đã hủy" key="canceled">
+					{renderAppointmentList(appointments)}
+				</TabPane>
+				<TabPane tab="Thất bại" key="failed">
 					{renderAppointmentList(appointments)}
 				</TabPane>
 			</Tabs>
