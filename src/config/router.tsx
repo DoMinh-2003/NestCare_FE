@@ -52,6 +52,7 @@ import FetalChart from "../pages/customer/fetal-chart";
 import BlogPage from "../pages/customer/blog";
 import BlogDetail from "../pages/customer/blog-detail";
 import { message } from "antd";
+import AdminManageCategory from "../pages/admin/manage-category";
 
 
 interface ProtectedRouteByRoleProps {
@@ -248,6 +249,10 @@ export const router = createBrowserRouter([
       {
         path: ADMIN_ROUTES.WEEK_CHECKUPS,
         element: <WeekCheckup />,
+      },
+      {
+        path: ADMIN_ROUTES.CATEGORIES,
+        element: <AdminManageCategory />,
       },
     ],
   },
