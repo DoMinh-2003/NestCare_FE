@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Form, message } from 'antd';
+import { Table, Button, Form, message, Input } from 'antd';
 import ModalCreateUpdateMedicine, { Medicine } from '../../../components/organisms/modal-create-update-medicine/ModalCreateUpdateMedicine';
 import useMedicineService from '../../../services/useMedicineService';
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined, SearchOutlined } from "@ant-design/icons";
 import ModalDelete from '../../../components/organisms/modal-delete';
 import { toast } from 'react-toastify';
+import { formatMoney } from '../../../utils/formatMoney';
+import { formatDate } from '../../../utils/formatDate';
 
 const AdminManageMedicines: React.FC = () => {
 
@@ -12,6 +14,7 @@ const AdminManageMedicines: React.FC = () => {
     const [medicines, setMedicines] = useState<Medicine[]>([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isModalDdelete, setIsModalDelete] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
     const [currentMedicine, setCurrentMedicine] = useState<Medicine | null>(null);
 
     const [form] = Form.useForm()
@@ -19,13 +22,13 @@ const AdminManageMedicines: React.FC = () => {
         getMedicine();
     }, [])
 
-    const getMedicine = async () => {
-        const response = await getMedicinesService("", 0)
-        console.log("response: ", response)
+    const getMedicine = async (keyword = "") => {
+        const response = await getMedicinesService(keyword, 0)
         if (response) {
             setMedicines(response.data.pageData)
         }
     }
+
 
     const showModal = (medicine?: Medicine) => {
         console.log("medicine: ", medicine)
@@ -82,7 +85,19 @@ const AdminManageMedicines: React.FC = () => {
             title: 'Giá (VNĐ)',
             dataIndex: 'price',
             key: 'price',
-            render: (text: number) => text.toLocaleString(), // Định dạng giá
+            render: (text: number) => formatMoney(text)
+        },
+        {
+            title: 'Ngày tạo',
+            dataIndex: 'createdAt',
+            key: 'createdAt',
+            render: (text: string) => formatDate(text)
+        },
+        {
+            title: 'Ngày sửa',
+            dataIndex: 'updatedAt',
+            key: 'updatedAt',
+            render: (text: string) => formatDate(text)
         },
         {
             title: 'Hành động',
@@ -99,7 +114,7 @@ const AdminManageMedicines: React.FC = () => {
 
     const handleOkDelete = async () => {
         await deleteMedicine(currentMedicine?.id + "")
-        toast.success('Xoá thuốc thành công!')
+        message.success('Xoá thuốc thành công!')
         setIsModalDelete(false)
         getMedicine()
     }
@@ -111,9 +126,20 @@ const AdminManageMedicines: React.FC = () => {
     return (
         <div>
             <h1 className="text-3xl text-center font-bold mb-4">Quản Lý Thuốc</h1>
-            <Button type="primary" onClick={() => showModal()}>
-                Thêm Thuốc
-            </Button>
+            <div className='px-2 flex justify-between'>
+                <Input.Search
+                    placeholder="Tìm kiếm tên thuốc..."
+                    allowClear
+                    enterButton={<SearchOutlined />}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onSearch={() => getMedicine(searchTerm)}
+                    style={{ width: 300, marginBottom: 16 }}
+                />
+                <Button type="primary" onClick={() => showModal()}>
+                    Thêm Thuốc
+                </Button>
+            </div>
             <Table dataSource={medicines} columns={columns} rowKey="id" className="mt-4" />
             <ModalDelete
                 name={createMedicine.name}

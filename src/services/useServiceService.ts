@@ -30,6 +30,39 @@ const useServiceService = () => {
     [callApi, router]
   );
 
+  const getPostServices = useCallback(
+    async ({
+      categoryId = "",
+      isPublished = 1,
+      pageNum = 1,
+      pageSize = 100,
+    }: {
+      categoryId?: string;
+      isPublished?: number;
+      pageNum?: number;
+      pageSize?: number;
+    }) => {
+      try {
+        const body = {
+          searchCondition: {
+            categoryId,
+            isPublished,
+          },
+          pageInfo: {
+            pageNum,
+            pageSize,
+          },
+        };
+
+        const response = await callApi("post", "services/search", body);
+        return response;
+      } catch (e: any) {
+        message.error(e?.response?.data?.message || "Lấy danh sách service thất bại");
+      }
+    },
+    [callApi]
+  );
+
 
   const createServices = useCallback(
     async (values: any) => {
