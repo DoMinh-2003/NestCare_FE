@@ -33,6 +33,7 @@ import { motion } from "framer-motion"
 import { getUserDataFromLocalStorage } from "../../../constants/function"
 import { formatMoney } from "../../../utils/formatMoney"
 import api from "../../../config/api"
+import { useNavigate } from "react-router-dom"
 
 const { Title, Text, Paragraph } = Typography
 const { Option } = Select
@@ -66,6 +67,7 @@ function AvailableService() {
 	const [bookingModalVisible, setBookingModalVisible] = useState(false)
 	const [hoveredCard, setHoveredCard] = useState<string | null>(null)
 	const user = getUserDataFromLocalStorage()
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		fetchServices()
@@ -162,10 +164,10 @@ function AvailableService() {
 
 	const handleBookService = () => {
 		// In a real app, you would call your API to book the service
-		message.success("Đặt lịch thành công! Vui lòng kiểm tra lịch hẹn của bạn.")
+		message.success("Đã đến trang đặt lịch hẹn! Hãy đặt lịch hẹn của bạn!")
 		setBookingModalVisible(false)
 		// Redirect to booking page
-		window.location.href = "/booking-doctor"
+		navigate("/booking-doctor")
 	}
 
 	const getServiceIcon = (serviceName: string) => {
@@ -245,21 +247,24 @@ function AvailableService() {
 								y: -5,
 								boxShadow: "0 10px 20px rgba(0,0,0,0.1)",
 								transition: { duration: 0.2 },
+								borderRadius: '20px'
 							}}
 							onHoverStart={() => setHoveredCard(packageService.id)}
 							onHoverEnd={() => setHoveredCard(null)}
+							className="rounded-[20px]"
 						>
 							<Card
 								className="service-card"
 								style={{
 									height: "100%",
-									borderRadius: "12px",
+									borderRadius: "20px",
 									overflow: "hidden",
 									boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)",
 									border:
 										hoveredCard === packageService.id
 											? `1px solid ${getServiceColor(packageService.service.name)}`
 											: "1px solid #f0f0f0",
+									transform: hoveredCard === packageService.id ? "scale(1.05)" : "scale(1)",
 									transition: "all 0.3s ease",
 								}}
 								bodyStyle={{ padding: "16px" }}
@@ -273,6 +278,7 @@ function AvailableService() {
 											justifyContent: "center",
 											position: "relative",
 											padding: "16px",
+											borderRadius: "20px"
 										}}
 									>
 										<div style={{ position: "absolute", top: "12px", right: "12px" }}>
@@ -306,7 +312,7 @@ function AvailableService() {
 										<Text type="secondary">Giá dịch vụ:</Text>
 										<div>
 											<Text strong style={{ fontSize: "16px", color: "#f5222d" }}>
-												{formatMoney(packageService.service.price)}
+												{formatMoney(Number(packageService.service.price))}
 											</Text>
 										</div>
 									</div>
@@ -330,7 +336,7 @@ function AvailableService() {
 									</div>
 								</div>
 
-								<div style={{ display: "flex", justifyContent: "space-between", marginTop: "16px" }}>
+								<div className="flex justify-between mt-4">
 									<Button
 										type="default"
 										icon={<InfoCircleOutlined />}
@@ -572,17 +578,6 @@ function AvailableService() {
 				footer={[
 					<Button key="back" onClick={() => setBookingModalVisible(false)}>
 						Hủy
-					</Button>,
-					<Button
-						key="submit"
-						type="primary"
-						onClick={handleBookService}
-						style={{
-							backgroundColor: selectedService ? getServiceColor(selectedService.service.name) : undefined,
-							borderColor: selectedService ? getServiceColor(selectedService.service.name) : undefined,
-						}}
-					>
-						Xác nhận đặt lịch
 					</Button>,
 				]}
 				width={600}
