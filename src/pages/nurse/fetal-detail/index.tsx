@@ -10,6 +10,7 @@ import ModalCreateAppointment, { CreateAppointment } from '../../../components/o
 import ModalCheckUpRecord, { CheckupRecord } from '../../../components/organisms/modal-checkup-records/ModalCheckUpRecord';
 import { Appointment } from '../manage-users';
 import ModalAppointmentHistory from '../../../components/organisms/modal-appointment-history/ModalAppointmentHistory';
+import ModalCreateFetalCheckupRecord from '../../../components/organisms/modal-create-checup-record/ModalCreateFetalCheckupRecord';
 
 export interface FetalData {
     id?: string
@@ -51,6 +52,17 @@ const FetalDetail = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [isModalVisibleAppointmentHistory, setisModalVisibleAppointmentHistory] = useState(false);
     const [appointmentData, setAppointmentData] = useState<Appointment>()
+    const [isModalCreateCheckup, setIsModalCreateCheckup] = useState(false);
+    const [fetalId, setFetalId] = useState<string>('')
+
+    const showModalCreateCheckup = (id: string) => {
+        setFetalId(id);
+        setIsModalCreateCheckup(true);
+    };
+
+    const handleCloseCreateCheckup = () => {
+        setIsModalCreateCheckup(false);
+    };
 
     const showModalAppointmentHistory = (appointmentData: Appointment) => {
         setisModalVisibleAppointmentHistory(true);
@@ -125,16 +137,15 @@ const FetalDetail = () => {
             )
         },
         {
-            title: 'Hồ sơ kiểm tra',
-            dataIndex: 'checkupRecords',
-            key: 'checkupRecords',
-            render: (record: CheckupRecord[]) => (
+            title: 'Hồ sơ kiểm tra thai nhi',
+
+            render: (record: Appointment) => (
                 <div className='flex gap-2'>
-                    <div className='Hồ sơ kiểm tra text-blue cursor-pointer' onClick={() => showModalCheckUpRecord(record)}>
-                        Hồ sơ kiểm tra
+                    <div className='Hồ sơ kiểm tra text-blue cursor-pointer' onClick={() => showModalCheckUpRecord(record.checkupRecords)}>
+                        Hồ sơ kiểm tra thai
                     </div>
                     <div>
-                        <PlusOutlined className='text-yellow-500' />
+                        <PlusOutlined onClick={()=>showModalCreateCheckup(record.id)} className='text-yellow-500' />
                     </div>
                 </div>
             )
@@ -190,11 +201,16 @@ const FetalDetail = () => {
             getFetalsByMotherIdFromNurse()
         }
     }
-    const handleCancelCreateAppointment = ()=>{
+    const handleCancelCreateAppointment = () => {
         setIsModalVisible(false)
     }
     return (
         <div>
+            <ModalCreateFetalCheckupRecord
+            id={fetalId}
+                isVisible={isModalCreateCheckup}
+                onClose={handleCloseCreateCheckup}
+            />
             <ModalAppointmentHistory
                 isVisible={isModalVisibleAppointmentHistory}
                 onClose={handleClose}
