@@ -4,6 +4,7 @@ import { Modal, Form, Select, Button, message, Input } from "antd";
 import userAppointmentService from "../../../services/useAppointmentService";
 import useServiceService from "../../../services/useServiceService";
 import TextArea from "antd/es/input/TextArea";
+import { formatMoney } from "../../../utils/formatMoney";
 
 const { Option } = Select;
 
@@ -94,7 +95,7 @@ const ModalAddServices: React.FC<ModalAddServicesProps> = ({
                     >
                         {services.map((item) => (
                             <Option key={item.id} value={item.id}>
-                                {item.name} - {item.price}
+                                {item.name} - {formatMoney(item.price)}
                             </Option>
                         ))}
                     </Select>

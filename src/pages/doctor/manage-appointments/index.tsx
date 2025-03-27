@@ -160,14 +160,11 @@ const DoctorManageAppointments: React.FC = () => {
         if (currentDoctor) {
             getAppointmentFromDoctor()
         }
-    }, [currentDoctor])
+    }, [currentDoctor, selectedDate, statusFilter])
+
 
     const getStatusTag = (status: AppointmentStatus) => {
         switch (status) {
-            case AppointmentStatus.PENDING:
-                return <Tag color="orange">Đang chờ xác nhận</Tag>
-            case AppointmentStatus.CONFIRMED:
-                return <Tag color="blue">Đã xác nhận</Tag>
             case AppointmentStatus.CHECKED_IN:
                 return <Tag color="cyan">Đã đến bệnh viện</Tag>
             case AppointmentStatus.IN_PROGRESS:
@@ -259,8 +256,6 @@ const DoctorManageAppointments: React.FC = () => {
             // Thay Tag bằng Select
             render: (value: AppointmentStatus, record: Appointment) => (
                 <Select style={{ width: 180 }} value={value} onChange={(newStatus) => handleChangeStatus(record, newStatus)}>
-                    <Option value={AppointmentStatus.PENDING}>{getStatusTag(AppointmentStatus.PENDING)}</Option>
-                    <Option value={AppointmentStatus.CONFIRMED}>{getStatusTag(AppointmentStatus.CONFIRMED)}</Option>
                     <Option value={AppointmentStatus.CHECKED_IN}>{getStatusTag(AppointmentStatus.CHECKED_IN)}</Option>
                     <Option value={AppointmentStatus.IN_PROGRESS}>{getStatusTag(AppointmentStatus.IN_PROGRESS)}</Option>
                     <Option value={AppointmentStatus.COMPLETED}>{getStatusTag(AppointmentStatus.COMPLETED)}</Option>
@@ -428,8 +423,6 @@ const DoctorManageAppointments: React.FC = () => {
                     onChange={(newStatus) => setStatusFilter(newStatus)}
                     placeholder="Lọc theo trạng thái"
                 >
-                    <Option value={AppointmentStatus.PENDING}>{getStatusTag(AppointmentStatus.PENDING)}</Option>
-                    <Option value={AppointmentStatus.CONFIRMED}>{getStatusTag(AppointmentStatus.CONFIRMED)}</Option>
                     <Option value={AppointmentStatus.CHECKED_IN}>{getStatusTag(AppointmentStatus.CHECKED_IN)}</Option>
                     <Option value={AppointmentStatus.IN_PROGRESS}>{getStatusTag(AppointmentStatus.IN_PROGRESS)}</Option>
                     <Option value={AppointmentStatus.COMPLETED}>{getStatusTag(AppointmentStatus.COMPLETED)}</Option>
@@ -444,9 +437,7 @@ const DoctorManageAppointments: React.FC = () => {
                     placeholder="Chọn ngày"
                 />
 
-                <Button type="primary" onClick={handleRefresh}>
-                    Tải lại dữ liệu
-                </Button>
+
             </div>
 
             {/* Modal thêm dịch vụ */}

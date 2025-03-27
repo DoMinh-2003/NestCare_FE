@@ -9,11 +9,13 @@ const useBlogService = () => {
     const getBlogs = useCallback(
         async ({
             categoryId = "",
+            authorId = "",
             isPublished = 1,
             pageNum = 1,
             pageSize = 100,
         }: {
             categoryId?: string;
+            authorId?: "";
             isPublished?: number;
             pageNum?: number;
             pageSize?: number;
@@ -22,6 +24,7 @@ const useBlogService = () => {
                 const body = {
                     searchCondition: {
                         categoryId,
+                        authorId,
                         isPublished,
                     },
                     pageInfo: {
@@ -52,7 +55,46 @@ const useBlogService = () => {
         [callApi]
     );
 
-    return { getBlogs, loading, setIsLoading, getBlog };
+    const createBlog = useCallback(async (values) => {
+        try {
+
+
+            const response = await callApi("post", `blogs/create`, values);
+            return response;
+        } catch (e: any) {
+            message.error(e?.response?.data?.message || "Lấy danh sách blog thất bại");
+        }
+    },
+        [callApi]
+    );
+
+
+    const updateBlog = useCallback(async (id: string, values) => {
+        try {
+
+
+            const response = await callApi("put", `blogs/${id}`, values);
+            return response;
+        } catch (e: any) {
+            message.error(e?.response?.data?.message || "Lấy danh sách blog thất bại");
+        }
+    },
+        [callApi]
+    );
+
+    const deleteBlog = useCallback(async (id: string) => {
+        try {
+
+
+            const response = await callApi("delete", `blogs/${id}`);
+            return response;
+        } catch (e: any) {
+            message.error(e?.response?.data?.message || "Lấy danh sách blog thất bại");
+        }
+    },
+        [callApi]
+    );
+    return { getBlogs, loading, setIsLoading, getBlog, createBlog, updateBlog, deleteBlog };
 };
 
 export default useBlogService;

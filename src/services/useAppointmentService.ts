@@ -48,6 +48,19 @@ const userAppointmentService = () => {
         [callApi]
     );
 
+    const updateMotherHeal = useCallback(
+
+        async (values: any, id: string) => {
+            try {
+                const response = await callApi("put", `appointments/mother-health/${id}`, values);
+                return response;
+            } catch (error: any) {
+                console.error(error?.response?.data?.message || "updateMotherHeal failed");
+            }
+        },
+        [callApi]
+    );
+
     const updateAppointmentStatus = useCallback(
         async (appointmentId: string, status: AppointmentStatus) => {
 
@@ -69,7 +82,7 @@ const userAppointmentService = () => {
     )
 
 
-    return {getAppointmentDetail, getAppointmentsByDoctor, setIsLoading, updateAppointmentStatus, addServicesToAppointment, createAppointment };
+    return {updateMotherHeal, getAppointmentDetail, getAppointmentsByDoctor, setIsLoading, updateAppointmentStatus, addServicesToAppointment, createAppointment };
 };
 
 export default userAppointmentService;
