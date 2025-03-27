@@ -6,7 +6,7 @@ import { tableText } from "../../../constants/function";
 import useBlogService from '../../../services/useBlogService';
 import useCategoryService from '../../../services/useCategoryService';
 import { formatDate } from '../../../utils/formatDate';
-import ModalCreateUpdateBlog from '../../../components/organisms/modal-create-update-user/ModalCreateUpdateUser';
+import ModalCreateUpdateBlog from '../../../components/organisms/modal-create-update-blog';
 
 const { Search } = Input;
 
