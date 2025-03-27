@@ -1,98 +1,130 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, Form, Image, message, Select, Table } from "antd";
+import { Button, Form, Image, Input, message, Table } from "antd";
 import React, { useEffect, useState } from "react";
-import ModalCreateUpdateUser, { UserData } from "../../../components/organisms/modal-create-update-user/ModalCreateUpdateUser";
 import ModalDelete from "../../../components/organisms/modal-delete";
 import { tableText } from "../../../constants/function";
-import userUserService from "../../../services/userUserService";
-import type { GetProps } from 'antd';
-import { Input } from 'antd';
 import useBlogService from '../../../services/useBlogService';
+import useCategoryService from '../../../services/useCategoryService';
 import { formatDate } from '../../../utils/formatDate';
-type SearchProps = GetProps<typeof Input.Search>;
+import ModalCreateUpdateBlog from '../../../components/organisms/modal-create-update-user/ModalCreateUpdateUser';
+
 const { Search } = Input;
 
 const AdminManageBlogs: React.FC = () => {
-    const [blogs, setBlogs] = useState<[]>([]);
-    const [currentUser, setCurrentUser] = useState<UserData | null>(null);
+    const [blogs, setBlogs] = useState<any[]>([]);
+    const [categories, setCategories] = useState<any[]>([]);
+    const [currentBlog, setCurrentBlog] = useState<any | null>(null);
     const [visible, setVisible] = useState(false);
-    const { createUser, updateUser, deleteUser, getUsers, getUsersSearch } = userUserService();
-    const { getBlog, getBlogs } = useBlogService();
-    const [form] = Form.useForm(); // Create a form reference
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
-    const [roleToFilter, setRoleToFilter] = useState<string>('')
-    const showModal = (user: UserData | null = null) => {
-        if (user) {
-            setCurrentUser(user);
-        } else {
-            setCurrentUser(null); // Reset currentUser  when adding a new user
-            form.resetFields(); // Reset form fields when opening modal
-        }
-        setVisible(true);
-    };
 
-    const handleCreateOrUpdate = async (values: UserData) => {
-        console.log("handleCreateOrUpdate:", values);
-        if (currentUser) {
-            // Update user logic can be added here
-            const response = await updateUser(values);
-            if (response) {
-                message.success("Cập nhật dùng thành công");
-                getBlogsFromAdmin();
-                setVisible(false); // Close the modal only after successful creation
-                form.resetFields(); // Reset the form fields
-            }
-        } else {
-            // Create new user
-            const response = await createUser(values);
-            if (response) {
-                message.success("Tạo người dùng thành công");
-                getBlogsFromAdmin();
-                setVisible(false); // Close the modal only after successful creation
-                form.resetFields(); // Reset the form fields
-            }
-        }
-    };
-
-    const handleCancel = () => {
-        setVisible(false);
-    };
+    const { getBlogs, createBlog, updateBlog, deleteBlog } = useBlogService();
+    const { getCategories } = useCategoryService();
+    const [form] = Form.useForm();
 
     useEffect(() => {
-        getBlogsFromAdmin();
+        fetchBlogs();
+        fetchCategories();
     }, []);
 
-    const getBlogsFromAdmin = async () => {
-        const response = await getBlogs({
-            categoryId: "",
-            isPublished: 1,
-            pageNum: 1,
-            pageSize: 10
-        });
-        console.log("response: ", response);
+    const fetchBlogs = async () => {
+        const response = await getBlogs({ isPublished: 1 });
         if (response) {
             setBlogs(response.data.pageData);
         }
     };
 
-    const handleOpenModalDelete = (record: UserData) => {
-        console.log("record: ", record)
-        setCurrentUser(record);
+    const fetchCategories = async () => {
+        const response = await getCategories({
+            keyword: "",
+            isDeleted: 0,
+            pageNum: 1,
+            pageSize: 100,
+        });
+        if (response) {
+            setCategories(response.data.pageData);
+        }
+    };
+
+    const showModal = (blog: any | null = null) => {
+        setCurrentBlog(blog);
+        form.resetFields();
+        if (blog) {
+            form.setFieldsValue({
+                ...blog,
+                categoryId: blog.category?.id,
+            });
+        }
+        setVisible(true);
+    };
+
+    const handleCreateOrUpdate = async (values: any) => {
+        if (currentBlog) {
+            const response = await updateBlog(currentBlog.id, values);
+            if (response) {
+                message.success("Cập nhật blog thành công");
+                fetchBlogs();
+                setVisible(false);
+                form.resetFields();
+            }
+        } else {
+            const response = await createBlog(values);
+            if (response) {
+                message.success("Tạo blog thành công");
+                fetchBlogs();
+                setVisible(false);
+                form.resetFields();
+            }
+        }
+    };
+
+    const handleOpenModalDelete = (blog: any) => {
+        setCurrentBlog(blog);
         setIsModalDeleteOpen(true);
     };
-    // Cấu hình cột cho bảng
+
+    const handleOkModalDelete = async () => {
+        if (!currentBlog) return;
+        await deleteBlog(currentBlog.id);
+        message.success(`Xóa blog "${currentBlog.title}" thành công`);
+        setCurrentBlog(null);
+        setIsModalDeleteOpen(false);
+        fetchBlogs();
+    };
+
+    const handleCancelModalDelete = () => {
+        setIsModalDeleteOpen(false);
+    };
+
+    const onSearch = async (value: string) => {
+        const response = await getBlogs({ isPublished: 1, categoryId: "", authorId: "", pageNum: 1, pageSize: 100 });
+        if (response) {
+            const keyword = value.toLowerCase();
+            const filtered = response.data.pageData.filter((b: any) =>
+                b.title?.toLowerCase().includes(keyword)
+            );
+            setBlogs(filtered);
+        }
+    };
+
     const columns = [
         {
             title: "Tiêu đề",
-            render: (record) => (
-
-                <p>{record.title}</p>
-            )
+            render: (record: any) => <p>{record.title}</p>
         },
         {
             title: "Mô tả",
             dataIndex: "description",
             key: "description",
+        },
+        {
+            title: "Danh mục",
+            dataIndex: ['category', 'name'],
+            key: 'categoryName',
+        },
+        {
+            title: "Người dùng",
+            dataIndex: ['user', 'username'],
+            key: 'username',
         },
         {
             title: "Ngày tạo",
@@ -101,44 +133,15 @@ const AdminManageBlogs: React.FC = () => {
             render: (text: string) => formatDate(text)
         },
         {
-            title: "Ngày sửa",
-            dataIndex: "updatedAt",
-            key: "updatedAt",
-            render: (text: string) => formatDate(text)
-        },
-
-        {
             title: 'Hành động',
-            render: (record: UserData) => {
-                return <div className="flex gap-2 text-xl">
-                    <EditOutlined onClick={() => showModal(record)} className="text-blue" />
-                    <DeleteOutlined onClick={() => handleOpenModalDelete(record)} className="text-red-500" />
+            render: (record: any) => (
+                <div className="flex gap-2 text-xl">
+                    <EditOutlined onClick={() => showModal(record)} className="text-blue-500 cursor-pointer" />
+                    <DeleteOutlined onClick={() => handleOpenModalDelete(record)} className="text-red-500 cursor-pointer" />
                 </div>
-            }
+            )
         },
     ];
-
-    const handleCancelModalDelete = () => {
-        setIsModalDeleteOpen(false);
-    };
-
-    const handleOkModalDelete = async () => {
-        console.log("currentUser: ", currentUser)
-        if (!currentUser) return; // Ensure selectedService is defined
-        await deleteUser(currentUser.id);
-        message.success(`Xóa dịch vụ ${currentUser.fullName} thành công`);
-        setCurrentUser(null);
-        setIsModalDeleteOpen(false);
-        getBlogsFromAdmin(); // Refresh the service list after deletion
-    };
-
-    const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
-        const response = await getUsersSearch(value, roleToFilter);
-        console.log("response: ", response);
-        if (response) {
-            setBlogs(response.data.pageData);
-        }
-    }
 
     return (
         <div>
@@ -146,32 +149,27 @@ const AdminManageBlogs: React.FC = () => {
                 Quản lý bài blog
             </div>
             <div className='flex gap-2 justify-between px-2'>
-                <div className='gap-2 flex'>
-                    <Search placeholder="Tìm kiếm bằng tên" className='w-[200px]' onSearch={onSearch} enterButton />
-
-
-                </div>
-                <div>
-                    <Button onClick={() => showModal()} type="primary" style={{ marginBottom: 16 }}>
-                        Thêm bài blog
-                    </Button>
-                </div>
+                <Search placeholder="Tìm kiếm tiêu đề" className='w-[200px]' onSearch={onSearch} enterButton />
+                <Button onClick={() => showModal()} type="primary" style={{ marginBottom: 16 }}>
+                    Thêm bài blog
+                </Button>
             </div>
+
             <ModalDelete
                 handleCancelModalDelete={handleCancelModalDelete}
                 handleOkModalDelete={handleOkModalDelete}
-                name={currentUser?.fullName || ""}
+                name={currentBlog?.title || ""}
                 isModalOpenDelete={isModalDeleteOpen}
             />
-            <ModalCreateUpdateUser
+
+            <ModalCreateUpdateBlog
                 visible={visible}
+                onCancel={() => setVisible(false)}
                 onCreate={handleCreateOrUpdate}
-                onCancel={handleCancel}
-                user={currentUser}
-                form={form} // Pass the form reference to the modal
+                blog={currentBlog}
+                form={form}
+                categories={categories}
             />
-
-
 
             <Table rowClassName={() => tableText()} columns={columns} dataSource={blogs} rowKey="id" />
         </div>
