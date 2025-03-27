@@ -4,6 +4,7 @@ import useAppointmentService from '../../../services/useApoitment';
 import type { GetProps } from 'antd';
 import { Input } from 'antd';
 import { toast } from 'react-toastify';
+import ModalUpdateMotherHealth from '../../../components/organisms/modal-update-mother-heal/ModalUpdateMotherHealth';
 type SearchProps = GetProps<typeof Input.Search>;
 const { Search } = Input;
 interface FetalRecord {
@@ -20,7 +21,7 @@ interface Appointment {
     id: string;
     appointmentDate: string;
     status: string;
-    fetalRecord: FetalRecord;
+    fetalRecords: FetalRecord[];
 }
 
 
@@ -28,10 +29,21 @@ const NurseCheckIn: React.FC = () => {
     const [appointments, setAppointments] = useState<Appointment[]>([]);
     const { getAppointmentsByStatus, updateAppointmentsByStatus } = useAppointmentService()
     const [statusFilter, setStatusFilter] = useState<string>('PENDING')
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [appointmentId, setAppointmentId] = useState<string>('')
 
     useEffect(() => {
         getAppointmentsByStatusFromNurse();
     }, [statusFilter])
+
+    const showModal = (id: string) => {
+        setIsModalVisible(true);
+        setAppointmentId(id)
+    };
+
+    const handleClose = () => {
+        setIsModalVisible(false);
+    };
 
     const getAppointmentsByStatusFromNurse = async () => {
         const response = await getAppointmentsByStatus(statusFilter)
@@ -71,13 +83,19 @@ const NurseCheckIn: React.FC = () => {
             title: 'Tên bác sĩ',
             dataIndex: ['doctor', 'fullName'],
             key: 'doctorName',
+            width: "20%"
         },
-        // {
-        //     title: 'Tên bé',
-        //     dataIndex: ['fetalRecord', 'name'],
-        //     key: 'babyName',
-        // },
         {
+            title: 'Tên mẹ',
+            width: "20%",
+            render: (record: Appointment) => (
+                <div>
+                    {record.fetalRecords[0]?.mother.fullName}
+                </div>
+            )
+        },
+        {
+            width: "20%",
             title: 'Trạng thái',
             dataIndex: 'status',
             key: 'status',
@@ -86,24 +104,37 @@ const NurseCheckIn: React.FC = () => {
             title: 'Hành động',
             key: 'action',
             render: (text: any, record: Appointment) => (
-                record.status === "PENDING" ? <span>
+                record.status === "PENDING" ? <div className='flex gap-2'>
+                    <Button className='bg-blue hover:bg-blue text-white' type="default" onClick={() => showModal(record.id)}>Cập nhật thông tin sức khoẻ</Button>
                     <Button type="primary" onClick={() => handleAccept(record.id)}>Chấp nhận</Button>
                     <Button type="danger" onClick={() => handleReject(record.id)} style={{ marginLeft: 8 }}>Từ chối</Button>
-                </span>
+                </div>
                     : <div>
                         {record.status}
                     </div>
             ),
         },
     ];
+
     const handleChange = (value: string) => {
         setStatusFilter(value);
+    }
+
+    const handleSubmit = (response: any) => {
+        if (response) {
+            getAppointmentsByStatusFromNurse();
+        }
     }
 
     return (
         <div>
             <div className='text-3xl font-bold text-center my-5'>Quản lý cuộc hẹn</div>
-
+            <ModalUpdateMotherHealth
+                id={appointmentId}
+                onSumit={handleSubmit}
+                isVisible={isModalVisible}
+                onClose={handleClose}
+            />
             <Select
                 placeholder="Chọn gói dịch vụ"
                 onChange={handleChange}
