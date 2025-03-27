@@ -59,7 +59,7 @@ import ManageSlot from "../pages/admin/manage-slot";
 
 interface ProtectedRouteByRoleProps {
   children: ReactNode;
-  allowedRoles: Array<"ADMIN" | "USER">; // Các vai trò cho phép
+  allowedRoles: Array<"ADMIN" | "USER" | "NURSE" | "DOCTOR">; // Các vai trò cho phép
 }
 
 interface ProtectedRouteAuthProps {
@@ -72,8 +72,8 @@ const ProtectedRouteAuth: React.FC<ProtectedRouteAuthProps> = ({
   const user = useCurrentUser();
 
   if (!user) {
-    message.error("You need to login first!!");
-    return <Navigate to="/" replace />;
+    message.info("You need to login first!!");
+    return <Navigate to="/auth/login" replace />;
   }
 
   return children;
@@ -84,6 +84,7 @@ const ProtectedRouteByRole: React.FC<ProtectedRouteByRoleProps> = ({
   allowedRoles,
 }) => {
   const user = useCurrentUser();
+  console.log(user);
 
   if (!user || !allowedRoles.includes(user.role)) {
     message.error("You do not have permissions to access");
@@ -174,19 +175,27 @@ export const router = createBrowserRouter([
       },
       {
         path: USER_ROUTES.PURCHASED_HISTORY,
-        element: <PurchasedHistory />,
+        element: <ProtectedRouteAuth>
+          <PurchasedHistory />
+        </ProtectedRouteAuth>,
       },
       {
         path: USER_ROUTES.BOOKING_DOCTOR,
-        element: <BookingDoctor />,
+        element: <ProtectedRouteAuth>
+          <BookingDoctor />
+        </ProtectedRouteAuth>,
       },
       {
         path: USER_ROUTES.APPOINTMENT_HISTORY,
-        element: <AppointmentHistory />,
+        element: <ProtectedRouteAuth>
+          <AppointmentHistory />
+        </ProtectedRouteAuth>,
       },
       {
         path: USER_ROUTES.FETAL_CHART,
-        element: <FetalChart />,
+        element: <ProtectedRouteAuth>
+          <FetalChart />
+        </ProtectedRouteAuth>,
       },
       {
         path: USER_ROUTES.BLOG_PAGE,
@@ -195,6 +204,18 @@ export const router = createBrowserRouter([
       {
         path: USER_ROUTES.BLOG_DETAIL,
         element: <BlogDetail />,
+      },
+      {
+        path: USER_ROUTES.PROFILE,
+        element: <ProtectedRouteAuth>
+          <Profile />
+        </ProtectedRouteAuth>,
+      },
+      {
+        path: USER_ROUTES.MY_SERVICES,
+        element: <ProtectedRouteAuth>
+          <AvailableService />
+        </ProtectedRouteAuth>,
       },
     ],
   },
@@ -223,9 +244,9 @@ export const router = createBrowserRouter([
   {
     path: ADMIN_ROUTES.ADMIN,
     element: (
-      // <ProtectedRouteByRole allowedRoles={["ADMIN"]}>
-      <AdminLayout />
-      // </ProtectedRouteByRole>
+      <ProtectedRouteByRole allowedRoles={["ADMIN"]}>
+        <AdminLayout />
+      </ProtectedRouteByRole>
     ),
     children: [
       {
@@ -269,9 +290,9 @@ export const router = createBrowserRouter([
   {
     path: NURSE_ROUTES.NURSE,
     element: (
-      // <ProtectedRouteByRole allowedRoles={["ADMIN"]}>
-      <NurseLayout />
-      // </ProtectedRouteByRole>
+      <ProtectedRouteByRole allowedRoles={["NURSE"]}>
+        <NurseLayout />
+      </ProtectedRouteByRole>
     ),
     children: [
       {
@@ -313,9 +334,9 @@ export const router = createBrowserRouter([
   {
     path: DOCTOR_ROUTES.DOCTOR,
     element: (
-      // <ProtectedRouteByRole allowedRoles={["ADMIN"]}>
-      <DoctorLayout />
-      // </ProtectedRouteByRole>
+      <ProtectedRouteByRole allowedRoles={["DOCTOR"]}>
+        <DoctorLayout />
+      </ProtectedRouteByRole>
     ),
     children: [
       {
