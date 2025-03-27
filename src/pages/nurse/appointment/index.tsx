@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Modal, message, Select } from 'antd';
+import { Table, Button, Modal, message, Select, Tag } from 'antd';
 import useAppointmentService from '../../../services/useApoitment';
 import type { GetProps } from 'antd';
 import { Input } from 'antd';
 import { toast } from 'react-toastify';
 import ModalUpdateMotherHealth from '../../../components/organisms/modal-update-mother-heal/ModalUpdateMotherHealth';
+import { AppointmentStatus } from '../../../constants/status';
+import { formatDate } from '../../../utils/formatDate';
 type SearchProps = GetProps<typeof Input.Search>;
 const { Search } = Input;
 interface FetalRecord {
@@ -78,6 +80,25 @@ const NurseCheckIn: React.FC = () => {
         });
     };
 
+    const getStatusTag = (status: AppointmentStatus) => {
+        switch (status) {
+            case AppointmentStatus.PENDING:
+                return <Tag color="orange">Đang chờ xác nhận</Tag>;
+            case AppointmentStatus.CONFIRMED:
+                return <Tag color="blue">Đã xác nhận</Tag>;
+            case AppointmentStatus.CHECKED_IN:
+                return <Tag color="cyan">Đã đến bệnh viện</Tag>;
+            case AppointmentStatus.IN_PROGRESS:
+                return <Tag color="purple">Đang khám</Tag>;
+            case AppointmentStatus.COMPLETED:
+                return <Tag color="green">Hoàn tất</Tag>;
+            case AppointmentStatus.CANCELED:
+                return <Tag color="red">Đã hủy</Tag>;
+            default:
+                return <Tag color="default">Không xác định</Tag>;
+        }
+    };
+
     const columns = [
         {
             title: 'Tên bác sĩ',
@@ -99,6 +120,14 @@ const NurseCheckIn: React.FC = () => {
             title: 'Trạng thái',
             dataIndex: 'status',
             key: 'status',
+            render: (status: AppointmentStatus) => getStatusTag(status),
+        },
+        {
+            title: 'Ngày khám',
+            dataIndex: 'appointmentDate',
+            key: 'appointmentDate',
+            width: "20%",
+            render: (value: string) => formatDate(value),
         },
         {
             title: 'Hành động',
