@@ -67,6 +67,15 @@ const Navbar = () => {
             icon: <AreaChartOutlined />,
         },
         {
+            key: '7',
+            label: (
+                <p>
+                    Lời nhắc của bác sĩ
+                </p>
+            ),
+            icon: <AreaChartOutlined />,
+        },
+        {
             key: '4',
             danger: true,
             label: 'Đăng xuất',
@@ -96,6 +105,9 @@ const Navbar = () => {
                 break;
             case '6':
                 navigate(USER_ROUTES.FETAL_CHART)
+                break;
+            case '7':
+                navigate('/reminders')
                 break;
             case '10':
                 navigate('/profile')
