@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { Image, Skeleton } from 'antd';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Image, message, Skeleton } from 'antd';
 import CustomBreadcrumbs, { BreadcrumbsProps } from '../../atoms/breadcrumbs/CustomBreadcrumbs';
 import usePackageService from '../../../services/usePackageService';
 import { Package } from '../../../model/Pakage';
@@ -14,6 +14,7 @@ const PackageDetail = () => {
 	const { id } = useParams();
 	const { getPackageById } = usePackageService();
 	const { createOrder } = useOrderService();
+	const navigate = useNavigate();
 
 	// Fetch package data
 	useEffect(() => {
@@ -28,12 +29,17 @@ const PackageDetail = () => {
 	// Handle booking
 	const handleBookingPackage = async () => {
 		if (!id) return;
+
 		const storedUser = localStorage.getItem('USER');
-		if (storedUser) {
-			const userObject = JSON.parse(storedUser);
-			const response = await createOrder({ userId: userObject.id, packageId: id });
-			if (response) window.location.href = response;
+		if (!storedUser) {
+			navigate('/auth/login');
+			message.info('Bạn phải đăng nhập để mua gói');
+			return;
 		}
+
+		const userObject = JSON.parse(storedUser);
+		const response = await createOrder({ userId: userObject.id, packageId: id });
+		if (response) window.location.href = response;
 	};
 
 	// Loading state

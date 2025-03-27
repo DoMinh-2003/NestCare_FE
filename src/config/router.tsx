@@ -73,7 +73,7 @@ const ProtectedRouteAuth: React.FC<ProtectedRouteAuthProps> = ({
   const user = useCurrentUser();
 
   if (!user) {
-    message.info("You need to login first!!");
+    message.info("Bạn cần phải đăng nhập trước");
     return <Navigate to="/auth/login" replace />;
   }
 
