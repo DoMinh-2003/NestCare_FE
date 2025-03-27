@@ -28,6 +28,13 @@ const Navbar = () => {
 
     const items: MenuProps['items'] = [
         {
+            key: '10',
+            label: (
+                <p>Xem thông tin tài khoản</p>
+            ),
+            icon: <Avatar />
+        },
+        {
             key: '1',
             label: (
                 <p>Các gói đã đăng ký</p>
@@ -89,6 +96,9 @@ const Navbar = () => {
                 break;
             case '6':
                 navigate(USER_ROUTES.FETAL_CHART)
+                break;
+            case '10':
+                navigate('/profile')
                 break;
             default:
                 break;
