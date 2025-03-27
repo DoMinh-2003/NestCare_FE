@@ -40,6 +40,7 @@ export interface FetalRecord {
 
 }
 
+
 const FetalDetail = () => {
     const { id } = useParams();
     const { getFetalsByMotherId, createFetal, updateFetal, deleteFetal } = useFetalService();
@@ -145,7 +146,7 @@ const FetalDetail = () => {
                         Hồ sơ kiểm tra thai
                     </div>
                     <div>
-                        <PlusOutlined onClick={()=>showModalCreateCheckup(record.id)} className='text-yellow-500' />
+                        <PlusOutlined onClick={() => showModalCreateCheckup(record.id)} className='text-yellow-500' />
                     </div>
                 </div>
             )
@@ -207,7 +208,7 @@ const FetalDetail = () => {
     return (
         <div>
             <ModalCreateFetalCheckupRecord
-            id={fetalId}
+                id={fetalId}
                 isVisible={isModalCreateCheckup}
                 onClose={handleCloseCreateCheckup}
             />

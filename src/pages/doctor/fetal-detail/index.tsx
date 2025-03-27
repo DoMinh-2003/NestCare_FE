@@ -44,6 +44,7 @@ import axios from "axios"
 import api from "../../../config/api"
 import ModalCreateReminder from "../../../components/organisms/modal-create-reminder/ModalCreateReminder"
 import userReminderService from "../../../services/useReminders"
+import ModalCreateAppointment, { CreateAppointment } from "../../../components/organisms/modal-create-appointment/ModalCreateAppointment"
 
 const { Title, Text, Paragraph } = Typography
 const { TabPane } = Tabs
@@ -129,8 +130,23 @@ const DoctorFetalView: React.FC = () => {
     const [medications, setMedications] = useState<MedicationData[]>([])
     const [availableMedications, setAvailableMedications] = useState<any[]>([])
     const [reminderModalVisible, setReminderModalVisible] = useState(false)
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [fetals, setFetals] = useState<FetalRecord[]>([]);
+
 
     const { createReminderByDoctor } = userReminderService()
+
+    useEffect(() => {
+        const fetchFetalModel = async () => {
+            const response = await getFetalsByMotherId(fetalRecord?.mother.id)
+            console.log("Fetal model", response);
+
+            if (response) {
+                setFetals(response)
+            }
+        }
+        fetchFetalModel()
+    }, [fetalRecord])
 
     // Tạo nhắc nhở
     const handleCreateReminder = async (values: any) => {
@@ -173,7 +189,7 @@ const DoctorFetalView: React.FC = () => {
         fetchMedicine()
     }, [id])
 
-    const { getFetailAndMotherDetail } = useFetalService()
+    const { getFetailAndMotherDetail, getFetalsByMotherId } = useFetalService()
     const navigate = useNavigate()
 
     // Fetch fetal record data
@@ -189,6 +205,7 @@ const DoctorFetalView: React.FC = () => {
                 const response = await getFetailAndMotherDetail(id)
                 console.log("Fetal record data:", response)
                 setFetalRecord(response)
+                setFetals(response.data)
             } catch (err) {
                 console.error("Error fetching fetal record:", err)
                 setError("Không thể tải dữ liệu hồ sơ thai nhi")
@@ -315,6 +332,32 @@ const DoctorFetalView: React.FC = () => {
         (app) => app.status === AppointmentStatus.CHECKED_IN || app.status === AppointmentStatus.IN_PROGRESS,
     )
 
+    // const { getFetalsByMotherId } = useFetalService()
+
+    const showModal = () => {
+        setIsModalVisible(true);
+    };
+
+    const getFetalsByMotherIdFromNurse = async () => {
+        const response = await getFetalsByMotherId(fetalRecord.mother.id);
+        console.log("&&&&&&&&&&&&&&response mother=============fetals", response)
+
+        setFetals(response);
+    };
+
+    const handleCreateRespone = (values: CreateAppointment) => {
+        console.log('====================================');
+        console.log("(((((((((value)))))))))))", values);
+        console.log('====================================');
+        if (values) {
+            getFetalsByMotherIdFromNurse()
+        }
+    }
+
+    const handleCancelCreateAppointment = () => {
+        setIsModalVisible(false)
+    }
+
     return (
         <div className="p-4 max-w-6xl mx-auto">
             <div className="flex justify-between items-center mb-4">
@@ -346,6 +389,17 @@ const DoctorFetalView: React.FC = () => {
                     }
                     key="info"
                 >
+                    <Button
+                        type="primary"
+                        className='ml-2'
+                        onClick={showModal}
+                        style={{ marginBottom: 16 }}
+                    >
+                        Đặt lịch
+                    </Button>
+
+                    <ModalCreateAppointment fetals={fetals} createRespone={handleCreateRespone} isVisible={isModalVisible} onClose={handleCancelCreateAppointment} />
+
                     <Card className="shadow-sm mb-4">
                         <div className="flex items-center mb-4">
                             <HeartOutlined style={{ color: "#ff4d4f", fontSize: 24, marginRight: 12 }} />

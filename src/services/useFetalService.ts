@@ -109,7 +109,7 @@ const useFetalService = () => {
   );
 
 
-  return {createFetalCheckupRecord, loading, getFetalsRecords, getFetalsByMotherId, deleteFetal, createFetal, setIsLoading, updateFetal, getFetailAndMotherDetail };
+  return { createFetalCheckupRecord, loading, getFetalsRecords, getFetalsByMotherId, deleteFetal, createFetal, setIsLoading, updateFetal, getFetailAndMotherDetail };
 };
 
 export default useFetalService;

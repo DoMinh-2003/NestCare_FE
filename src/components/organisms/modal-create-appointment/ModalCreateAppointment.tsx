@@ -7,7 +7,6 @@ import { Slot } from '../modal-create-update-slot/ModalCreateUpdateSlot';
 import useSlotService from '../../../services/useSlotsService';
 import userUserService from '../../../services/userUserService';
 import { User } from '../../../model/User';
-import { formatDateSubmitData } from '../../../utils/formatDate';
 
 export interface CreateAppointment {
     fetalRecordIds: string[],
@@ -56,7 +55,7 @@ const ModalCreateAppointment = ({ isVisible, onClose, createRespone, fetals }: {
         const appointmentData = {
             fetalRecordIds: selectedFetalRecordIds.map(id => ({ fetalRecordId: id })), // Format fetalRecordIds, // Ensure this matches the expected structure
             doctorId: values.doctorId,
-            date: moment(selectedDate+'').format('YYYY-MM-DD'),
+            date: moment(selectedDate + '').format('YYYY-MM-DD'),
             slotId: values.slotId
         };
         console.log("appointmentData: ", appointmentData)
@@ -114,70 +113,70 @@ const ModalCreateAppointment = ({ isVisible, onClose, createRespone, fetals }: {
                     label="Chọn slot"
                     name="slotId"
                     rules={[{ required: true, message: 'Please select a slot!' }]}
-                    >
-                        <Select
-                            onChange={handleChangeSelectedSlot}
-                            placeholder="Chọn slot"
-                            className='w-[150px]'
-                            options={
-                                slots?.map((item) => ({
-                                    value: item.id,
-                                    label: `${item.startTime} - ${item.endTime}`
-                                }))
-                            }
-                        />
-                    </Form.Item>
-    
-                    <Form.Item
-                        label="Chọn bác sĩ"
-                        name="doctorId"
-                        rules={[{ required: true, message: 'Please select a doctor!' }]}
-                    >
-                        <Select
-                            onChange={handleChangeSelectedDoctor}
-                            placeholder="Chọn bác sĩ"
-                            className='w-[150px]'
-                            options={
-                                doctors?.map((item) => ({
-                                    value: item.id,
-                                    label: item.fullName
-                                }))
-                            }
-                        />
-                    </Form.Item>
-    
-                    <Form.Item
-                        label="Chọn thai nhi"
-                        name="fetalRecordId"
-                        rules={[{ required: true, message: 'Please select a fetal record!' }]}
-                    >
-                        <Select
-                            placeholder="Chọn thai nhi"
-                            mode='multiple'
-                            className='w-[150px]'
-                            onChange={setSelectedFetalRecordIds}
-                            options={
-                                fetals?.map((item) => ({
-                                    value: item.id,
-                                    label: item.name
-                                }))
-                            }
-                        />
-                    </Form.Item>
-    
-                    <Form.Item>
-                        <div className="flex justify-end">
-                        <Button  onClick={onClose} className="bg-red-500 text-white mr-2">
-                                Cancel
-                            </Button>
-                            <Button type="primary" htmlType="submit" >
-                                Create Appointment
-                            </Button>
-                        </div>
-                    </Form.Item>
-                </Form>
-            </Modal>
-        );
-    };
-    
-    export default ModalCreateAppointment;
+                >
+                    <Select
+                        onChange={handleChangeSelectedSlot}
+                        placeholder="Chọn slot"
+                        className='w-[150px]'
+                        options={
+                            slots?.map((item) => ({
+                                value: item.id,
+                                label: `${item.startTime} - ${item.endTime}`
+                            }))
+                        }
+                    />
+                </Form.Item>
+
+                <Form.Item
+                    label="Chọn bác sĩ"
+                    name="doctorId"
+                    rules={[{ required: true, message: 'Please select a doctor!' }]}
+                >
+                    <Select
+                        onChange={handleChangeSelectedDoctor}
+                        placeholder="Chọn bác sĩ"
+                        className='w-[150px]'
+                        options={
+                            doctors?.map((item) => ({
+                                value: item.id,
+                                label: item.fullName
+                            }))
+                        }
+                    />
+                </Form.Item>
+
+                <Form.Item
+                    label="Chọn thai nhi"
+                    name="fetalRecordId"
+                    rules={[{ required: true, message: 'Please select a fetal record!' }]}
+                >
+                    <Select
+                        placeholder="Chọn thai nhi"
+                        mode='multiple'
+                        className='w-[150px]'
+                        onChange={setSelectedFetalRecordIds}
+                        options={
+                            fetals?.map((item) => ({
+                                value: item.id,
+                                label: item.name
+                            }))
+                        }
+                    />
+                </Form.Item>
+
+                <Form.Item>
+                    <div className="flex justify-end">
+                        <Button onClick={onClose} className="bg-red-500 text-white mr-2">
+                            Cancel
+                        </Button>
+                        <Button type="primary" htmlType="submit" >
+                            Create Appointment
+                        </Button>
+                    </div>
+                </Form.Item>
+            </Form>
+        </Modal>
+    );
+};
+
+export default ModalCreateAppointment;
