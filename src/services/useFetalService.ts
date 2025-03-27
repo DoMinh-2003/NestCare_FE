@@ -9,7 +9,20 @@ const useFetalService = () => {
   const router = useNavigate();
   const dispatch = useDispatch();
 
-
+  const createFetalCheckupRecord = useCallback(
+    async (values: any, id: string) => {
+      try {
+        const response = await callApi("post", `fetal-records/checkup-records/${id}`, {
+          ...values
+        });
+        console.log("createFetalCheckupRecord: ", response)
+        return response;
+      } catch (e: any) {
+        console.log("e: ", e)
+      }
+    },
+    [callApi, dispatch, router]
+  );
   const createFetal = useCallback(
     async (values: any) => {
       try {
@@ -96,7 +109,7 @@ const useFetalService = () => {
   );
 
 
-  return { loading, getFetalsRecords, getFetalsByMotherId, deleteFetal, createFetal, setIsLoading, updateFetal, getFetailAndMotherDetail };
+  return {createFetalCheckupRecord, loading, getFetalsRecords, getFetalsByMotherId, deleteFetal, createFetal, setIsLoading, updateFetal, getFetailAndMotherDetail };
 };
 
 export default useFetalService;
