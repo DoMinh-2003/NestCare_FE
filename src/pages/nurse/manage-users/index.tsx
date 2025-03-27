@@ -7,9 +7,45 @@ import ModalDelete from "../../../components/organisms/modal-delete";
 import { tableText } from "../../../constants/function";
 import { Link } from "react-router-dom";
 import { Input } from 'antd';
+import ModalAppointmentHistory from "../../../components/organisms/modal-appointment-history/ModalAppointmentHistory";
+import { CreateAppointment } from "../../../components/organisms/modal-create-appointment/ModalCreateAppointment";
 type SearchProps = GetProps<typeof Input.Search>;
 const { Search } = Input;
+// Interface for the Mother
+export interface Mother {
+    id: string;
+    username: string;
+    email: string;
+    fullName: string;
+    phone: string;
+    role: string;
+    isDeleted: boolean;
+}
 
+// Interface for the Fetal Record
+export interface FetalRecord {
+    id: string;
+    name: string;
+    note: string;
+    dateOfPregnancyStart: string; // Format: YYYY-MM-DD
+    expectedDeliveryDate: string; // Format: YYYY-MM-DD
+    actualDeliveryDate: string | null; // Can be null if not yet delivered
+    healthStatus: string;
+    status: string; // e.g., "PREGNANT"
+    isDeleted: number; // Assuming this is a flag (0 or 1)
+    createdAt: string; // ISO date string
+    updatedAt: string; // ISO date string
+    checkupRecords: any[]; // Assuming this is an array of checkup records
+    mother: Mother; // Reference to the Mother interface
+}
+
+// Interface for the Appointment
+export interface Appointment {
+    id: string;
+    appointmentDate: string; // Format: YYYY-MM-DD
+    status: string; // e.g., "PENDING"
+    fetalRecords: FetalRecord[]; // Array of fetal records
+}
 const NurseManageUsers: React.FC = () => {
     const [users, setUsers] = useState<UserData[]>([]);
     const [currentUser, setCurrentUser] = useState<UserData | null>(null);
@@ -17,6 +53,7 @@ const NurseManageUsers: React.FC = () => {
     const { createUser, updateUser, deleteUser, getUsers, getUsersSearch } = userUserService();
     const [form] = Form.useForm(); // Create a form reference
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
+ 
 
     useEffect(() => {
         getUsersFromAdmin();
@@ -153,6 +190,7 @@ const NurseManageUsers: React.FC = () => {
             <div className='text-3xl font-semibold text-center my-5'>
                 Quản lý người dùng
             </div>
+           
             <ModalDelete
                 handleCancelModalDelete={handleCancelModalDelete}
                 handleOkModalDelete={handleOkModalDelete}

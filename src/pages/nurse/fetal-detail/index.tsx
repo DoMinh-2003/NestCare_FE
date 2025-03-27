@@ -8,6 +8,8 @@ import { tableText } from '../../../constants/function';
 
 import ModalCreateAppointment, { CreateAppointment } from '../../../components/organisms/modal-create-appointment/ModalCreateAppointment';
 import ModalCheckUpRecord, { CheckupRecord } from '../../../components/organisms/modal-checkup-records/ModalCheckUpRecord';
+import { Appointment } from '../manage-users';
+import ModalAppointmentHistory from '../../../components/organisms/modal-appointment-history/ModalAppointmentHistory';
 
 export interface FetalData {
     id?: string
@@ -47,14 +49,20 @@ const FetalDetail = () => {
     const [currentFetal, setCurrentFetal] = useState<FetalData | null>(null);
     const [form] = Form.useForm()
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isModalVisibleAppointmentHistory, setisModalVisibleAppointmentHistory] = useState(false);
+    const [appointmentData, setAppointmentData] = useState<Appointment>()
 
+    const showModalAppointmentHistory = (appointmentData: Appointment) => {
+        setisModalVisibleAppointmentHistory(true);
+        setAppointmentData(appointmentData)
+    };
 
     const showModal = () => {
         setIsModalVisible(true);
     };
 
     const handleClose = () => {
-        setIsModalVisible(false);
+        setisModalVisibleAppointmentHistory(false);
     };
     useEffect(() => {
         if (id) {
@@ -107,6 +115,14 @@ const FetalDetail = () => {
             title: 'Name',
             dataIndex: 'name',
             key: 'name',
+        },
+        {
+            title: "Xem lịch sử đặt lịch",
+            render: (record: Appointment) => (
+                <div className="cursor-pointer text-blue" onClick={() => showModalAppointmentHistory(record)}>
+                    Xem lịch sử
+                </div>
+            )
         },
         {
             title: 'Hồ sơ kiểm tra',
@@ -164,20 +180,27 @@ const FetalDetail = () => {
         setCheckUpRecords(records)
         setIsModalOpenCheckUpRecords(true)
     }
-    
+
     const handleCancelModalCheckUpRecord = () => {
         setIsModalOpenCheckUpRecords(false)
     }
 
-    const handleCreateRespone = (values: CreateAppointment)=>{
-        if(values){
+    const handleCreateRespone = (values: CreateAppointment) => {
+        if (values) {
             getFetalsByMotherIdFromNurse()
         }
     }
-
+    const handleCancelCreateAppointment = ()=>{
+        setIsModalVisible(false)
+    }
     return (
         <div>
-            <ModalCreateAppointment fetals={fetals} createRespone={handleCreateRespone} isVisible={isModalVisible} onClose={handleClose} />
+            <ModalAppointmentHistory
+                isVisible={isModalVisibleAppointmentHistory}
+                onClose={handleClose}
+                appointmentData={appointmentData}
+            />
+            <ModalCreateAppointment fetals={fetals} createRespone={handleCreateRespone} isVisible={isModalVisible} onClose={handleCancelCreateAppointment} />
             <ModalCheckUpRecord records={checkUpRecords} handleCancelModalCheckUpRecord={handleCancelModalCheckUpRecord} isModalOpen={isModalOpenCheckUpRecords} />
             <div className='text-3xl font-semibold text-center'>
                 Hồ sơ thai nhi của mẹ {fetals[0]?.mother?.fullName}
