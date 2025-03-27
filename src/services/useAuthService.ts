@@ -32,7 +32,6 @@ const useAuthService = () => {
       try {
         const response = await callApi("post", "auth/login", values);
         console.log("login: ", response)
-
         localStorage.setItem("token", response?.token);
         localStorage.setItem('USER', JSON.stringify(response));
         console.log(localStorage.getItem('USER'));

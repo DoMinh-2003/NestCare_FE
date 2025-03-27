@@ -25,7 +25,6 @@ const ModalCreateOrder: React.FC<ModalCreateOrderProps> = ({
     form
 }) => {
 
-
     useEffect(() => {
         if (!visible) {
             form.resetFields();
@@ -66,7 +65,9 @@ const ModalCreateOrder: React.FC<ModalCreateOrderProps> = ({
                     label="Gói dịch vụ"
                     rules={[{ required: true, message: "Vui lòng chọn gói dịch vụ!" }]}
                 >
-                    <Select placeholder="Chọn gói dịch vụ">
+                    <Select 
+                    mode="multiple"
+                    placeholder="Chọn gói dịch vụ">
                         {packages.map(pkg => (
                             <Select.Option key={pkg.id} value={pkg.id}>
                                 {pkg.name}

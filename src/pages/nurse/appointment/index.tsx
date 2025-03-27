@@ -27,7 +27,7 @@ interface Appointment {
 const NurseCheckIn: React.FC = () => {
     const [appointments, setAppointments] = useState<Appointment[]>([]);
     const { getAppointmentsByStatus, updateAppointmentsByStatus } = useAppointmentService()
-    const [statusFilter, setStatusFilter] = useState<string>('CONFIRMED')
+    const [statusFilter, setStatusFilter] = useState<string>('PENDING')
 
     useEffect(() => {
         getAppointmentsByStatusFromNurse();
@@ -58,7 +58,7 @@ const NurseCheckIn: React.FC = () => {
             title: 'Xác nhận',
             content: 'Bạn có chắc chắn muốn từ chối cuộc hẹn này?',
             onOk: async () => {
-                const response = await updateAppointmentsByStatus("CANCELED", appointmentId)
+                const response = await updateAppointmentsByStatus("FAIL", appointmentId)
                 if (response) {
                     message.success('Cuộc hẹn đã được từ chối!');
                 }
@@ -68,20 +68,15 @@ const NurseCheckIn: React.FC = () => {
 
     const columns = [
         {
-            title: 'Tên mẹ',
-            dataIndex: ['fetalRecord', 'mother', 'fullName'],
-            key: 'motherName',
-        },
-        {
             title: 'Tên bác sĩ',
             dataIndex: ['doctor', 'fullName'],
             key: 'doctorName',
         },
-        {
-            title: 'Tên bé',
-            dataIndex: ['fetalRecord', 'name'],
-            key: 'babyName',
-        },
+        // {
+        //     title: 'Tên bé',
+        //     dataIndex: ['fetalRecord', 'name'],
+        //     key: 'babyName',
+        // },
         {
             title: 'Trạng thái',
             dataIndex: 'status',
@@ -91,7 +86,7 @@ const NurseCheckIn: React.FC = () => {
             title: 'Hành động',
             key: 'action',
             render: (text: any, record: Appointment) => (
-                record.status === "CONFIRMED" ? <span>
+                record.status === "PENDING" ? <span>
                     <Button type="primary" onClick={() => handleAccept(record.id)}>Chấp nhận</Button>
                     <Button type="danger" onClick={() => handleReject(record.id)} style={{ marginLeft: 8 }}>Từ chối</Button>
                 </span>
@@ -108,11 +103,12 @@ const NurseCheckIn: React.FC = () => {
     return (
         <div>
             <div className='text-3xl font-bold text-center my-5'>Quản lý cuộc hẹn</div>
+
             <Select
                 placeholder="Chọn gói dịch vụ"
                 onChange={handleChange}
                 className='w-[150px] mb-2'
-                defaultValue={"CONFIRMED"}
+                defaultValue={"PENDING"}
                 options={
                     appointmentStatus.map((item) => (
                         { value: item.value, label: item.label }
