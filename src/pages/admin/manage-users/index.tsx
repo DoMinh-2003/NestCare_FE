@@ -32,10 +32,10 @@ const AdminManageUsers: React.FC = () => {
     };
 
     const handleCreateOrUpdate = async (values: UserData) => {
-        console.log("handleCreateOrUpdate:", values);
         if (currentUser) {
             // Update user logic can be added here
             const response = await updateUser(values);
+            console.log("updateUser: ", response)
             if (response) {
                 message.success("Cập nhật dùng thành công");
                 getUsersFromAdmin();

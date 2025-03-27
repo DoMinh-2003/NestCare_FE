@@ -2,7 +2,6 @@ import { useDispatch } from "react-redux";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import useApiService from "../hooks/useApi";
-import { toast } from "react-toastify";
 import { message } from "antd";
 
 const userUserService = () => {
@@ -21,6 +20,21 @@ const userUserService = () => {
     },
     [callApi, dispatch, router]
   );
+
+  const getAvailableDoctor = useCallback(async (date: string, slotId: string) => {
+    try {
+      const queryParams = {
+        date,   // The date in YYYY-MM-DD format
+        slotId  // The ID of the time slot
+      };
+      const response = await callApi("get", "users/available-doctor", { params: queryParams });
+      return response
+    } catch (e: any) {
+      console.log('====================================');
+      console.log(e);
+      console.log('====================================');
+    }
+  }, [callApi, dispatch, router]);
 
   const getUsersSearch = useCallback(
     async (name: string, role: string) => {
@@ -114,7 +128,7 @@ const userUserService = () => {
     }, [callApi],
   )
 
-  return { getUserById, getUsers, getUserByRole, loading, updateUser, deleteUser, createUser, setIsLoading, getUsersSearch };
+  return { getUserById, getAvailableDoctor, getUsers, getUserByRole, loading, updateUser, deleteUser, createUser, setIsLoading, getUsersSearch };
 };
 
 export default userUserService;

@@ -32,6 +32,8 @@ export enum USER_ROUTES {
   FETAL_CHART = "/fetal-chart",
   BLOG_PAGE = "/blog",
   BLOG_DETAIL = "/blog/:id",
+  PROFILE = "/profile",
+  MY_SERVICES = '/my-services'
 }
 
 export enum DOCTOR_ROUTES {
@@ -47,6 +49,7 @@ export enum NURSE_ROUTES {
   USER = "users",
   ORDER = "orders",
   NURSE_APPOINTMENT = "appointments",
+  NURSE_CREATE_APPOINTMENT = "create-appointment",
   FETALS_DETAIL = "users/fetals/:id",
 }
 // Admin Routes

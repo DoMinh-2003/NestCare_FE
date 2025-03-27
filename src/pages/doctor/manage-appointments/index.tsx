@@ -1,7 +1,7 @@
 
 import type React from "react"
 import { useEffect, useState } from "react"
-import { Button, message, Table, Form, Modal, Select, Tag, Space, Dropdown, Menu, Typography } from "antd"
+import { Button, message, Table, Form, Modal, Select, Tag, Space, Dropdown, Menu, Typography, DatePicker } from "antd"
 import { Link, Outlet, useNavigate } from "react-router-dom"
 import userAppointmentService from "../../../services/useAppointmentService"
 import { formatDate } from "../../../utils/formatDate"
@@ -13,6 +13,7 @@ import userReminderService from "../../../services/useReminders"
 import useServiceService from "../../../services/useServiceService"
 import ModalAddServices from "../../../components/organisms/modal-add-service-of-appointment"
 import { DownOutlined, FileTextOutlined } from "@ant-design/icons"
+import moment from "moment"
 
 const { Option } = Select
 const { Text } = Typography
@@ -51,6 +52,8 @@ const DoctorManageAppointments: React.FC = () => {
     const [currentDoctor, setCurrentDoctor] = useState(null)
     const [visible, setVisible] = useState(false)
     const { getAppointmentsByDoctor, updateAppointmentStatus } = userAppointmentService()
+    const [selectedDate, setSelectedDate] = useState(moment(new Date()).format("YYYY-MM-DD"))
+    const [statusFilter, setStatusFilter] = useState<AppointmentStatus | null>('CHECKED_IN')
     const [form] = Form.useForm()
     const { getServices } = useServiceService()
     const [modalVisible, setModalVisible] = useState(false)
@@ -70,7 +73,7 @@ const DoctorManageAppointments: React.FC = () => {
     const getAppointmentFromDoctor = async () => {
         if (!currentDoctor) return
         try {
-            const response = await getAppointmentsByDoctor(currentDoctor.id)
+            const response = await getAppointmentsByDoctor(currentDoctor.id, selectedDate, statusFilter)
             if (response) {
                 setAppointments(response.filter((item) => !item.isDeleted))
             }
@@ -156,14 +159,11 @@ const DoctorManageAppointments: React.FC = () => {
         if (currentDoctor) {
             getAppointmentFromDoctor()
         }
-    }, [currentDoctor])
+    }, [currentDoctor, selectedDate, statusFilter])
+
 
     const getStatusTag = (status: AppointmentStatus) => {
         switch (status) {
-            case AppointmentStatus.PENDING:
-                return <Tag color="orange">Đang chờ xác nhận</Tag>
-            case AppointmentStatus.CONFIRMED:
-                return <Tag color="blue">Đã xác nhận</Tag>
             case AppointmentStatus.CHECKED_IN:
                 return <Tag color="cyan">Đã đến bệnh viện</Tag>
             case AppointmentStatus.IN_PROGRESS:
@@ -255,8 +255,6 @@ const DoctorManageAppointments: React.FC = () => {
             // Thay Tag bằng Select
             render: (value: AppointmentStatus, record: Appointment) => (
                 <Select style={{ width: 180 }} value={value} onChange={(newStatus) => handleChangeStatus(record, newStatus)}>
-                    <Option value={AppointmentStatus.PENDING}>{getStatusTag(AppointmentStatus.PENDING)}</Option>
-                    <Option value={AppointmentStatus.CONFIRMED}>{getStatusTag(AppointmentStatus.CONFIRMED)}</Option>
                     <Option value={AppointmentStatus.CHECKED_IN}>{getStatusTag(AppointmentStatus.CHECKED_IN)}</Option>
                     <Option value={AppointmentStatus.IN_PROGRESS}>{getStatusTag(AppointmentStatus.IN_PROGRESS)}</Option>
                     <Option value={AppointmentStatus.COMPLETED}>{getStatusTag(AppointmentStatus.COMPLETED)}</Option>
@@ -409,9 +407,37 @@ const DoctorManageAppointments: React.FC = () => {
         },
     ]
 
+    const handleDateChange = (e) => {
+        console.log("e", e);
+        setSelectedDate(moment(e).format('YYYY-MM-DD'));
+    }
+
     return (
         <div>
             <h1 className="text-3xl font-extrabold text-center mb-5">Quản lí lịch khám</h1>
+            <div className="flex items-center gap-4 mb-6">
+                <Select
+                    style={{ width: 200 }}
+                    value={statusFilter}
+                    onChange={(newStatus) => setStatusFilter(newStatus)}
+                    placeholder="Lọc theo trạng thái"
+                >
+                    <Option value={AppointmentStatus.CHECKED_IN}>{getStatusTag(AppointmentStatus.CHECKED_IN)}</Option>
+                    <Option value={AppointmentStatus.IN_PROGRESS}>{getStatusTag(AppointmentStatus.IN_PROGRESS)}</Option>
+                    <Option value={AppointmentStatus.COMPLETED}>{getStatusTag(AppointmentStatus.COMPLETED)}</Option>
+                    <Option value={AppointmentStatus.CANCELED}>{getStatusTag(AppointmentStatus.CANCELED)}</Option>
+                </Select>
+
+                <DatePicker
+                    onChange={(date) => handleDateChange(date)}
+                    defaultValue={moment(selectedDate)}
+                    format="DD/MM/YYYY"
+                    style={{ width: 200 }}
+                    placeholder="Chọn ngày"
+                />
+
+
+            </div>
 
             {/* Modal thêm dịch vụ */}
             <ModalAddServices

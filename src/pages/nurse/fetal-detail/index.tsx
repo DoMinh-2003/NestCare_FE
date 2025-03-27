@@ -5,7 +5,12 @@ import { Table, Button, Popconfirm, message, Form } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import ModalCreateUpdateFetal from '../../../components/organisms/modal-create-update-fetal/ModalCreateUpdateFetal';
 import { tableText } from '../../../constants/function';
-import ModalCheckUpRecord, { CheckupRecord } from '../../../components/organisms/modal-checkup-records/ModalCheckupRecord';
+
+import ModalCreateAppointment, { CreateAppointment } from '../../../components/organisms/modal-create-appointment/ModalCreateAppointment';
+import ModalCheckUpRecord, { CheckupRecord } from '../../../components/organisms/modal-checkup-records/ModalCheckUpRecord';
+import { Appointment } from '../manage-users';
+import ModalAppointmentHistory from '../../../components/organisms/modal-appointment-history/ModalAppointmentHistory';
+import ModalCreateFetalCheckupRecord from '../../../components/organisms/modal-create-checup-record/ModalCreateFetalCheckupRecord';
 
 export interface FetalData {
     id?: string
@@ -44,6 +49,33 @@ const FetalDetail = () => {
     const [checkUpRecords, setCheckUpRecords] = useState<CheckupRecord[]>([]);
     const [currentFetal, setCurrentFetal] = useState<FetalData | null>(null);
     const [form] = Form.useForm()
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isModalVisibleAppointmentHistory, setisModalVisibleAppointmentHistory] = useState(false);
+    const [appointmentData, setAppointmentData] = useState<Appointment>()
+    const [isModalCreateCheckup, setIsModalCreateCheckup] = useState(false);
+    const [fetalId, setFetalId] = useState<string>('')
+
+    const showModalCreateCheckup = (id: string) => {
+        setFetalId(id);
+        setIsModalCreateCheckup(true);
+    };
+
+    const handleCloseCreateCheckup = () => {
+        setIsModalCreateCheckup(false);
+    };
+
+    const showModalAppointmentHistory = (appointmentData: Appointment) => {
+        setisModalVisibleAppointmentHistory(true);
+        setAppointmentData(appointmentData)
+    };
+
+    const showModal = () => {
+        setIsModalVisible(true);
+    };
+
+    const handleClose = () => {
+        setisModalVisibleAppointmentHistory(false);
+    };
     useEffect(() => {
         if (id) {
             getFetalsByMotherIdFromNurse();
@@ -90,8 +122,6 @@ const FetalDetail = () => {
 
     };
 
-
-
     const columns = [
         {
             title: 'Name',
@@ -99,16 +129,23 @@ const FetalDetail = () => {
             key: 'name',
         },
         {
-            title: 'Hồ sơ kiểm tra',
-            dataIndex: 'checkupRecords',
-            key: 'checkupRecords',
-            render: (record: CheckupRecord[]) => (
+            title: "Xem lịch sử đặt lịch",
+            render: (record: Appointment) => (
+                <div className="cursor-pointer text-blue" onClick={() => showModalAppointmentHistory(record)}>
+                    Xem lịch sử
+                </div>
+            )
+        },
+        {
+            title: 'Hồ sơ kiểm tra thai nhi',
+
+            render: (record: Appointment) => (
                 <div className='flex gap-2'>
-                    <div className='Hồ sơ kiểm tra text-blue cursor-pointer' onClick={()=>showModalCheckUpRecord(record)}>
-                        Hồ sơ kiểm tra
+                    <div className='Hồ sơ kiểm tra text-blue cursor-pointer' onClick={() => showModalCheckUpRecord(record.checkupRecords)}>
+                        Hồ sơ kiểm tra thai
                     </div>
                     <div>
-                        <PlusOutlined className='text-yellow-500'/>
+                        <PlusOutlined onClick={()=>showModalCreateCheckup(record.id)} className='text-yellow-500' />
                     </div>
                 </div>
             )
@@ -149,16 +186,38 @@ const FetalDetail = () => {
             ),
         },
     ];
-    const showModalCheckUpRecord = (records: CheckupRecord[])=>{
+
+    const showModalCheckUpRecord = (records: CheckupRecord[]) => {
         setCheckUpRecords(records)
         setIsModalOpenCheckUpRecords(true)
     }
-    const handleCancelModalCheckUpRecord = ()=>{
+
+    const handleCancelModalCheckUpRecord = () => {
         setIsModalOpenCheckUpRecords(false)
+    }
+
+    const handleCreateRespone = (values: CreateAppointment) => {
+        if (values) {
+            getFetalsByMotherIdFromNurse()
+        }
+    }
+    const handleCancelCreateAppointment = () => {
+        setIsModalVisible(false)
     }
     return (
         <div>
-            <ModalCheckUpRecord records={checkUpRecords} handleCancelModalCheckUpRecord={handleCancelModalCheckUpRecord} isModalOpen={isModalOpenCheckUpRecords}/>
+            <ModalCreateFetalCheckupRecord
+            id={fetalId}
+                isVisible={isModalCreateCheckup}
+                onClose={handleCloseCreateCheckup}
+            />
+            <ModalAppointmentHistory
+                isVisible={isModalVisibleAppointmentHistory}
+                onClose={handleClose}
+                appointmentData={appointmentData}
+            />
+            <ModalCreateAppointment fetals={fetals} createRespone={handleCreateRespone} isVisible={isModalVisible} onClose={handleCancelCreateAppointment} />
+            <ModalCheckUpRecord records={checkUpRecords} handleCancelModalCheckUpRecord={handleCancelModalCheckUpRecord} isModalOpen={isModalOpenCheckUpRecords} />
             <div className='text-3xl font-semibold text-center'>
                 Hồ sơ thai nhi của mẹ {fetals[0]?.mother?.fullName}
             </div>
@@ -168,6 +227,14 @@ const FetalDetail = () => {
                 style={{ marginBottom: 16 }}
             >
                 Thêm hồ sơ
+            </Button>
+            <Button
+                type="primary"
+                className='ml-2'
+                onClick={showModal}
+                style={{ marginBottom: 16 }}
+            >
+                Đặt lịch
             </Button>
             <Table
                 components={{

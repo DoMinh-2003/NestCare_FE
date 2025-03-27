@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useCallback } from "react";
 import api from "../config/api";
-import { message } from "antd";
-import { toast } from "react-toastify";
 
 const useApiService = () => {
   const [loading, setIsLoading] = useState<boolean>(false);
@@ -19,9 +17,6 @@ const useApiService = () => {
         return response.data;
       } catch (e: any) {
         console.error(e);
-        message.error(e?.response?.data?.message || "Lỗi server");
-        // toast.error(e?.response?.data || "Operation failed");
-        throw e;
       } finally {
         setIsLoading(false);
       }

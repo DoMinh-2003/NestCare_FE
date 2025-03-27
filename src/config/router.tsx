@@ -1,12 +1,10 @@
 import { ReactNode } from "react";
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import AdminLayout from "../components/layouts/admin-layout";
 import AuthLayout from "../components/layouts/auth-layout";
 import CustomerLayout from "../components/layouts/customer-layout";
 import NurseLayout from "../components/layouts/nurse-layout";
 import PackageDetail from "../components/molecules/package-detail";
-import FetalRecord from "../pages/admin/fetal-record";
 import { ADMIN_ROUTES, DOCTOR_ROUTES, NURSE_ROUTES, USER_ROUTES } from "../constants/routes";
 import ManageOverview from "../pages/admin/manage-overview";
 import ManagePackage from "../pages/admin/manage-package";
@@ -55,6 +53,9 @@ import { message } from "antd";
 import AdminManageCategory from "../pages/admin/manage-category";
 import AdminManageBlogs from "../pages/admin/manage-blog";
 import ManageSlot from "../pages/admin/manage-slot";
+import Profile from "../pages/customer/profile";
+import AvailableService from "../pages/customer/available-service";
+
 
 
 interface ProtectedRouteByRoleProps {

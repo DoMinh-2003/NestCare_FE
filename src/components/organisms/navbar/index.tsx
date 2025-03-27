@@ -1,4 +1,4 @@
-import { AreaChartOutlined, CalendarOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, AreaChartOutlined, CalendarOutlined, HeartOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Avatar, Dropdown } from 'antd';
 import { useEffect, useState } from "react";
@@ -28,11 +28,25 @@ const Navbar = () => {
 
     const items: MenuProps['items'] = [
         {
+            key: '10',
+            label: (
+                <p>Xem thông tin tài khoản</p>
+            ),
+            icon: <Avatar />
+        },
+        {
             key: '1',
             label: (
-                <p>Dịch vụ đã đăng ký</p>
+                <p>Các gói đã đăng ký</p>
             ),
             icon: <ShoppingCartOutlined />
+        },
+        {
+            key: '2',
+            label: (
+                <p>Dịch vụ của bạn</p>
+            ),
+            icon: <AppstoreOutlined />
         },
         {
             key: '5',
@@ -67,7 +81,7 @@ const Navbar = () => {
                 navigate(USER_ROUTES.PURCHASED_HISTORY);
                 break;
             case '2':
-                // No action needed here since it's a link (handled by <a> tag)
+                navigate(USER_ROUTES.MY_SERVICES);
                 break;
             case '3':
                 // Disabled item, no action
@@ -82,6 +96,9 @@ const Navbar = () => {
                 break;
             case '6':
                 navigate(USER_ROUTES.FETAL_CHART)
+                break;
+            case '10':
+                navigate('/profile')
                 break;
             default:
                 break;

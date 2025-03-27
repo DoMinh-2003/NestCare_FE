@@ -44,7 +44,7 @@ const AdminLayout: React.FC = () => {
   const navigate = useNavigate();
   const handleLogout = () => {
     dispatch(logout());
-    navigate("/");
+    navigate("/auth/login");
     message.success("Logged out");
   };
 

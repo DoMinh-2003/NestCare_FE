@@ -530,6 +530,9 @@ function FetalDevelopmentCharts({ fetalRecord }) {
 		return <Empty description="Không có dữ liệu thai nhi" />
 	}
 
+	console.log("Print c=fetal record --------", fetalRecord);
+
+
 	const checkupCount = fetalRecord.checkupRecords?.length || 0
 
 	return (

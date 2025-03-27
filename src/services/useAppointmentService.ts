@@ -11,13 +11,51 @@ const userAppointmentService = () => {
     const dispatch = useDispatch();
 
     const getAppointmentsByDoctor = useCallback(
-        async (doctorId: string) => {
+        async (doctorId: string, date: string, status: string) => {
             try {
-                const response = await callApi("get", `appointments/by-doctor/${doctorId}`);
+                const response = await callApi("get", `appointments/doctor-date/${doctorId}/${date}/${status}`);
                 return response;
             } catch (e: any) {
                 console.error(e?.response?.data?.message || "GetAppointmentsByDoctor failed");
                 // throw e;
+            }
+        },
+        [callApi]
+    );
+
+    const getAppointmentDetail = useCallback(
+        async (id: any) => {
+            try {
+                const response = await callApi("get", `appointments/${id}`);
+                return response;
+            } catch (error: any) {
+                console.error(error?.response?.data?.message || "getAppointmentDetail failed");
+            }
+        },
+        [callApi]
+    );
+
+    const createAppointment = useCallback(
+
+        async (values: any) => {
+            try {
+                const response = await callApi("post", `appointments`, values);
+                return response;
+            } catch (error: any) {
+                console.error(error?.response?.data?.message || "createAppointment failed");
+            }
+        },
+        [callApi]
+    );
+
+    const updateMotherHeal = useCallback(
+
+        async (values: any, id: string) => {
+            try {
+                const response = await callApi("put", `appointments/mother-health/${id}`, values);
+                return response;
+            } catch (error: any) {
+                console.error(error?.response?.data?.message || "updateMotherHeal failed");
             }
         },
         [callApi]
@@ -44,7 +82,7 @@ const userAppointmentService = () => {
     )
 
 
-    return { getAppointmentsByDoctor, setIsLoading, updateAppointmentStatus, addServicesToAppointment };
+    return {updateMotherHeal, getAppointmentDetail, getAppointmentsByDoctor, setIsLoading, updateAppointmentStatus, addServicesToAppointment, createAppointment };
 };
 
 export default userAppointmentService;

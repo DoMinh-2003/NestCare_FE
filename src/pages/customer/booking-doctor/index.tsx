@@ -34,25 +34,29 @@ function BookingDoctor() {
 	const user = getUserDataFromLocalStorage()
 
 	const { getFetalsByMotherId } = useFetalService()
-	const { getUserByRole } = userUserService()
+	const { getAvailableDoctor } = userUserService()
 	const { userCreateAppointments } = useAppointmentService()
 	const { getSlots } = useSlotService()
 
 	const handleGetFetalsByMotherId = async (userId: string) => {
 		try {
-			const response = await getFetalsByMotherId(userId)
-			setFetals(response)
+			const response = await getFetalsByMotherId(userId);
+			setFetals(response);
+			const pregnantFetals = response.filter(fetal => fetal.status === "PREGNANT");
+			form.setFieldsValue({ fetalRecords: pregnantFetals.map(fetal => fetal.id) });
 		} catch (error) {
-			message.error("Không thể tải dữ liệu thai nhi")
-			console.error("Error fetching fetals:", error)
+			message.error("Không thể tải dữ liệu thai nhi");
+			console.error("Error fetching fetals:", error);
 		} finally {
-			setLoading((prev) => ({ ...prev, fetals: false }))
+			setLoading((prev) => ({ ...prev, fetals: false }));
 		}
-	}
+	};
 
 	const handleGetDoctors = async () => {
 		try {
-			const response = await getUserByRole("doctor")
+			console.log("selectedDate:", selectedDate, "selectedTime:", selectedTime)
+			const date = selectedDate ? dayjs(selectedDate).format("YYYY-MM-DD") : null
+			const response = await getAvailableDoctor(date, selectedTime)
 			setDoctors(response)
 		} catch (error) {
 			message.error("Không thể tải danh sách bác sĩ")
@@ -78,9 +82,14 @@ function BookingDoctor() {
 		if (user?.id) {
 			handleGetFetalsByMotherId(user.id)
 		}
-		handleGetDoctors()
 		handleGetSlots()
 	}, [])
+
+	useEffect(() => {
+		if (selectedDate && selectedTime) {
+			handleGetDoctors()
+		}
+	}, [selectedDate, selectedTime])
 
 	const handleDateChange = (date) => {
 		setSelectedDate(date)
@@ -139,7 +148,7 @@ function BookingDoctor() {
 		}
 	}
 
-	const isLoading = loading.fetals || loading.doctors || loading.slots
+	const isLoading = loading.fetals || loading.slots
 
 	const disabledDate = (current) => {
 		// Can't select days before today
@@ -208,35 +217,6 @@ function BookingDoctor() {
 								)}
 							</Form.Item>
 
-							{/* Doctor Selection */}
-							<Form.Item
-								name="doctor"
-								label={
-									<span style={{ fontSize: "16px", fontWeight: 500 }}>
-										<UserOutlined style={{ marginRight: "8px", color: "#1890ff" }} />
-										Bác sĩ
-									</span>
-								}
-								rules={[{ required: true, message: "Hãy lựa chọn bác sĩ khám!" }]}
-							>
-								{doctors.length > 0 ? (
-									<Select
-										placeholder="Chọn bác sĩ khám"
-										showSearch
-										optionFilterProp="children"
-										style={{ width: "100%" }}
-										listHeight={250}
-									>
-										{doctors.map((doctor) => (
-											<Option key={doctor.id} value={doctor.id}>
-												{doctor.fullName}
-											</Option>
-										))}
-									</Select>
-								) : (
-									<Empty description="Không có bác sĩ khả dụng" image={Empty.PRESENTED_IMAGE_SIMPLE} />
-								)}
-							</Form.Item>
 
 							{/* Date Selection */}
 							<Form.Item
@@ -297,6 +277,38 @@ function BookingDoctor() {
 										/>
 									) : (
 										<Empty description="Không có khung giờ khả dụng" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+									)}
+								</Form.Item>
+							)}
+
+							{/* Doctor Selection */}
+							{selectedDate && selectedTime && (
+								<Form.Item
+									name="doctor"
+									label={
+										<span style={{ fontSize: "16px", fontWeight: 500 }}>
+											<UserOutlined style={{ marginRight: "8px", color: "#1890ff" }} />
+											Bác sĩ
+										</span>
+									}
+									rules={[{ required: true, message: "Hãy lựa chọn bác sĩ khám!" }]}
+								>
+									{doctors.length > 0 ? (
+										<Select
+											placeholder="Chọn bác sĩ khám"
+											showSearch
+											optionFilterProp="children"
+											style={{ width: "100%" }}
+											listHeight={250}
+										>
+											{doctors.map((doctor) => (
+												<Option key={doctor.id} value={doctor.id}>
+													{doctor.fullName}
+												</Option>
+											))}
+										</Select>
+									) : (
+										<Empty description="Không có bác sĩ khả dụng" image={Empty.PRESENTED_IMAGE_SIMPLE} />
 									)}
 								</Form.Item>
 							)}
