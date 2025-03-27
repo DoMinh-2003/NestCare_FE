@@ -5,7 +5,9 @@ import { Table, Button, Popconfirm, message, Form } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import ModalCreateUpdateFetal from '../../../components/organisms/modal-create-update-fetal/ModalCreateUpdateFetal';
 import { tableText } from '../../../constants/function';
-import ModalCheckUpRecord, { CheckupRecord } from '../../../components/organisms/modal-checkup-records/ModalCheckupRecord';
+
+import ModalCreateAppointment, { CreateAppointment } from '../../../components/organisms/modal-create-appointment/ModalCreateAppointment';
+import ModalCheckUpRecord, { CheckupRecord } from '../../../components/organisms/modal-checkup-records/ModalCheckUpRecord';
 
 export interface FetalData {
     id?: string
@@ -44,6 +46,16 @@ const FetalDetail = () => {
     const [checkUpRecords, setCheckUpRecords] = useState<CheckupRecord[]>([]);
     const [currentFetal, setCurrentFetal] = useState<FetalData | null>(null);
     const [form] = Form.useForm()
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
+
+    const showModal = () => {
+        setIsModalVisible(true);
+    };
+
+    const handleClose = () => {
+        setIsModalVisible(false);
+    };
     useEffect(() => {
         if (id) {
             getFetalsByMotherIdFromNurse();
@@ -90,8 +102,6 @@ const FetalDetail = () => {
 
     };
 
-
-
     const columns = [
         {
             title: 'Name',
@@ -104,11 +114,11 @@ const FetalDetail = () => {
             key: 'checkupRecords',
             render: (record: CheckupRecord[]) => (
                 <div className='flex gap-2'>
-                    <div className='Hồ sơ kiểm tra text-blue cursor-pointer' onClick={()=>showModalCheckUpRecord(record)}>
+                    <div className='Hồ sơ kiểm tra text-blue cursor-pointer' onClick={() => showModalCheckUpRecord(record)}>
                         Hồ sơ kiểm tra
                     </div>
                     <div>
-                        <PlusOutlined className='text-yellow-500'/>
+                        <PlusOutlined className='text-yellow-500' />
                     </div>
                 </div>
             )
@@ -149,16 +159,26 @@ const FetalDetail = () => {
             ),
         },
     ];
-    const showModalCheckUpRecord = (records: CheckupRecord[])=>{
+
+    const showModalCheckUpRecord = (records: CheckupRecord[]) => {
         setCheckUpRecords(records)
         setIsModalOpenCheckUpRecords(true)
     }
-    const handleCancelModalCheckUpRecord = ()=>{
+    
+    const handleCancelModalCheckUpRecord = () => {
         setIsModalOpenCheckUpRecords(false)
     }
+
+    const handleCreateRespone = (values: CreateAppointment)=>{
+        if(values){
+            getFetalsByMotherIdFromNurse()
+        }
+    }
+
     return (
         <div>
-            <ModalCheckUpRecord records={checkUpRecords} handleCancelModalCheckUpRecord={handleCancelModalCheckUpRecord} isModalOpen={isModalOpenCheckUpRecords}/>
+            <ModalCreateAppointment fetals={fetals} createRespone={handleCreateRespone} isVisible={isModalVisible} onClose={handleClose} />
+            <ModalCheckUpRecord records={checkUpRecords} handleCancelModalCheckUpRecord={handleCancelModalCheckUpRecord} isModalOpen={isModalOpenCheckUpRecords} />
             <div className='text-3xl font-semibold text-center'>
                 Hồ sơ thai nhi của mẹ {fetals[0]?.mother?.fullName}
             </div>
@@ -168,6 +188,14 @@ const FetalDetail = () => {
                 style={{ marginBottom: 16 }}
             >
                 Thêm hồ sơ
+            </Button>
+            <Button
+                type="primary"
+                className='ml-2'
+                onClick={showModal}
+                style={{ marginBottom: 16 }}
+            >
+                Đặt lịch
             </Button>
             <Table
                 components={{

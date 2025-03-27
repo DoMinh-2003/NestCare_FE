@@ -1,5 +1,6 @@
 import axios from "axios";
 import SECRECT from "../secret";
+
 export const generateTimeSlots = () => {
     const slots = [];
     const startHour = 7; // Bắt đầu từ 7:00
