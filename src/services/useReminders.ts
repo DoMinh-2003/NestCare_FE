@@ -27,8 +27,22 @@ const userReminderService = () => {
         [callApi]
     );
 
+    const getReminderByMother = useCallback(
+        async (id: string) => {
+            try {
+                const response = await callApi("get", `reminders/mother/${id}`);
+                console.log(response);
+                return response;
+            } catch (e: any) {
+                message.error(e?.response?.data?.message || "CreateReminderssByDoctor failed");
+                throw e;
+            }
+        },
+        [callApi]
+    );
 
-    return { createReminderByDoctor, setIsLoading };
+
+    return { createReminderByDoctor, setIsLoading, getReminderByMother };
 };
 
 export default userReminderService;

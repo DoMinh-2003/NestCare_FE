@@ -55,6 +55,7 @@ import AdminManageBlogs from "../pages/admin/manage-blog";
 import ManageSlot from "../pages/admin/manage-slot";
 import Profile from "../pages/customer/profile";
 import AvailableService from "../pages/customer/available-service";
+import Reminder from "../pages/customer/reminder";
 
 
 
@@ -70,7 +71,7 @@ interface ProtectedRouteAuthProps {
 const ProtectedRouteAuth: React.FC<ProtectedRouteAuthProps> = ({
   children,
 }) => {
-  const user = useCurrentUser();
+  const user = localStorage.getItem("USER");
 
   if (!user) {
     message.info("Bạn cần phải đăng nhập trước");
@@ -179,6 +180,12 @@ export const router = createBrowserRouter([
         path: USER_ROUTES.PURCHASED_HISTORY,
         element: <ProtectedRouteAuth>
           <PurchasedHistory />
+        </ProtectedRouteAuth>,
+      },
+      {
+        path: '/reminders',
+        element: <ProtectedRouteAuth>
+          <Reminder />
         </ProtectedRouteAuth>,
       },
       {
