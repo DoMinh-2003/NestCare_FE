@@ -11,9 +11,9 @@ const userAppointmentService = () => {
     const dispatch = useDispatch();
 
     const getAppointmentsByDoctor = useCallback(
-        async (doctorId: string) => {
+        async (doctorId: string, date: string, status: string) => {
             try {
-                const response = await callApi("get", `appointments/by-doctor/${doctorId}`);
+                const response = await callApi("get", `appointments/doctor-date/${doctorId}/${date}/${status}`);
                 return response;
             } catch (e: any) {
                 console.error(e?.response?.data?.message || "GetAppointmentsByDoctor failed");
