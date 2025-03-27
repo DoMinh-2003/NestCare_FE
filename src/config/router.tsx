@@ -54,6 +54,7 @@ import AdminManageCategory from "../pages/admin/manage-category";
 import AdminManageBlogs from "../pages/admin/manage-blog";
 import ManageSlot from "../pages/admin/manage-slot";
 import Profile from "../pages/customer/profile";
+import AvailableService from "../pages/customer/available-service";
 
 
 
@@ -199,6 +200,10 @@ export const router = createBrowserRouter([
       {
         path: USER_ROUTES.PROFILE,
         element: <Profile />,
+      },
+      {
+        path: USER_ROUTES.MY_SERVICES,
+        element: <AvailableService />,
       },
     ],
   },
