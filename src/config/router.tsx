@@ -60,7 +60,7 @@ import AvailableService from "../pages/customer/available-service";
 
 interface ProtectedRouteByRoleProps {
   children: ReactNode;
-  allowedRoles: Array<"ADMIN" | "USER" | "NURSE" | "DOCTOR">; // Các vai trò cho phép
+  allowedRoles: Array<"admin" | "user" | "nurse" | "doctor">; // Các vai trò cho phép
 }
 
 interface ProtectedRouteAuthProps {
@@ -84,10 +84,11 @@ const ProtectedRouteByRole: React.FC<ProtectedRouteByRoleProps> = ({
   children,
   allowedRoles,
 }) => {
-  const user = useCurrentUser();
-  console.log(user);
+  const user = localStorage.getItem("USER");
+  const userData = JSON.parse(user)
+  console.log("user", user)
 
-  if (!user || !allowedRoles.includes(user.role)) {
+  if (!user || !allowedRoles.includes(userData.role)) {
     message.error("You do not have permissions to access");
     return <Navigate to="/" replace />;
   }
@@ -237,7 +238,7 @@ export const router = createBrowserRouter([
   {
     path: "/test",
     element: (
-      <ProtectedRouteByRole allowedRoles={["ADMIN"]}>
+      <ProtectedRouteByRole allowedRoles={["admin"]}>
         <div className="text-3xl font-bold underline ">Hi ADMIN</div>
       </ProtectedRouteByRole>
     ),
@@ -245,7 +246,7 @@ export const router = createBrowserRouter([
   {
     path: ADMIN_ROUTES.ADMIN,
     element: (
-      <ProtectedRouteByRole allowedRoles={["ADMIN"]}>
+      <ProtectedRouteByRole allowedRoles={["admin"]}>
         <AdminLayout />
       </ProtectedRouteByRole>
     ),
@@ -291,7 +292,7 @@ export const router = createBrowserRouter([
   {
     path: NURSE_ROUTES.NURSE,
     element: (
-      <ProtectedRouteByRole allowedRoles={["NURSE"]}>
+      <ProtectedRouteByRole allowedRoles={["nurse"]}>
         <NurseLayout />
       </ProtectedRouteByRole>
     ),
@@ -335,7 +336,7 @@ export const router = createBrowserRouter([
   {
     path: DOCTOR_ROUTES.DOCTOR,
     element: (
-      <ProtectedRouteByRole allowedRoles={["DOCTOR"]}>
+      <ProtectedRouteByRole allowedRoles={["doctor"]}>
         <DoctorLayout />
       </ProtectedRouteByRole>
     ),
