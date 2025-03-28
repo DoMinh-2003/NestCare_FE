@@ -41,6 +41,10 @@ export enum DOCTOR_ROUTES {
   USER = "user",
   FETALS_DETAIL = "appointments/fetals/:id",
   APPOINTMENT = "appointments",
+  CHECK_IN_APPOINTMENT = "check-in",
+  CHECK_IN_APPOINTMENT_FETALS = "check-in/fetals/:id",
+  IN_PROGRESS_APPOINTMENT = "in-progress",
+  IN_PROGRESS_APPOINTMENT_FETALS = "in-progress/fetals/:id",
   REQUEST_APPOINTMENT = "request/appointments",
 }
 
