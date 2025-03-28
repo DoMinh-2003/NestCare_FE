@@ -241,7 +241,7 @@ const DoctorFetalView: React.FC = () => {
             }
 
             // Make the API call to complete the appointment
-            await api.put(`/api/appointments/completed/${selectedAppointment}`, requestData)
+            await api.put(`appointments/completed/${selectedAppointment}`, requestData)
 
             message.success("Đã lưu thông tin khám thành công")
 
