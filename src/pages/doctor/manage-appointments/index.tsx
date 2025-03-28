@@ -14,7 +14,6 @@ import useServiceService from "../../../services/useServiceService"
 import ModalAddServices from "../../../components/organisms/modal-add-service-of-appointment"
 import { DownOutlined, FileTextOutlined } from "@ant-design/icons"
 import moment from "moment"
-import ModalCreateFetalCheckupRecord from "../../../components/organisms/modal-create-checup-record/ModalCreateFetalCheckupRecord"
 
 const { Option } = Select
 const { Text } = Typography

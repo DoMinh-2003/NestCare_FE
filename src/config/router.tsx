@@ -56,6 +56,8 @@ import ManageSlot from "../pages/admin/manage-slot";
 import Profile from "../pages/customer/profile";
 import AvailableService from "../pages/customer/available-service";
 import Reminder from "../pages/customer/reminder";
+import DoctorManageCheckinAppointments from "../pages/doctor/check-in-appoinment";
+import DoctorManageInprogressAppointments from "../pages/doctor/in-progress-appointment";
 
 
 
@@ -351,10 +353,25 @@ export const router = createBrowserRouter([
       {
         path: DOCTOR_ROUTES.APPOINTMENT,
         element: <DoctorManageAppointments />,
-
+      },
+      {
+        path: DOCTOR_ROUTES.CHECK_IN_APPOINTMENT,
+        element: <DoctorManageCheckinAppointments />,
+      },
+      {
+        path: DOCTOR_ROUTES.IN_PROGRESS_APPOINTMENT,
+        element: <DoctorManageInprogressAppointments />,
       },
       {
         path: DOCTOR_ROUTES.FETALS_DETAIL,
+        element: <FetailDetail />,
+      },
+      {
+        path: DOCTOR_ROUTES.CHECK_IN_APPOINTMENT_FETALS,
+        element: <FetailDetail />,
+      },
+      {
+        path: DOCTOR_ROUTES.IN_PROGRESS_APPOINTMENT_FETALS,
         element: <FetailDetail />,
       },
 
