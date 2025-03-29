@@ -52,6 +52,7 @@ export const tableText = () => {
 
 export const getUserDataFromLocalStorage = () => {
     const user = localStorage.getItem("USER");
+    console.log(user);
     if (user) {
         const userData = JSON.parse(user)
         return userData;
