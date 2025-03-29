@@ -67,7 +67,7 @@ const useFetalService = () => {
   );
 
   const getFetalsByMother = useCallback(
-    async (motherId: any) => {
+    async () => {
       try {
         const response = await callApi("get", `fetal-records`);
         console.log("getOrderByUserId: ", response)
