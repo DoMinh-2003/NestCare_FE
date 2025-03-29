@@ -67,6 +67,7 @@ const ModalAddServices: React.FC<ModalAddServicesProps> = ({
             if (!appointmentId) return;
             const response = await addServicesToAppointment(appointmentId, serviceList);
             if (response) {
+                window.location.href = response
                 onCancel();  // Đóng modal
                 onSuccess(); // Gọi callback refresh danh sách
             }
