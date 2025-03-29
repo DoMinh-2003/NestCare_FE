@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, Form, Input, Select } from 'antd';
+import { Modal, Form, Input, Select, Divider } from 'antd';
 import useServiceService, { Service } from '../../../services/useServiceService';
 import { formatCreatedAt } from '../../../utils/formatDate';
 
@@ -54,7 +54,8 @@ const ModalCreateUpdateWeekCheckup: React.FC<CheckupModalProps> = ({ visible, on
 
     const handleOk = () => {
         form.validateFields().then(values => {
-            onCreate(values);
+            console.log("form: ", values)
+            onCreate({ ...values, });
             form.resetFields();
         }).catch(info => {
             console.log('Validate Failed:', info);
@@ -87,15 +88,13 @@ const ModalCreateUpdateWeekCheckup: React.FC<CheckupModalProps> = ({ visible, on
                     <Select
                         mode="multiple"
                         placeholder="Chọn dịch vụ"
-                        labelInValue
-                        optionLabelProp="label"
+                        options={services.map((item) => ({
+                            value: item.id,
+                            label: item.name
+                        }))}
                     >
-                        {services.map((item) => (
-                            <Select.Option key={item.id} value={item.id} label={item.name}>
-                                {item.name}
-                            </Select.Option>
-                        ))}
                     </Select>
+
                 </Form.Item>
 
             </Form>

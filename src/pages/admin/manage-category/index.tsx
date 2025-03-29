@@ -151,7 +151,7 @@ const AdminManageCategory: React.FC = () => {
                 Quản lý danh mục
             </div>
             <div className='flex gap-2 justify-between px-2'>
-                <div className='gap-2 flex'>
+                <div className='gap-2 flex mb-2'>
                     <Search placeholder="Tìm kiếm bằng tên" className='w-[200px]' onSearch={onSearch} enterButton />
                 </div>
                 <div>

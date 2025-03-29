@@ -5,6 +5,7 @@ import useSlotService from '../../../services/useSlotsService';
 import { formatDate } from '../../../utils/formatDate';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import ModalDelete from '../../../components/organisms/modal-delete';
+import Search, { SearchProps } from 'antd/es/input/Search';
 const ManageSlot = () => {
     const [slots, setSlots] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -112,7 +113,7 @@ const ManageSlot = () => {
 
     const handleOkModalDelete = async () => {
         if (!selectedSlot) return; // Ensure selectedService is defined
-        const response = await deleteSlot(selectedSlot.id+"");
+        const response = await deleteSlot(selectedSlot.id + "");
         console.log("response: ", response)
         if (response) {
             message.success(`Xóa slot thành công`);
@@ -123,6 +124,16 @@ const ManageSlot = () => {
             message.error(`Xóa slot thất bại`);
         }
     };
+
+    const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
+        const response = await getSlots();
+        console.log("response: ", response);
+        if (response && value != '') {
+            setSlots(response.filter((item: Slot) => item.startTime.includes(value)));
+        } else if (response) {
+            setSlots(response);
+        }
+    }
 
     return (
         <div>
@@ -135,9 +146,12 @@ const ManageSlot = () => {
                 name={""}
                 isModalOpenDelete={isModalDeleteOpen}
             />
-            <Button type="primary" className='mb-5' onClick={() => showModal()}>
-                Thêm Slot
-            </Button>
+            <div className='flex gap-2'>
+                <Search placeholder="Tìm kiếm theo thời gian bắt đầu" className='w-[200px]' onSearch={onSearch} enterButton />
+                <Button type="primary" className='mb-5' onClick={() => showModal()}>
+                    Thêm Slot
+                </Button>
+            </div>
             <Table dataSource={slots} columns={columns} rowKey="createdAt" />
 
             <ModalCreateUpdateSlot

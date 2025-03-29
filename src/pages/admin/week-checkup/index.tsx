@@ -6,6 +6,7 @@ import { tableText } from '../../../constants/function';
 import ModalServicesOfWeekCheckup from '../../../components/organisms/modal-services-of-week-checkup/ModalServicesOfWeekCheckup';
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import ModalDelete from '../../../components/organisms/modal-delete';
+import Search, { SearchProps } from 'antd/es/input/Search';
 
 interface CheckupData {
     week: number;
@@ -62,6 +63,7 @@ const WeekCheckup: React.FC = () => {
     };
 
     const handleCreateOrUpdate = async (values: CheckupData) => {
+        console.log("handleCreateOrUpdate: ", values)
         if (currentCheckup) {
             const response = await updateWeekCheckup(values, currentCheckup.id + "")
             if (response) {
@@ -136,10 +138,24 @@ const WeekCheckup: React.FC = () => {
         setCheckups(null)
     }
 
+    const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
+        const response = await getWeekCheckup();
+        console.log("response: ", response);
+        if (response && value != '') {
+            setCheckups(response.filter((item: Checkup) => item.title.toLocaleLowerCase().includes(value.toLocaleLowerCase())));
+        } else if (response) {
+            setCheckups(response);
+        }
+    }
+
     return (
         <div>
             <div className='text-center font-bold text-3xl'>Quản lý lịch khám</div>
-            <Button type="primary" className='mb-2' onClick={() => showModal()}>Thêm lịch khám</Button>
+
+            <div className='flex gap-2'>
+                <Search placeholder="Tìm kiếm bằng tiêu đề" className='w-[200px]' onSearch={onSearch} enterButton />
+                <Button type="primary" className='mb-2' onClick={() => showModal()}>Thêm lịch khám</Button>
+            </div>
             <Table rowClassName={() => tableText()} dataSource={checkups} columns={columns} rowKey="week" />
             <ModalServicesOfWeekCheckup
                 visible={isServiceModalVisible}
