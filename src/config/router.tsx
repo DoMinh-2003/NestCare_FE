@@ -83,21 +83,44 @@ const ProtectedRouteAuth: React.FC<ProtectedRouteAuthProps> = ({
   return children;
 };
 
+const getRedirectPathByRole = (role: string) => {
+  switch (role) {
+    case "admin":
+      return "/admin";
+    case "doctor":
+      return "/doctor";
+    case "nurse":
+      return "/nurse";
+    case "user":
+      return "/";
+    default:
+      return "/";
+  }
+};
+
 const ProtectedRouteByRole: React.FC<ProtectedRouteByRoleProps> = ({
   children,
   allowedRoles,
 }) => {
   const user = localStorage.getItem("USER");
-  const userData = JSON.parse(user)
-  console.log("user", user)
 
-  if (!user || !allowedRoles.includes(userData.role)) {
-    message.error("You do not have permissions to access");
-    return <Navigate to="/" replace />;
+  if (!user) {
+    message.info("Bạn cần đăng nhập trước");
+    return <Navigate to="/auth/login" replace />;
+  }
+
+  const userData = JSON.parse(user);
+  console.log("test", userData);
+
+  if (!allowedRoles.includes(userData.role)) {
+    const correctPath = getRedirectPathByRole(userData.role);
+    message.warning("Bạn không có quyền truy cập, đang chuyển hướng...");
+    return <Navigate to={correctPath} replace />;
   }
 
   return children;
 };
+
 
 export const router = createBrowserRouter([
   {
@@ -180,9 +203,9 @@ export const router = createBrowserRouter([
       },
       {
         path: USER_ROUTES.PURCHASED_HISTORY,
-        element: <ProtectedRouteAuth>
+        element: <ProtectedRouteByRole allowedRoles={["user"]}>
           <PurchasedHistory />
-        </ProtectedRouteAuth>,
+        </ProtectedRouteByRole>,
       },
       {
         path: '/reminders',
@@ -192,21 +215,21 @@ export const router = createBrowserRouter([
       },
       {
         path: USER_ROUTES.BOOKING_DOCTOR,
-        element: <ProtectedRouteAuth>
+        element: <ProtectedRouteByRole allowedRoles={["user"]}>
           <BookingDoctor />
-        </ProtectedRouteAuth>,
+        </ProtectedRouteByRole>,
       },
       {
         path: USER_ROUTES.APPOINTMENT_HISTORY,
-        element: <ProtectedRouteAuth>
+        element: <ProtectedRouteByRole allowedRoles={["user"]}>
           <AppointmentHistory />
-        </ProtectedRouteAuth>,
+        </ProtectedRouteByRole>,
       },
       {
         path: USER_ROUTES.FETAL_CHART,
-        element: <ProtectedRouteAuth>
+        element: <ProtectedRouteByRole allowedRoles={["user"]}>
           <FetalChart />
-        </ProtectedRouteAuth>,
+        </ProtectedRouteByRole>,
       },
       {
         path: USER_ROUTES.BLOG_PAGE,
@@ -224,9 +247,9 @@ export const router = createBrowserRouter([
       },
       {
         path: USER_ROUTES.MY_SERVICES,
-        element: <ProtectedRouteAuth>
+        element: <ProtectedRouteByRole allowedRoles={["user"]}>
           <AvailableService />
-        </ProtectedRouteAuth>,
+        </ProtectedRouteByRole>,
       },
     ],
   },
