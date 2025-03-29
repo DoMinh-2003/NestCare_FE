@@ -3,7 +3,6 @@ import { Table, Button, Modal, message, Select, Tag } from 'antd';
 import useAppointmentService from '../../../services/useApoitment';
 import type { GetProps } from 'antd';
 import { Input } from 'antd';
-import { toast } from 'react-toastify';
 import ModalUpdateMotherHealth from '../../../components/organisms/modal-update-mother-heal/ModalUpdateMotherHealth';
 import { AppointmentStatus } from '../../../constants/status';
 import { formatDate } from '../../../utils/formatDate';
@@ -18,11 +17,14 @@ interface FetalRecord {
         fullName: string;
     };
 }
-
+interface doctor {
+    fullName: string;
+}
 interface Appointment {
     id: string;
     appointmentDate: string;
     status: string;
+    doctor: doctor
     fetalRecords: FetalRecord[];
 }
 
@@ -49,6 +51,7 @@ const NurseCheckIn: React.FC = () => {
 
     const getAppointmentsByStatusFromNurse = async () => {
         const response = await getAppointmentsByStatus(statusFilter)
+        console.log("getAppointmentsByStatusFromNurse: ", response)
         if (response) {
             setAppointments(response)
         }
@@ -155,25 +158,44 @@ const NurseCheckIn: React.FC = () => {
         }
     }
 
+    const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
+        const response = await getAppointmentsByStatus(statusFilter);
+        console.log("response: ", response);
+        if (response && value != '') {
+            setAppointments(response.filter((item: Appointment) =>
+                item.fetalRecords[0].mother.fullName.toLocaleLowerCase().includes(value.toLocaleLowerCase()) ||
+                    item.doctor.fullName.toLocaleLowerCase().includes(value.toLocaleLowerCase())
+                )
+            );
+        } else {
+            setAppointments(response);
+        }
+    }
+
     return (
         <div>
             <div className='text-3xl font-bold text-center my-5'>Quản lý cuộc hẹn</div>
+            <div className='flex gap-2'>
+                <div className='flex gap-2 mb-2'>
+                    <Search placeholder="Tìm kiếm bằng tên" className='w-[200px]' onSearch={onSearch} enterButton />
+                </div>
+                <Select
+                    placeholder="Chọn gói dịch vụ"
+                    onChange={handleChange}
+                    className='w-[150px] mb-2'
+                    defaultValue={"PENDING"}
+                    options={
+                        appointmentStatus.map((item) => (
+                            { value: item.value, label: item.label }
+                        ))
+                    }
+                />
+            </div>
             <ModalUpdateMotherHealth
                 id={appointmentId}
                 onSumit={handleSubmit}
                 isVisible={isModalVisible}
                 onClose={handleClose}
-            />
-            <Select
-                placeholder="Chọn gói dịch vụ"
-                onChange={handleChange}
-                className='w-[150px] mb-2'
-                defaultValue={"PENDING"}
-                options={
-                    appointmentStatus.map((item) => (
-                        { value: item.value, label: item.label }
-                    ))
-                }
             />
             <Table dataSource={appointments} columns={columns} rowKey="id" />
         </div>

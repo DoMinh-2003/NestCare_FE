@@ -167,7 +167,8 @@ const AdminManageUsers: React.FC = () => {
     const handleChange = (value: string) => {
         setRoleToFilter(value);
     }
-    const roles = [{ "role": "user", "name": "User" }, { "role": "doctor", "name": "Doctor" }, { "role": "", "name": "Tất cả" }]
+    const roles = [{ "role": "user", "name": "User" }, { "role": "doctor", "name": "Doctor" },{ "role": "nurse", "name": "Nurse" }, { "role": "", "name": "Tất cả" }]
+
     return (
         <div>
             <div className='text-3xl font-semibold text-center mb-5'>
