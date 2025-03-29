@@ -42,7 +42,7 @@ const DoctorLayout: React.FC = () => {
         dispatch(logout());
         localStorage.removeItem("USER");
         navigate("/");
-        // toast.success("Đăng xuất thành công");
+        toast.success("Đăng xuất thành công");
     };
 
     return (
