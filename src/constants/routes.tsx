@@ -42,9 +42,9 @@ export enum DOCTOR_ROUTES {
   FETALS_DETAIL = "appointments/fetals/:id",
   APPOINTMENT = "appointments",
   CHECK_IN_APPOINTMENT = "check-in",
-  CHECK_IN_APPOINTMENT_FETALS = "check-in/fetals/:id",
+  CHECK_IN_APPOINTMENT_DETAIL = "check-in/appointments/:id",
   IN_PROGRESS_APPOINTMENT = "in-progress",
-  IN_PROGRESS_APPOINTMENT_FETALS = "in-progress/fetals/:id",
+  IN_PROGRESS_APPOINTMENT_DETAIL = "in-progress/appointments/:id",
   REQUEST_APPOINTMENT = "request/appointments",
 }
 

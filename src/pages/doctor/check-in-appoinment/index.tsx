@@ -223,49 +223,14 @@ function DoctorManageCheckinAppointments() {
 	// Cấu hình cột cho bảng chính
 	const columns = [
 		{
-			title: "Hồ Sơ thai nhi",
+			title: "Hồ Sơ khám",
 			key: "fetalRecords",
 			render: (record: Appointment) => {
-				const fetalCount = record.fetalRecords?.length || 0
-
-				if (fetalCount === 0) {
-					return <Text type="secondary">Không có hồ sơ</Text>
-				} else if (fetalCount === 1) {
-					return (
-						<Link to={`fetals/${record.fetalRecords[0].id}`} className="text-blue">
-							<Button type="link" className="text-blue hover:text-blue-600">
-								<FileTextOutlined /> {record.fetalRecords[0].name}
-							</Button>
-						</Link>
-					)
-				} else {
-					return (
-						<Dropdown
-							overlay={
-								<Menu>
-									{record.fetalRecords.map((fetal) => (
-										<Menu.Item key={fetal.id} onClick={() => navigateToFetalDetail(fetal.id)}>
-											<Space>
-												<FileTextOutlined />
-												{fetal.name}
-												{getPregnancyStatusTag(fetal.status)}
-											</Space>
-										</Menu.Item>
-									))}
-									<Menu.Divider />
-									<Menu.Item key="view-all" onClick={() => showFetalRecords(record.fetalRecords)}>
-										Xem tất cả hồ sơ
-									</Menu.Item>
-								</Menu>
-							}
-							trigger={["click"]}
-						>
-							<Button type="link">
-								<FileTextOutlined /> Xem {fetalCount} hồ sơ thai nhi <DownOutlined />
-							</Button>
-						</Dropdown>
-					)
-				}
+				return (
+					<Link to={`appoinment/${record.id}`}>
+						Xem
+					</Link>
+				)
 			},
 		},
 		{
@@ -325,36 +290,6 @@ function DoctorManageCheckinAppointments() {
 						Thêm
 					</Button>
 				</Space>
-			),
-		},
-		{
-			title: "Hóa đơn thuốc",
-			dataIndex: "medicationBills",
-			key: "medicationBills",
-			render: (bills: any[]) => (
-				<Button
-					onClick={() => showDetails("Hóa đơn thuốc", bills)}
-					disabled={!bills?.length}
-					icon={<MedicineBoxOutlined />}
-					className="border-purple-400 text-purple-500 hover:text-purple-600 hover:border-purple-500"
-				>
-					Xem
-				</Button>
-			),
-		},
-		{
-			title: "Lịch sử khám",
-			dataIndex: "fullHistory",
-			key: "fullHistory",
-			render: (history: any[]) => (
-				<Button
-					onClick={() => showDetails("Lịch sử khám", history)}
-					disabled={!history?.length}
-					icon={<HistoryOutlined />}
-					className="border-orange-400 text-orange-500 hover:text-orange-600 hover:border-orange-500"
-				>
-					Xem
-				</Button>
 			),
 		},
 		{

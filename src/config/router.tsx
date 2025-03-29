@@ -58,6 +58,7 @@ import AvailableService from "../pages/customer/available-service";
 import Reminder from "../pages/customer/reminder";
 import DoctorManageCheckinAppointments from "../pages/doctor/check-in-appoinment";
 import DoctorManageInprogressAppointments from "../pages/doctor/in-progress-appointment";
+import AppoinmentDetail from "../pages/doctor/appointment-detail";
 
 
 
@@ -390,12 +391,12 @@ export const router = createBrowserRouter([
         element: <FetailDetail />,
       },
       {
-        path: DOCTOR_ROUTES.CHECK_IN_APPOINTMENT_FETALS,
-        element: <FetailDetail />,
+        path: DOCTOR_ROUTES.CHECK_IN_APPOINTMENT_DETAIL,
+        element: <AppoinmentDetail />,
       },
       {
-        path: DOCTOR_ROUTES.IN_PROGRESS_APPOINTMENT_FETALS,
-        element: <FetailDetail />,
+        path: DOCTOR_ROUTES.IN_PROGRESS_APPOINTMENT_DETAIL,
+        element: <AppoinmentDetail />,
       },
 
       // {
