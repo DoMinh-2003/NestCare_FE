@@ -278,49 +278,14 @@ function DoctorManageCheckinAppointments() {
 	// Cấu hình cột cho bảng chính
 	const columns = [
 		{
-			title: "Hồ Sơ thai nhi",
-			key: "fetalRecords",
+			title: "Hồ Sơ Khám",
+			key: "id",
 			render: (record: Appointment) => {
-				const fetalCount = record.fetalRecords?.length || 0
-
-				if (fetalCount === 0) {
-					return <Text type="secondary">Không có hồ sơ</Text>
-				} else if (fetalCount === 1) {
-					return (
-						<Link to={`fetals/${record.fetalRecords[0].id}`} className="text-blue">
-							<Button type="link" className="text-blue hover:text-blue-600">
-								<FileTextOutlined /> {record.fetalRecords[0].name}
-							</Button>
-						</Link>
-					)
-				} else {
-					return (
-						<Dropdown
-							overlay={
-								<Menu>
-									{record.fetalRecords.map((fetal) => (
-										<Menu.Item key={fetal.id} onClick={() => navigateToFetalDetail(fetal.id)}>
-											<Space>
-												<FileTextOutlined />
-												{fetal.name}
-												{getPregnancyStatusTag(fetal.status)}
-											</Space>
-										</Menu.Item>
-									))}
-									<Menu.Divider />
-									<Menu.Item key="view-all" onClick={() => showFetalRecords(record.fetalRecords)}>
-										Xem tất cả hồ sơ
-									</Menu.Item>
-								</Menu>
-							}
-							trigger={["click"]}
-						>
-							<Button type="link">
-								<FileTextOutlined /> Xem {fetalCount} hồ sơ thai nhi <DownOutlined />
-							</Button>
-						</Dropdown>
-					)
-				}
+				return (
+					<Link to={`appointments/${record.id}`} className="font-medium">
+						Xem
+					</Link>
+				)
 			},
 		},
 		{

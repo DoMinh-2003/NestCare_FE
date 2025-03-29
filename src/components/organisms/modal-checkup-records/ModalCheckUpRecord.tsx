@@ -12,7 +12,7 @@ export interface CheckupRecord {
   warning: string;
 }
 
-const ModalCheckUpRecord = ({isModalOpen, records, handleCancelModalCheckUpRecord}:{isModalOpen: boolean, records: CheckupRecord[], handleCancelModalCheckUpRecord:()=>void}) => {
+const ModalCheckUpRecord = ({ isModalOpen, records, handleCancelModalCheckUpRecord }: { isModalOpen: boolean, records: CheckupRecord[], handleCancelModalCheckUpRecord: () => void }) => {
 
   const columns = [
     {
@@ -27,12 +27,12 @@ const ModalCheckUpRecord = ({isModalOpen, records, handleCancelModalCheckUpRecor
       key: 'fetalHeartbeat',
     },
     {
-      title: 'Chiều cao thai nhi (cm)',
+      title: 'Chiều cao thai nhi (mm)',
       dataIndex: 'fetalHeight',
       key: 'fetalHeight',
     },
     {
-      title: 'Cân nặng thai nhi (kg)',
+      title: 'Cân nặng thai nhi (g)',
       dataIndex: 'fetalWeight',
       key: 'fetalWeight',
     },

@@ -1,4 +1,3 @@
-"use client"
 
 import type React from "react"
 import { useState, useEffect } from "react"
@@ -628,7 +627,7 @@ const DoctorFetalView: React.FC = () => {
 
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <Form.Item
-                                                label="Cân nặng thai nhi (kg)"
+                                                label="Cân nặng thai nhi (g)"
                                                 name="fetalWeight"
                                                 rules={[{ required: true, message: "Vui lòng nhập cân nặng thai nhi" }]}
                                             >
@@ -643,7 +642,7 @@ const DoctorFetalView: React.FC = () => {
                                             </Form.Item>
 
                                             <Form.Item
-                                                label="Chiều cao thai nhi (cm)"
+                                                label="Chiều cao thai nhi (mm)"
                                                 name="fetalHeight"
                                                 rules={[{ required: true, message: "Vui lòng nhập chiều cao thai nhi" }]}
                                             >

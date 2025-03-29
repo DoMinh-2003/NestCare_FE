@@ -60,6 +60,7 @@ import DoctorManageCheckinAppointments from "../pages/doctor/check-in-appoinment
 import DoctorManageInprogressAppointments from "../pages/doctor/in-progress-appointment";
 import AllFetail from "../pages/customer/all-fetail";
 import NurseDashboard from "../pages/nurse/dashboard";
+import AppoinmentDetail from "../pages/doctor/appointment-detail";
 
 
 
@@ -402,12 +403,12 @@ export const router = createBrowserRouter([
         element: <FetailDetail />,
       },
       {
-        path: DOCTOR_ROUTES.CHECK_IN_APPOINTMENT_FETALS,
-        element: <FetailDetail />,
+        path: DOCTOR_ROUTES.CHECK_IN_APPOINTMENT_DETAIL,
+        element: <AppoinmentDetail />,
       },
       {
-        path: DOCTOR_ROUTES.IN_PROGRESS_APPOINTMENT_FETALS,
-        element: <FetailDetail />,
+        path: DOCTOR_ROUTES.IN_PROGRESS_APPOINTMENT_DETAIL,
+        element: <AppoinmentDetail />,
       },
 
       // {
