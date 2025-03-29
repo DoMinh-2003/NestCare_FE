@@ -1,7 +1,6 @@
 import { Button, DatePicker, Form, Input, message, Modal, Select } from 'antd';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
 import { getUserDataFromLocalStorage } from '../../../constants/function';
 import { FetalRecordSubmit } from '../../../model/Fetal';
 import useFetalService from '../../../services/useFetalService';
@@ -9,7 +8,12 @@ import { calculateExpectedDeliveryDate } from '../../../utils/formatDate';
 
 const { Option } = Select;
 
-function FetalCreation({ open, onClose }) {
+interface FetalCreationProps {
+	open: boolean;
+	onClose: () => void;
+}
+
+function FetalCreation({ open, onClose }: FetalCreationProps) {
 	const [form] = Form.useForm();
 	const [loading, setLoading] = useState(false);
 	const { createFetal } = useFetalService();
@@ -66,29 +70,29 @@ function FetalCreation({ open, onClose }) {
 
 	return (
 		<Modal
-			title="Tạo Hồ Sơ Thai Nhi"
+			title={<span style={{ fontSize: '20px', fontWeight: 'bold' }}>Tạo Hồ Sơ Thai Nhi</span>}
 			open={open}
 			onCancel={onClose}
-			footer={null} // Remove default footer, use form button instead
+			footer={null} // Custom footer bên trong form
+			centered
+			bodyStyle={{ padding: '24px' }}
 		>
 			<Form
 				form={form}
 				layout="vertical"
 				onFinish={onFinish}
-				initialValues={{
-					status: 'PREGNANT', // Default value for status
-				}}
+				initialValues={{ status: 'PREGNANT' }}
 			>
 				<Form.Item
 					label="Tên em bé"
 					name="name"
 					rules={[{ required: true, message: 'Vui lòng nhập tên em bé!' }]}
 				>
-					<Input placeholder="Nhập tên em bé" />
+					<Input placeholder="Nhập tên em bé" size="large" />
 				</Form.Item>
 
 				<Form.Item label="Ghi chú" name="note">
-					<Input placeholder="Nhập ghi chú (ví dụ: 1 bé hay 2 bé)" />
+					<Input placeholder="Nhập ghi chú (ví dụ: 1 bé hay 2 bé)" size="large" />
 				</Form.Item>
 
 				<Form.Item
@@ -99,7 +103,8 @@ function FetalCreation({ open, onClose }) {
 					<DatePicker
 						format="DD/MM/YYYY"
 						style={{ width: '100%' }}
-						onChange={handlePregnancyStartChange} // Trigger calculation on change
+						size="large"
+						onChange={handlePregnancyStartChange}
 					/>
 				</Form.Item>
 
@@ -108,7 +113,7 @@ function FetalCreation({ open, onClose }) {
 					name="expectedDeliveryDate"
 					rules={[{ required: true, message: 'Vui lòng kiểm tra ngày dự sinh!' }]}
 				>
-					<DatePicker format="DD/MM/YYYY" style={{ width: '100%' }} disabled />
+					<DatePicker format="DD/MM/YYYY" style={{ width: '100%' }} size="large" disabled />
 				</Form.Item>
 
 				<Form.Item
@@ -116,11 +121,11 @@ function FetalCreation({ open, onClose }) {
 					name="healthStatus"
 					rules={[{ required: true, message: 'Vui lòng nhập tình trạng sức khỏe!' }]}
 				>
-					<Input placeholder="Nhập tình trạng sức khỏe" />
+					<Input placeholder="Nhập tình trạng sức khỏe" size="large" />
 				</Form.Item>
 
 				<Form.Item label="Trạng thái" name="status">
-					<Select disabled>
+					<Select size="large" disabled>
 						<Option value="PREGNANT">Đang mang thai</Option>
 						<Option value="BORN">Đã sinh</Option>
 						<Option value="MISSED">Sảy thai sớm</Option>
@@ -131,9 +136,14 @@ function FetalCreation({ open, onClose }) {
 				</Form.Item>
 
 				<Form.Item>
-					<Button type="primary" htmlType="submit" loading={loading}>
-						Gửi
-					</Button>
+					<div style={{ display: 'flex', justifyContent: 'flex-end', gap: '8px' }}>
+						<Button onClick={onClose} size="large">
+							Hủy
+						</Button>
+						<Button type="primary" htmlType="submit" loading={loading} size="large">
+							Gửi
+						</Button>
+					</div>
 				</Form.Item>
 			</Form>
 		</Modal>

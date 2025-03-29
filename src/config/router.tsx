@@ -58,6 +58,7 @@ import AvailableService from "../pages/customer/available-service";
 import Reminder from "../pages/customer/reminder";
 import DoctorManageCheckinAppointments from "../pages/doctor/check-in-appoinment";
 import DoctorManageInprogressAppointments from "../pages/doctor/in-progress-appointment";
+import AllFetail from "../pages/customer/all-fetail";
 import AppoinmentDetail from "../pages/doctor/appointment-detail";
 
 
@@ -250,6 +251,12 @@ export const router = createBrowserRouter([
         path: USER_ROUTES.MY_SERVICES,
         element: <ProtectedRouteByRole allowedRoles={["user"]}>
           <AvailableService />
+        </ProtectedRouteByRole>,
+      },
+      {
+        path: USER_ROUTES.ALL_FETAIL,
+        element: <ProtectedRouteByRole allowedRoles={["user"]}>
+          <AllFetail />
         </ProtectedRouteByRole>,
       },
     ],
