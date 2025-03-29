@@ -96,13 +96,15 @@ function DoctorManageCheckinAppointments() {
 	const [modalVisible, setModalVisible] = useState(false)
 	const [modalData, setModalData] = useState<any[]>([])
 	const [modalTitle, setModalTitle] = useState("")
-	const { createReminderByDoctor } = userReminderService()
+	const { createReminderByDoctor, getReminderByDoctor } = userReminderService()
 	const [reminderModalVisible, setReminderModalVisible] = useState(false)
 	const [motherId, setMotherId] = useState<string | null>(null)
 	const [addServiceModalVisible, setAddServiceModalVisible] = useState(false)
 	const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null)
 	const [fetalModalVisible, setFetalModalVisible] = useState(false)
 	const [selectedFetalRecords, setSelectedFetalRecords] = useState<FetalRecord[]>([])
+	const [reminder, setReminder] = useState([]);
+	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const navigate = useNavigate()
 
@@ -120,6 +122,13 @@ function DoctorManageCheckinAppointments() {
 		} finally {
 			setLoading(false)
 		}
+	}
+
+	const fetchReminderByDoctor = async (motherId: string) => {
+		const response = await getReminderByDoctor(motherId);
+		console.log(response)
+		setIsModalOpen(true);
+		setReminder(response);
 	}
 
 	// Khi đổi trạng thái
@@ -230,6 +239,41 @@ function DoctorManageCheckinAppointments() {
 				return <Tag color="default">Không xác định</Tag>
 		}
 	}
+
+	const reminderColumns = [
+		{
+			title: "Tiêu đề",
+			dataIndex: "title",
+			key: "title",
+		},
+		{
+			title: "Mô tả",
+			dataIndex: "description",
+			key: "description",
+		},
+		{
+			title: "Ngày bắt đầu",
+			dataIndex: "startDate",
+			key: "startDate",
+			render: (value: string) => formatDate(value)
+		},
+		{
+			title: "Ngày kết thúc",
+			dataIndex: "endDate",
+			key: "endDate",
+			render: (value: string) => formatDate(value)
+		},
+		{
+			title: "Thời gian nhắc",
+			dataIndex: "reminderTime",
+			key: "reminderTime",
+		},
+		{
+			title: "Bác sĩ",
+			dataIndex: ["doctor", "fullName"], // Lấy tên bác sĩ
+			key: "doctor",
+		},
+	];
 
 	// Cấu hình cột cho bảng chính
 	const columns = [
@@ -374,7 +418,7 @@ function DoctorManageCheckinAppointments() {
 			render: (record: Appointment) => {
 				// Lấy motherId từ fetal record đầu tiên nếu có
 				const mId = record.fetalRecords?.[0]?.mother?.id
-
+				console.log(motherId)
 				return (
 					<Space>
 						<Button
@@ -392,6 +436,21 @@ function DoctorManageCheckinAppointments() {
 							className="bg-blue-500 hover:bg-blue-600"
 						>
 							Tạo nhắc nhở
+						</Button>
+						<Button
+							type="primary"
+							icon={<BellOutlined />}
+							onClick={() => {
+								if (mId) {
+									fetchReminderByDoctor(mId);
+								} else {
+									message.warning("Không tìm thấy thông tin mẹ để xem nhắc nhở");
+								}
+							}}
+							disabled={!mId}
+							className="bg-blue-500 hover:bg-blue-600"
+						>
+							Xem nhắc nhở
 						</Button>
 					</Space>
 				)
@@ -705,6 +764,21 @@ function DoctorManageCheckinAppointments() {
 						pagination={false}
 						bordered
 						className="shadow-sm rounded-lg overflow-hidden"
+					/>
+
+				</Modal>
+				<Modal
+					title="Danh sách nhắc nhở"
+					open={isModalOpen}
+					onCancel={() => setIsModalOpen(false)}
+					footer={null} // Ẩn footer
+					width={1000}
+				>
+					<Table
+						dataSource={reminder}
+						columns={reminderColumns}
+						rowKey="id"
+						pagination={{ pageSize: 5 }}
 					/>
 				</Modal>
 
