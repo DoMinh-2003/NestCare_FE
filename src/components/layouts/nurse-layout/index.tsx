@@ -25,7 +25,7 @@ function getItem(
   } as MenuItem;
 }
 const items: MenuItem[] = [
-  getItem("Overview", "overview", <FaChartPie />),
+  getItem("Dashboard", "dashboard", <FaChartPie />),
   getItem("Quản lí người dùng", "users", <SlCalender />),
   getItem("Quản lí thanh toán", "orders", <SlCalender />),
   getItem("Quản lí cuộc hẹn", "appointments", <SlCalender />),
@@ -77,8 +77,7 @@ const NurseLayout: React.FC = () => {
           overflowY: "auto",
         }}
       >
-        <Header style={{ padding: 0, background: colorBgContainer }} />
-        <Content style={{ margin: "0 16px" }}>
+        <Content style={{ margin: "10px 16px" }}>
           <Outlet />
         </Content>
         <Footer style={{ textAlign: "center" }}>
