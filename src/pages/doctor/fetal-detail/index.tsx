@@ -338,7 +338,7 @@ const DoctorFetalView: React.FC = () => {
     };
 
     const getFetalsByMotherIdFromNurse = async () => {
-        const response = await getFetalsByMotherId(fetalRecord.mother.id);
+        const response = await getFetalsByMotherId();
         console.log("&&&&&&&&&&&&&&response mother=============fetals", response)
 
         setFetals(response);

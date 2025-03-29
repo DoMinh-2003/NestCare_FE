@@ -14,6 +14,7 @@ import {
 	Empty,
 	Badge,
 	Avatar,
+	Modal,
 } from "antd"
 import { useForm } from "antd/es/form/Form"
 import {
@@ -146,10 +147,10 @@ function BookingDoctor() {
 	}
 
 	const handleTimeChange = (value) => {
-		setSelectedTime(value)
-		// Reset doctor selection when time changes
-		form.setFieldsValue({ doctor: undefined })
-	}
+		setSelectedTime(value);
+		form.setFieldsValue({ time: value });
+		form.setFieldsValue({ doctor: undefined });
+	};
 
 	const onSearch = (value: string) => {
 		console.log("search:", value)
@@ -237,6 +238,21 @@ function BookingDoctor() {
 
 	const availableTimeSlots = getAvailableTimeSlots()
 
+	const showConfirmModal = (values) => {
+		Modal.confirm({
+			title: "Xác nhận đặt lịch",
+			content: (
+				<div>
+					<p>Bé: {values.fetalRecords.map((id) => fetals.find((f) => f.id === id)?.name).join(", ")}</p>
+					<p>Bác sĩ: {doctors.find((d) => d.id === values.doctor)?.fullName}</p>
+					<p>Ngày: {values.date.format("DD-MM-YYYY")}</p>
+					<p>Thời gian: {availableTimeSlots.find((s) => s.value === selectedTime)?.label}</p>
+				</div>
+			),
+			onOk: () => handleSubmitAppointment(values),
+		});
+	};
+
 	return (
 		<motion.div
 			initial="hidden"
@@ -277,7 +293,7 @@ function BookingDoctor() {
 								Vui lòng điền đầy đủ thông tin để đặt lịch khám thai. Bác sĩ sẽ liên hệ với bạn để xác nhận lịch hẹn.
 							</Paragraph>
 
-							<Form layout="vertical" onFinish={onFinish} form={form} requiredMark="optional" size="large">
+							<Form layout="vertical" onFinish={showConfirmModal} form={form} requiredMark="optional" size="large">
 								{/* Fetal Selection */}
 								<motion.div variants={itemVariants}>
 									<Form.Item
@@ -366,7 +382,9 @@ function BookingDoctor() {
 
 								{/* Time Selection */}
 								{selectedDate && (
-									<motion.div variants={itemVariants} initial="hidden" animate="visible">
+									<motion.div variants={itemVariants} initial={{ opacity: 0, y: 20 }}
+										animate={{ opacity: 1, y: 0 }}
+										transition={{ duration: 0.5 }} >
 										<Form.Item
 											name="time"
 											label={
@@ -378,27 +396,23 @@ function BookingDoctor() {
 											rules={[{ required: true, message: "Hãy chọn thời gian khám!" }]}
 										>
 											{availableTimeSlots.length > 0 ? (
-												<Select
-													showSearch
-													placeholder="Chọn giờ khám"
-													optionFilterProp="label"
-													onChange={handleTimeChange}
-													onSearch={onSearch}
-													style={{ width: "100%" }}
-													options={availableTimeSlots}
-													optionRender={(option) => (
-														<div
-															style={{
-																display: "flex",
-																alignItems: "center",
-																padding: "8px 0",
-															}}
-														>
-															<ClockCircleOutlined style={{ marginRight: "8px", color: "#722ed1" }} />
-															<span>{option.data.label}</span>
-														</div>
-													)}
-												/>
+												<Row gutter={[8, 8]}>
+													{availableTimeSlots.map((slot) => (
+														<Col key={slot.value}>
+															<Button
+																type={selectedTime === slot.value ? "primary" : "default"}
+																onClick={() => handleTimeChange(slot.value)}
+																style={{
+																	borderRadius: "8px",
+																	width: "100%",
+																	textAlign: "center",
+																}}
+															>
+																{slot.label}
+															</Button>
+														</Col>
+													))}
+												</Row>
 											) : (
 												<Empty description="Không có khung giờ khả dụng" image={Empty.PRESENTED_IMAGE_SIMPLE} />
 											)}
@@ -432,25 +446,20 @@ function BookingDoctor() {
 													style={{ width: "100%" }}
 													listHeight={250}
 													optionRender={(option) => {
-														const doctor = doctors.find((d) => d.id === option.value)
+														const doctor = doctors.find((d) => d.id === option.value);
 														return (
-															<div
-																style={{
-																	display: "flex",
-																	alignItems: "center",
-																	padding: "8px 0",
-																}}
-															>
+															<div style={{ display: "flex", alignItems: "center", padding: "8px 0" }}>
 																<Avatar
-																	icon={<UserOutlined />}
 																	style={{ marginRight: "12px", backgroundColor: "#1890ff" }}
-																/>
+																>
+																	{doctor?.fullName?.charAt(0).toUpperCase() || <UserOutlined />}
+																</Avatar>
 																<div>
 																	<div style={{ fontWeight: "bold" }}>{doctor?.fullName}</div>
 																	<div style={{ fontSize: "12px", color: "#666" }}>Bác sĩ chuyên khoa sản</div>
 																</div>
 															</div>
-														)
+														);
 													}}
 												>
 													{doctors.map((doctor) => (

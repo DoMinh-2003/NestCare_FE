@@ -33,7 +33,8 @@ export enum USER_ROUTES {
   BLOG_PAGE = "/blog",
   BLOG_DETAIL = "/blog/:id",
   PROFILE = "/profile",
-  MY_SERVICES = '/my-services'
+  MY_SERVICES = '/my-services',
+  ALL_FETAIL = "/all-fetal"
 }
 
 export enum DOCTOR_ROUTES {

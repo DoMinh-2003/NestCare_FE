@@ -56,7 +56,20 @@ const useFetalService = () => {
   const getFetalsByMotherId = useCallback(
     async (motherId: any) => {
       try {
-        const response = await callApi("get", `fetal-records/user/${motherId}`);
+        const response = await callApi("get", `fetal-records/${motherId}`);
+        console.log("getOrderByUserId: ", response)
+        return response;
+      } catch (e: any) {
+        console.log("e: ", e)
+      }
+    },
+    [callApi, dispatch, router]
+  );
+
+  const getFetalsByMother = useCallback(
+    async () => {
+      try {
+        const response = await callApi("get", `fetal-records`);
         console.log("getOrderByUserId: ", response)
         return response;
       } catch (e: any) {
@@ -109,7 +122,7 @@ const useFetalService = () => {
   );
 
 
-  return { createFetalCheckupRecord, loading, getFetalsRecords, getFetalsByMotherId, deleteFetal, createFetal, setIsLoading, updateFetal, getFetailAndMotherDetail };
+  return { createFetalCheckupRecord, loading, getFetalsRecords, getFetalsByMother, getFetalsByMotherId, deleteFetal, createFetal, setIsLoading, updateFetal, getFetailAndMotherDetail };
 };
 
 export default useFetalService;

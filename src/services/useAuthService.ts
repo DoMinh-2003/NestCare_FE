@@ -31,28 +31,35 @@ const useAuthService = () => {
     async (values: any) => {
       try {
         const response = await callApi("post", "auth/login", values);
-        console.log("login: ", response)
-        localStorage.setItem("token", response?.token);
-        localStorage.setItem('USER', JSON.stringify(response));
-        console.log(localStorage.getItem('USER'));
-        message.success("Đăng nhập thành công");
-        switch (response?.role) {
-          case "doctor":
-            router('/doctor')
-            break;
-          case "nurse":
-            router('/nurse')
-            break;
-          case "admin":
-            router('/admin')
-            break;
-          default:
-            router("/");
-            break;
+        console.log("login: ", response);
+
+        if (response?.token) {
+          localStorage.setItem("token", response.token);
+          localStorage.setItem("USER", JSON.stringify(response));
+          message.success("Đăng nhập thành công");
+
+          // Điều hướng dựa trên role
+          switch (response?.role) {
+            case "doctor":
+              router("/doctor");
+              break;
+            case "nurse":
+              router("/nurse");
+              break;
+            case "admin":
+              router("/admin");
+              break;
+            default:
+              router("/");
+              break;
+          }
+          return response?.data;
+        } else {
+          // Nếu không có token, coi như thất bại
+          message.error(response?.message || "Mật khẩu hoặc tài khoản không đúng");
         }
-        // dispatch(loginRedux(response?.data));
-        return response?.data;
       } catch (e: any) {
+        // Xử lý lỗi khi API gặp exception (ví dụ: mạng lỗi)
         message.error(e?.response?.data || "Đăng nhập thất bại");
       }
     },
