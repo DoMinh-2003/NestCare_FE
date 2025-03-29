@@ -39,6 +39,13 @@ const Navbar = () => {
             icon: <Avatar />
         },
         {
+            key: '111',
+            label: (
+                <p>Xem danh sách thai nhi</p>
+            ),
+            icon: <UserOutlined />
+        },
+        {
             key: '1',
             label: (
                 <p>Các gói đã đăng ký</p>
@@ -115,6 +122,9 @@ const Navbar = () => {
                 break;
             case '10':
                 navigate('/profile')
+                break;
+            case '111':
+                navigate('/all-fetal')
                 break;
             default:
                 break;

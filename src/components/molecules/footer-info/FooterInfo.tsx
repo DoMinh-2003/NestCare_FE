@@ -4,10 +4,10 @@ const FooterInfo = () => {
     return (
         <div className='text-white'>
             <div className='mt-5'>
-                Hotline:
+                Hotline: 089 830 0028
             </div>
             <div className='mt-5'>
-                089 830 0028
+                Địa chỉ: Lưu Hữu Phước Tân Lập, Đông Hoà, Dĩ An, Bình Dương, Vietnam
             </div>
             <div className='mt-5'>
                 Hỗ trợ: info@sihospital.com.vn
