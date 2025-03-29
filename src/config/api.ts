@@ -1,57 +1,54 @@
 import { message } from "antd";
 import axios from "axios";
-import { useDispatch } from "react-redux";
 import { logout } from "../redux/features/userSlice";
+import { store } from "../redux/store";
 
 const api = axios.create({
-  // baseURL: "http://14.225.217.207:8081/api/",
   baseURL: import.meta.env.VITE_API_URL,
 });
 
 let isTokenExpired = false;
 
 api.interceptors.request.use(
-  function (config) {
-    // Do something before request is sent
+  (config) => {
     const token = localStorage.getItem("token");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  function (error) {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
+    console.log(error);
+    const dispatch = store.dispatch;
     if (error.response) {
-      const { data } = error.response;
-      const dispatch = useDispatch();
-      console.log(error.response);
-      if (data.message === null && data.errors && data.errors.length > 0) {
-        data.errors.forEach((error: { field: string, message: string }) => {
-          message.error(`${error.field}: ${error.message}`);
-        });
-      } else {
+      const { data, status } = error.response;
+
+      if (status === 401 && data.message === "Token is expired") {
         if (!isTokenExpired) {
-          isTokenExpired = true
-          message.error(data.message);
+          isTokenExpired = true;
+          message.error("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.");
           setTimeout(() => {
-            window.location.href = '/'
             localStorage.clear();
+            dispatch(logout());
+            window.location.href = "/auth/login";
             isTokenExpired = false;
-            dispatch(logout())
-          }, 1300);
+          }, 1500);
         }
+      } else {
+        message.error(data.message);
       }
     }
-  })
+
+    return Promise.reject(error);
+  }
+);
 
 export default api;
-
 
 
 // import axios from "axios";
@@ -100,5 +97,3 @@ export default api;
 // );
 
 // export default api;
-
-

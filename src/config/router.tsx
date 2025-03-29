@@ -59,6 +59,7 @@ import Reminder from "../pages/customer/reminder";
 import DoctorManageCheckinAppointments from "../pages/doctor/check-in-appoinment";
 import DoctorManageInprogressAppointments from "../pages/doctor/in-progress-appointment";
 import AllFetail from "../pages/customer/all-fetail";
+import NurseDashboard from "../pages/nurse/dashboard";
 import AppoinmentDetail from "../pages/doctor/appointment-detail";
 
 
@@ -352,6 +353,10 @@ export const router = createBrowserRouter([
       {
         path: NURSE_ROUTES.NURSE_APPOINTMENT,
         element: <NurseCheckIn />,
+      },
+      {
+        path: 'dashboard',
+        element: <NurseDashboard />,
       },
     ],
   },
