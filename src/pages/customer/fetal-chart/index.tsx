@@ -694,13 +694,13 @@ function FetalChart() {
 	const [fetalRecords, setFetalRecords] = useState([])
 	const [loading, setLoading] = useState(true)
 	const [selectedFetalId, setSelectedFetalId] = useState(null)
-	const { getFetalsByMotherId } = useFetalService()
+	const { getFetalsByMother } = useFetalService()
 	const userData = getUserDataFromLocalStorage()
 
 	const fetchFetalRecords = async () => {
 		try {
 			setLoading(true)
-			const response = await getFetalsByMotherId(userData.id)
+			const response = await getFetalsByMother()
 			setFetalRecords(response)
 
 			// Set the first fetal with checkup records as selected, or just the first fetal
