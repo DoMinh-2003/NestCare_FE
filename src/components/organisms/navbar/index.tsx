@@ -131,37 +131,44 @@ const Navbar = () => {
                 </div>
 
                 <div className='flex gap-6'>
-                    {user && user.role === "user" ? (
-                        <>
-                            <Dropdown
-                                menu={{ items, onClick: handleMenuClick }}
-                                placement="bottom"
-                                arrow={{ pointAtCenter: true }}>
-                                <Avatar size={40} icon={<UserOutlined />} className='cursor-pointer' />
-                            </Dropdown>
+                    {/* Nếu có user thì hiển thị Avatar Dropdown */}
+                    {user && user.role === "user" && (
+                        <Dropdown
+                            menu={{ items, onClick: handleMenuClick }}
+                            placement="bottom"
+                            arrow={{ pointAtCenter: true }}
+                        >
+                            <Avatar size={40} icon={<UserOutlined />} className='cursor-pointer' />
+                        </Dropdown>
+                    )}
 
-                            <Button
-                                onClick={() => navigate(USER_ROUTES.BOOKING_DOCTOR)}
-                                type="button"
-                                status="pending"
-                                styleClass="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                            >
-                                Đặt lịch ngay
-                            </Button>
-                        </>
-                    ) : !user ? (
-                        <>
-                            <Button
-                                onClick={() => navigate("/auth/login")}
-                                type="button"
-                                status="pending"
-                                styleClass="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                            >
-                                Đăng nhập
-                            </Button>
-                        </>
-                    ) : null}
+                    <Button
+                        onClick={() => {
+                            if (user && user.role === "user") {
+                                navigate(USER_ROUTES.BOOKING_DOCTOR);
+                            } else {
+                                setIsModalOpen(true);
+                            }
+                        }}
+                        type="button"
+                        status="pending"
+                        styleClass="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                    >
+                        Đặt lịch ngay
+                    </Button>
+
+                    {!user && (
+                        <Button
+                            onClick={() => navigate("/auth/login")}
+                            type="button"
+                            status="pending"
+                            styleClass="focus:outline-none text-white bg-gray-700 hover:bg-gray-800 focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2"
+                        >
+                            Đăng nhập
+                        </Button>
+                    )}
                 </div>
+
 
 
             </div>
