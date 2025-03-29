@@ -12,6 +12,7 @@ interface FetalRecord {
     name: string;
     mother: {
         fullName: string;
+        username: string;
     };
     doctor: {
         fullName: string;
@@ -114,6 +115,15 @@ const NurseCheckIn: React.FC = () => {
             width: "20%",
             render: (record: Appointment) => (
                 <div>
+                    {record.fetalRecords[0]?.mother.username}
+                </div>
+            )
+        },
+        {
+            title: 'Tên người dùng',
+            width: "25%",
+            render: (record: Appointment) => (
+                <div>
                     {record.fetalRecords[0]?.mother.fullName}
                 </div>
             )
@@ -164,7 +174,8 @@ const NurseCheckIn: React.FC = () => {
         if (response && value != '') {
             setAppointments(response.filter((item: Appointment) =>
                 item.fetalRecords[0].mother.fullName.toLocaleLowerCase().includes(value.toLocaleLowerCase()) ||
-                    item.doctor.fullName.toLocaleLowerCase().includes(value.toLocaleLowerCase())
+                    item.doctor.fullName.toLocaleLowerCase().includes(value.toLocaleLowerCase()) ||
+                    item.fetalRecords[0].mother.username.toLocaleLowerCase().includes(value.toLocaleLowerCase()) 
                 )
             );
         } else {
