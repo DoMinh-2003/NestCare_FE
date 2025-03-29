@@ -8,11 +8,14 @@ import { Button } from "../../atoms/button/Button";
 import MainLogo from "../../atoms/logo/MainLogo";
 import NavbarMenuList from "../../molecules/nav-menu-list/NavBarMenuList";
 import ModalBookingForm from "../modal-booking-form";
+import { useDispatch } from 'react-redux';
+import { logout } from '../../../redux/features/userSlice';
 
 const Navbar = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         const userString = localStorage.getItem("USER");
@@ -23,6 +26,7 @@ const Navbar = () => {
 
     const handleLogout = () => {
         localStorage.removeItem("USER");
+        dispatch(logout());
         navigate(USER_ROUTES.LOGIN);
     };
 
@@ -127,15 +131,26 @@ const Navbar = () => {
                 </div>
 
                 <div className='flex gap-6'>
-                    {user ?
-                        <Dropdown
-                            menu={{ items, onClick: handleMenuClick }}
-                            placement="bottom"
-                            arrow={{ pointAtCenter: true }}>
-                            <Avatar size={40} icon={<UserOutlined />} className='cursor-pointer' />
-                        </Dropdown>
-                        :
-                        (
+                    {user && user.role === "user" ? (
+                        <>
+                            <Dropdown
+                                menu={{ items, onClick: handleMenuClick }}
+                                placement="bottom"
+                                arrow={{ pointAtCenter: true }}>
+                                <Avatar size={40} icon={<UserOutlined />} className='cursor-pointer' />
+                            </Dropdown>
+
+                            <Button
+                                onClick={() => navigate(USER_ROUTES.BOOKING_DOCTOR)}
+                                type="button"
+                                status="pending"
+                                styleClass="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                            >
+                                Đặt lịch ngay
+                            </Button>
+                        </>
+                    ) : !user ? (
+                        <>
                             <Button
                                 onClick={() => navigate("/auth/login")}
                                 type="button"
@@ -143,17 +158,11 @@ const Navbar = () => {
                                 styleClass="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
                             >
                                 Đăng nhập
-                            </Button>)
-                    }
-                    <Button
-                        onClick={() => navigate(USER_ROUTES.BOOKING_DOCTOR)}
-                        type="button"
-                        status="pending"
-                        styleClass="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                    >
-                        Đặt lịch ngay
-                    </Button>
+                            </Button>
+                        </>
+                    ) : null}
                 </div>
+
 
             </div>
         </div>
