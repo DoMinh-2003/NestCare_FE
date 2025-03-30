@@ -1,30 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button, Tag, Space, Input, Modal } from 'antd';
 import useFetalService from '../../../services/useFetalService';
-import { useNavigate } from 'react-router-dom';
 import { formatDate } from '../../../utils/formatDate';
 import FetalCreation from '../create-fetals';
+import HealthRecordModal from '../../../components/modal-input-health-fetal';
+import FetalDetailModal from '../../../components/molecules/fetal-record-detail';
+
 
 export enum PregnancyStatus {
-    PREGNANT = 'PREGNANT', // Đang mang thai
-    BORN = 'BORN', // Đã sinh
-    MISSED = 'MISSED', // Mất thai không có dấu hiệu
-    STILLBIRTH = 'STILLBIRTH', // Thai chết lưu
-    ABORTED = 'ABORTED', // Phá thai
-    MISCARRIAGE = 'MISCARRIAGE', // Sảy thai
+    PREGNANT = 'PREGNANT',
+    BORN = 'BORN',
+    MISSED = 'MISSED',
+    STILLBIRTH = 'STILLBIRTH',
+    ABORTED = 'ABORTED',
+    MISCARRIAGE = 'MISCARRIAGE',
 }
 
 export enum AppointmentStatus {
-    PENDING = 'PENDING', // Đang chờ xác nhận
-    CONFIRMED = 'CONFIRMED', // Đã xác nhận
-    CHECKED_IN = 'CHECKED_IN', // Bệnh nhân đã đến bệnh viện
-    IN_PROGRESS = 'IN_PROGRESS', // Đang được khám
-    COMPLETED = 'COMPLETED', // Đã hoàn tất
-    CANCELED = 'CANCELED', // Đã hủy
-    FAIL = 'FAIL', // Thất bại
+    PENDING = 'PENDING',
+    CONFIRMED = 'CONFIRMED',
+    CHECKED_IN = 'CHECKED_IN',
+    IN_PROGRESS = 'IN_PROGRESS',
+    COMPLETED = 'COMPLETED',
+    CANCELED = 'CANCELED',
+    FAIL = 'FAIL',
 }
 
-// Ánh xạ trạng thái thai kỳ sang màu Tag
 const statusColors: Record<PregnancyStatus, string> = {
     [PregnancyStatus.PREGNANT]: 'blue',
     [PregnancyStatus.BORN]: 'green',
@@ -34,7 +35,6 @@ const statusColors: Record<PregnancyStatus, string> = {
     [PregnancyStatus.MISCARRIAGE]: 'volcano',
 };
 
-// Ánh xạ trạng thái thai kỳ sang nhãn tiếng Việt
 const statusLabels: Record<PregnancyStatus, string> = {
     [PregnancyStatus.PREGNANT]: 'Đang mang thai',
     [PregnancyStatus.BORN]: 'Đã sinh',
@@ -44,7 +44,6 @@ const statusLabels: Record<PregnancyStatus, string> = {
     [PregnancyStatus.MISCARRIAGE]: 'Sảy thai',
 };
 
-// Ánh xạ trạng thái lịch hẹn sang màu và nhãn tiếng Việt
 const appointmentStatusColors: Record<AppointmentStatus, string> = {
     [AppointmentStatus.PENDING]: 'gold',
     [AppointmentStatus.CONFIRMED]: 'blue',
@@ -71,10 +70,12 @@ const AllFetail = () => {
     const [filteredFetals, setFilteredFetals] = useState<any[]>([]);
     const [searchText, setSearchText] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isHealthModalOpen, setIsHealthModalOpen] = useState(false);
+    const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+    const [selectedFetalId, setSelectedFetalId] = useState<string | null>(null);
     const [selectedAppointments, setSelectedAppointments] = useState<any[]>([]);
     const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
-
-    const navigate = useNavigate();
+    const [selectedFetal, setSelectedFetal] = useState<any | null>(null);
 
     const fetchFetalsByMother = async () => {
         const response = await getFetalsByMother();
@@ -84,38 +85,50 @@ const AllFetail = () => {
         setFetals(sorted);
         setFilteredFetals(sorted);
     };
+
     useEffect(() => {
         fetchFetalsByMother();
     }, []);
 
-    // Mở modal tạo hồ sơ thai nhi
     const showModal = () => {
         setIsModalOpen(true);
     };
 
-    // Đóng modal tạo hồ sơ thai nhi và refresh danh sách nếu cần
     const handleClose = () => {
         setIsModalOpen(false);
         fetchFetalsByMother();
     };
 
-    // Xử lý tìm kiếm theo tên thai kỳ
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value.toLowerCase();
         setSearchText(value);
-        const filtered = fetals.filter(f =>
-            f.name?.toLowerCase().includes(value)
-        );
+        const filtered = fetals.filter(f => f.name?.toLowerCase().includes(value));
         setFilteredFetals(filtered);
     };
 
-    // Mở modal lịch hẹn với danh sách appointments của bản ghi
     const showAppointmentModal = (appointments: any[]) => {
         setSelectedAppointments(appointments);
         setIsAppointmentModalOpen(true);
     };
 
-    // Các cột cho bảng lịch hẹn (Modal)
+    const showHealthModal = (fetalId: string) => {
+        setSelectedFetalId(fetalId);
+        setIsHealthModalOpen(true);
+    };
+
+    const showDetailModal = (fetal: any) => {
+        setSelectedFetal(fetal);
+        setIsDetailModalOpen(true);
+    };
+
+    const handleHealthSubmit = (values: any) => {
+        if (selectedFetalId) {
+            const submittedData = { ...values, fetalId: selectedFetalId };
+            console.log("Dữ liệu sức khỏe được gửi:", submittedData);
+        }
+        setIsHealthModalOpen(false);
+    };
+
     const appointmentColumns = [
         {
             title: 'Ngày hẹn',
@@ -155,7 +168,6 @@ const AllFetail = () => {
         },
     ];
 
-    // Các cột cho bảng danh sách thai kỳ
     const columns = [
         {
             title: 'Tên thai kỳ',
@@ -168,7 +180,7 @@ const AllFetail = () => {
             key: 'note',
         },
         {
-            title: 'Ngày cuối kì kinh',
+            title: 'Ngày cuối kỳ kinh',
             dataIndex: 'dateOfPregnancyStart',
             key: 'dateOfPregnancyStart',
             render: (date: string) => formatDate(date),
@@ -204,7 +216,7 @@ const AllFetail = () => {
             key: 'action',
             render: (_: any, record: any) => (
                 <Space>
-                    <Button type="link" onClick={() => navigate(`/fetal/${record.id}`)}>
+                    <Button type="link" onClick={() => showDetailModal(record)}>
                         Chi tiết
                     </Button>
                     {record.appointments && record.appointments.length > 0 && (
@@ -212,6 +224,9 @@ const AllFetail = () => {
                             Xem lịch hẹn
                         </Button>
                     )}
+                    <Button type="link" onClick={() => showHealthModal(record.id)}>
+                        Thêm thông tin sức khỏe
+                    </Button>
                 </Space>
             ),
         },
@@ -242,8 +257,6 @@ const AllFetail = () => {
                 bordered
             />
             <FetalCreation open={isModalOpen} onClose={handleClose} />
-
-            {/* Modal hiển thị danh sách lịch hẹn */}
             <Modal
                 title="Lịch hẹn"
                 open={isAppointmentModalOpen}
@@ -262,6 +275,16 @@ const AllFetail = () => {
                     bordered
                 />
             </Modal>
+            <HealthRecordModal
+                visible={isHealthModalOpen}
+                onCancel={() => setIsHealthModalOpen(false)}
+                onSubmit={handleHealthSubmit}
+            />
+            <FetalDetailModal
+                visible={isDetailModalOpen}
+                onCancel={() => setIsDetailModalOpen(false)}
+                fetal={selectedFetal}
+            />
         </div>
     );
 };
