@@ -63,6 +63,7 @@ import AppoinmentDetail from "../pages/doctor/appointment-detail";
 import NotFoundPage from "../pages/404";
 import CancelAppointment from "../pages/nurse/cancel-appointment";
 import PaymentBooking from "../components/molecules/payment-layout";
+import ForgotPassword from "../pages/customer/forgot-password";
 
 
 
@@ -275,6 +276,10 @@ export const router = createBrowserRouter([
       {
         path: USER_ROUTES.LOGIN,
         element: <LoginPage />,
+      },
+      {
+        path: USER_ROUTES.FORGOT_PASSWORD,
+        element: <ForgotPassword />,
       },
     ],
   },
