@@ -43,6 +43,7 @@ const AdminLayout: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleLogout = () => {
+    localStorage.removeItem("USER");
     dispatch(logout());
     navigate("/");
     message.success("Đăng xuất");

@@ -40,6 +40,7 @@ const NurseLayout: React.FC = () => {
   const navigate = useNavigate();
   const handleLogout = () => {
     dispatch(logout());
+    localStorage.removeItem('USER')
     navigate("/");
     message.success("Đăng xuất thành công");
   };

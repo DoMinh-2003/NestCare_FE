@@ -6,6 +6,8 @@ import { Input } from 'antd';
 import ModalUpdateMotherHealth from '../../../components/organisms/modal-update-mother-heal/ModalUpdateMotherHealth';
 import { AppointmentStatus } from '../../../constants/status';
 import { formatDate } from '../../../utils/formatDate';
+import userAppointmentService from '../../../services/useAppointmentService';
+import moment from 'moment';
 type SearchProps = GetProps<typeof Input.Search>;
 const { Search } = Input;
 interface FetalRecord {
@@ -33,6 +35,7 @@ interface Appointment {
 const NurseCheckIn: React.FC = () => {
     const [appointments, setAppointments] = useState<Appointment[]>([]);
     const { getAppointmentsByStatus, updateAppointmentsByStatus } = useAppointmentService()
+    const {getAppointmentsByDate} = userAppointmentService();
     const [statusFilter, setStatusFilter] = useState<string>('PENDING')
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [appointmentId, setAppointmentId] = useState<string>('')
@@ -50,13 +53,16 @@ const NurseCheckIn: React.FC = () => {
         setIsModalVisible(false);
     };
 
+    const today = moment().format('YYYY-MM-DD');
+
     const getAppointmentsByStatusFromNurse = async () => {
-        const response = await getAppointmentsByStatus(statusFilter)
+        const response = await getAppointmentsByDate(today, '', statusFilter)
         console.log("getAppointmentsByStatusFromNurse: ", response)
         if (response) {
             setAppointments(response)
         }
     }
+
     const handleAccept = (appointmentId: string) => {
         Modal.confirm({
             title: 'Xác nhận',
@@ -169,18 +175,20 @@ const NurseCheckIn: React.FC = () => {
     }
 
     const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
-        const response = await getAppointmentsByStatus(statusFilter);
+        console.log(today, value, statusFilter)
+        const response = await  getAppointmentsByDate(today, value, statusFilter)
         console.log("response: ", response);
-        if (response && value != '') {
-            setAppointments(response.filter((item: Appointment) =>
-                item.fetalRecords[0].mother.fullName.toLocaleLowerCase().includes(value.toLocaleLowerCase()) ||
-                    item.doctor.fullName.toLocaleLowerCase().includes(value.toLocaleLowerCase()) ||
-                    item.fetalRecords[0].mother.username.toLocaleLowerCase().includes(value.toLocaleLowerCase()) 
-                )
-            );
-        } else {
-            setAppointments(response);
-        }
+        setAppointments(response);
+        // if (response && value != '') {
+        //     setAppointments(response.filter((item: Appointment) =>
+        //         item.fetalRecords[0].mother.fullName.toLocaleLowerCase().includes(value.toLocaleLowerCase()) ||
+        //             item.doctor.fullName.toLocaleLowerCase().includes(value.toLocaleLowerCase()) ||
+        //             item.fetalRecords[0].mother.username.toLocaleLowerCase().includes(value.toLocaleLowerCase()) 
+        //         )
+        //     );
+        // } else {
+        //     setAppointments(response);
+        // }
     }
 
     return (

@@ -26,93 +26,94 @@ interface ModalCreateFetalCheckupRecordProps {
 
 const ModalCreateFetalCheckupRecord: React.FC<ModalCreateFetalCheckupRecordProps> = ({ isVisible, onClose, id }) => {
   const [form] = Form.useForm();
-  const {createFetalCheckupRecord} = useFetalService()
-  const onFinish = async(values: FetalCheckupRecordFormValues) => {
-    console.log('Received values:', {...values, createdAt:moment(values.createdAt).utc().format("YYYY-MM-DDTHH:mm:ss.SSS[Z]")});
-    const response = await createFetalCheckupRecord({...values, createdAt:moment(values.createdAt).utc().format("YYYY-MM-DDTHH:mm:ss.SSS[Z]")}, id+'')
+  const { createFetalCheckupRecord } = useFetalService();
+  
+  const onFinish = async (values: FetalCheckupRecordFormValues) => {
+    console.log('Received values:', { ...values, createdAt: moment(values.createdAt).utc().format("YYYY-MM-DDTHH:mm:ss.SSS[Z]") });
+    const response = await createFetalCheckupRecord({ ...values, createdAt: moment(values.createdAt).utc().format("YYYY-MM-DDTHH:mm:ss.SSS[Z]") }, id + '');
     console.log("response: ", response);
-    if(response){
-      message.success('Tạo hồ sơ kiểm tra thai nhi thành công!')
+    if (response) {
+      message.success('Tạo hồ sơ kiểm tra thai nhi thành công!');
     }
     onClose(); // Close the modal after submission
   };
 
   return (
     <Modal
-      title="Create Fetal Checkup Record"
+      title="Tạo Hồ Sơ Kiểm Tra Thai Nhi"
       visible={isVisible}
       onCancel={onClose}
       footer={null}
       className="rounded-lg"
     >
-      <Title level={4}>Fetal Checkup Information</Title>
+      <Title level={4}>Hồ Sơ Kiểm Tra Thai Nhi</Title>
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <Form.Item
-          label="Mother Weight (kg)"
+          label="Cân Nặng Người Mẹ (kg)"
           name="motherWeight"
-          rules={[{ required: true, message: 'Please input the mother weight!' }]}
+          rules={[{ required: true, message: 'Vui lòng nhập cân nặng của người mẹ!' }]}
         >
           <InputNumber min={0} />
         </Form.Item>
 
         <Form.Item
-          label="Mother Blood Pressure"
+          label="Huyết Áp Của Người Mẹ"
           name="motherBloodPressure"
-          rules={[{ required: true, message: 'Please input the mother blood pressure!' }]}
+          rules={[{ required: true, message: 'Vui lòng nhập huyết áp của người mẹ!' }]}
         >
-          <Input placeholder="e.g., 120/80" />
+          <Input placeholder="Ví dụ: 120/80" />
         </Form.Item>
 
         <Form.Item
-          label="Mother Health Status"
+          label="Tình Trạng Sức Khỏe Của Người Mẹ"
           name="motherHealthStatus"
-          rules={[{ required: true, message: 'Please input the mother health status!' }]}
+          rules={[{ required: true, message: 'Vui lòng nhập tình trạng sức khỏe của người mẹ!' }]}
         >
           <Input />
         </Form.Item>
 
         <Form.Item
-          label="Fetal Weight (kg)"
+          label="Cân Nặng Thai Nhi (g))"
           name="fetalWeight"
-          rules={[{ required: true, message: 'Please input the fetal weight!' }]}
+          rules={[{ required: true, message: 'Vui lòng nhập cân nặng của thai nhi!' }]}
         >
           <InputNumber min={0} />
         </Form.Item>
 
         <Form.Item
-          label="Fetal Height (cm)"
+          label="Chiều Cao Thai Nhi (cm)"
           name="fetalHeight"
-          rules={[{ required: true, message: 'Please input the fetal height!' }]}
+          rules={[{ required: true, message: 'Vui lòng nhập chiều cao của thai nhi!' }]}
         >
           <InputNumber min={0} />
         </Form.Item>
 
         <Form.Item
-          label="Fetal Heartbeat (bpm)"
+          label="Nhịp Tim Thai Nhi (bpm)"
           name="fetalHeartbeat"
-          rules={[{ required: true, message: 'Please input the fetal heartbeat!' }]}
+          rules={[{ required: true, message: 'Vui lòng nhập nhịp tim của thai nhi!' }]}
         >
           <InputNumber min={0} />
         </Form.Item>
 
         <Form.Item
-          label="Warning"
+          label="Cảnh Báo"
           name="warning"
         >
           <Input />
         </Form.Item>
 
         <Form.Item
-          label="Checkup Date"
+          label="Ngày Kiểm Tra"
           name="createdAt"
-          rules={[{ required: true, message: 'Please select the checkup date!' }]}
+          rules={[{ required: true, message: 'Vui lòng chọn ngày kiểm tra!' }]}
         >
-          <DatePicker showTime format="YYYY-MM-DDTHH:mm:ss.SSSZ"/>
+          <DatePicker showTime format="YYYY-MM-DDTHH:mm:ss.SSSZ" />
         </Form.Item>
 
         <Form.Item>
           <Button type="primary" htmlType="submit">
-            Submit
+            Gửi
           </Button>
         </Form.Item>
       </Form>

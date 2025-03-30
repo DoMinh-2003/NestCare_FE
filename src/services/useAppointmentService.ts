@@ -81,8 +81,23 @@ const userAppointmentService = () => {
         }, [callApi]
     )
 
+    const getAppointmentsByDate = useCallback(
+        async (date: string, search: string, status: string) => {
+            try {
+                const response = await callApi("get", `appointments/date/${date}?search=${search}&status=${status}`);
+                console.log("getAppointmentsByDate", response )
+                return response;
+            } catch (error: any) {
+                console.error(error?.response?.data?.message || "getAppointmentsByDate failed");
+            }
+        },
+        [callApi]
+    );
 
-    return {updateMotherHeal, getAppointmentDetail, getAppointmentsByDoctor, setIsLoading, updateAppointmentStatus, addServicesToAppointment, createAppointment };
+    return {
+        getAppointmentsByDate, updateMotherHeal, getAppointmentDetail, getAppointmentsByDoctor, setIsLoading,
+        updateAppointmentStatus, addServicesToAppointment, createAppointment
+    };
 };
 
 export default userAppointmentService;
