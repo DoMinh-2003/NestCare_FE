@@ -60,6 +60,7 @@ import DoctorManageInprogressAppointments from "../pages/doctor/in-progress-appo
 import AllFetail from "../pages/customer/all-fetail";
 import NurseDashboard from "../pages/nurse/dashboard";
 import AppoinmentDetail from "../pages/doctor/appointment-detail";
+import NotFoundPage from "../pages/404";
 import CancelAppointment from "../pages/nurse/cancel-appointment";
 import PaymentBooking from "../components/molecules/payment-layout";
 
@@ -425,6 +426,11 @@ export const router = createBrowserRouter([
       //   element: <ManageOverview />,
       // },
     ],
+
+  },
+  {
+    path: "*",
+    element: <NotFoundPage />,
   },
 
 ]);

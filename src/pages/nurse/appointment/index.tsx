@@ -35,7 +35,7 @@ interface Appointment {
 const NurseCheckIn: React.FC = () => {
     const [appointments, setAppointments] = useState<Appointment[]>([]);
     const { getAppointmentsByStatus, updateAppointmentsByStatus } = useAppointmentService()
-    const {getAppointmentsByDate} = userAppointmentService();
+    const { getAppointmentsByDate } = userAppointmentService();
     const [statusFilter, setStatusFilter] = useState<string>('PENDING')
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [appointmentId, setAppointmentId] = useState<string>('')
@@ -90,43 +90,10 @@ const NurseCheckIn: React.FC = () => {
         });
     };
 
-    const getStatusTag = (status: AppointmentStatus) => {
-        switch (status) {
-            case AppointmentStatus.PENDING:
-                return <Tag color="orange">Đang chờ xác nhận</Tag>;
-            case AppointmentStatus.CONFIRMED:
-                return <Tag color="blue">Đã xác nhận</Tag>;
-            case AppointmentStatus.CHECKED_IN:
-                return <Tag color="cyan">Đã đến bệnh viện</Tag>;
-            case AppointmentStatus.IN_PROGRESS:
-                return <Tag color="purple">Đang khám</Tag>;
-            case AppointmentStatus.COMPLETED:
-                return <Tag color="green">Hoàn tất</Tag>;
-            case AppointmentStatus.CANCELED:
-                return <Tag color="red">Đã hủy</Tag>;
-            default:
-                return <Tag color="default">Không xác định</Tag>;
-        }
-    };
-
     const columns = [
-        {
-            title: 'Tên bác sĩ',
-            dataIndex: ['doctor', 'fullName'],
-            key: 'doctorName',
-            width: "20%"
-        },
+
         {
             title: 'Tên mẹ',
-            width: "20%",
-            render: (record: Appointment) => (
-                <div>
-                    {record.fetalRecords[0]?.mother.username}
-                </div>
-            )
-        },
-        {
-            title: 'Tên người dùng',
             width: "25%",
             render: (record: Appointment) => (
                 <div>
@@ -134,6 +101,13 @@ const NurseCheckIn: React.FC = () => {
                 </div>
             )
         },
+        {
+            title: 'Tên bác sĩ',
+            dataIndex: ['doctor', 'fullName'],
+            key: 'doctorName',
+            width: "20%"
+        },
+
         {
             width: "20%",
             title: 'Trạng thái',
@@ -176,7 +150,7 @@ const NurseCheckIn: React.FC = () => {
 
     const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
         console.log(today, value, statusFilter)
-        const response = await  getAppointmentsByDate(today, value, statusFilter)
+        const response = await getAppointmentsByDate(today, value, statusFilter)
         console.log("response: ", response);
         setAppointments(response);
         // if (response && value != '') {
@@ -229,5 +203,24 @@ export const appointmentStatus = [
     { label: "Hoàn tất", value: "COMPLETED" },
     { label: "Đã hủy", value: "CANCELED" },
 ];
+
+export const getStatusTag = (status: AppointmentStatus) => {
+    switch (status) {
+        case AppointmentStatus.PENDING:
+            return <Tag color="orange">Đang chờ xác nhận</Tag>;
+        case AppointmentStatus.CONFIRMED:
+            return <Tag color="blue">Đã xác nhận</Tag>;
+        case AppointmentStatus.CHECKED_IN:
+            return <Tag color="cyan">Đã đến bệnh viện</Tag>;
+        case AppointmentStatus.IN_PROGRESS:
+            return <Tag color="purple">Đang khám</Tag>;
+        case AppointmentStatus.COMPLETED:
+            return <Tag color="green">Hoàn tất</Tag>;
+        case AppointmentStatus.CANCELED:
+            return <Tag color="red">Đã hủy</Tag>;
+        default:
+            return <Tag color="default">Không xác định</Tag>;
+    }
+};
 
 export default NurseCheckIn;
