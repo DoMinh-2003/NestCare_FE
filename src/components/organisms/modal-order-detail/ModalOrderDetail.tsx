@@ -46,7 +46,7 @@ const ModalOrderDetail = ({ order, isModalOpen, handleCancel }: ModalOrderDetail
 
     return (
         <div>
-            <Modal title="Basic Modal" open={isModalOpen} onCancel={handleCancel} footer={null}>
+            <Modal title="Các gói đã mua" open={isModalOpen} onCancel={handleCancel} footer={null}>
                 {
                     order.map(item => (
                         <div>
