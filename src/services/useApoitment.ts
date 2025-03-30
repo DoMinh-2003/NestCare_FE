@@ -106,9 +106,9 @@ const useAppointmentService = () => {
 	);
 
 	const updateAppointmentsByStatus = useCallback(
-		async (status: string, id: string) => {
+		async (status: string, id: string, reason?: string) => {
 			try {
-				const response = await callApi("put", `appointments/${id}/${status}`);
+				const response = await callApi("put", `appointments/${id}/${status}`, reason);
 				console.log("updateAppointmentsByStatus: ", response)
 				return response;
 			} catch (e: any) {
@@ -118,7 +118,8 @@ const useAppointmentService = () => {
 		[callApi, router]
 	);
 
-	return { updateAppointmentsByStatus, getAppointments, createReminder, getHistoryFetal, userCreateAppointments, loading, setIsLoading, getAppointmentsByStatus };
+	return { updateAppointmentsByStatus, getAppointments, createReminder, getHistoryFetal, userCreateAppointments,
+		 loading, setIsLoading, getAppointmentsByStatus };
 };
 
 export default useAppointmentService;

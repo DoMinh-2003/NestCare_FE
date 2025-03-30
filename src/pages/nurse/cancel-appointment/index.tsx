@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Table, Input, Button, Modal, Form, message, Select } from 'antd';
 import userAppointmentService from '../../../services/useAppointmentService';
 import userUserService from '../../../services/userUserService';
 import moment from 'moment';
-import { appointmentStatus } from '../appointment';
+import { appointmentStatus, getStatusTag } from '../appointment';
+import useAppointmentService from '../../../services/useApoitment';
+import { AppointmentStatus } from '../../../constants/status';
 // types.ts
 
 export interface AppointmentData {
     id: string;
     appointmentDate: string; // Ngày hẹn
-    status: 'PENDING' | 'COMPLETED' | 'CANCELLED'; // Trạng thái cuộc hẹn
+    status: 'PENDING' | 'COMPLETED' | 'CANCELED'; // Trạng thái cuộc hẹn
     fetalRecords: FetalRecord[]; // Danh sách hồ sơ thai nhi
     doctor: Doctor; // Thông tin bác sĩ
     appointmentServices: any[]; // Dịch vụ liên quan đến cuộc hẹn (nếu có)
@@ -81,7 +83,7 @@ export interface AppointmentSlot {
 
 export interface AppointmentHistory {
     id: string;
-    status: 'PENDING' | 'COMPLETED' | 'CANCELLED'; // Trạng thái
+    status: 'PENDING' | 'COMPLETED' | 'CANCELED'; // Trạng thái
     notes: string | null; // Ghi chú
     createdAt: string; // Ngày tạo
     changedBy: User; // Người thay đổi trạng thái
@@ -110,6 +112,7 @@ const CancelAppointment = () => {
     const [doctors, setDoctors] = useState<Doctor[]>([])
     const { getUsers } = userUserService()
     const [statusFilter, setStatusFilter] = useState<string>('PENDING')
+    const { updateAppointmentsByStatus } = useAppointmentService()
 
     useEffect(() => {
         getDoctors();
@@ -117,15 +120,17 @@ const CancelAppointment = () => {
 
     useEffect(() => {
         getAppointmentNeedToCancel();
-    }, [doctorSelected])
+    }, [doctorSelected, statusFilter, searchText])
 
     const today = moment().format('YYYY-MM-DD');
 
     const getAppointmentNeedToCancel = async () => {
-        console.log("doctorSelected: ", doctorSelected)
-        const response = await getAppointmentsByDoctorDate(doctorSelected, today, searchText, statusFilter)
-        if (response) {
-            setAppointments(response)
+        if (doctorSelected) {
+            console.log("doctorSelected: ", doctorSelected)
+            const response = await getAppointmentsByDoctorDate(doctorSelected, today, searchText, statusFilter)
+            if (response) {
+                setAppointments(response)
+            }
         }
     }
 
@@ -145,21 +150,18 @@ const CancelAppointment = () => {
         setIsModalVisible(true);
     };
 
-    const handleCancel = async (values: { reason: string }) => {
-        // Call your cancel appointment API here
-        // Example: await cancelAppointment(selectedAppointment.id, values.reason);
-        console.log('Canceling appointment:', selectedAppointment.id, 'Reason:', values.reason);
-
-        // Simulate a successful cancel
-        message.success('Appointment canceled successfully!');
-        setIsModalVisible(false);
-        form.resetFields();
+    const handleCancel = async (values: string) => {
+        const response = await updateAppointmentsByStatus("CANCELED", selectedAppointment.id, values)
+        console.log("handleCancel: ", response)
+        if (response) {
+            message.success('Xoá lịch hẹn thành công!');
+            setIsModalVisible(false);
+            form.resetFields();
+            getAppointmentNeedToCancel()
+        }
     };
 
-    //   const filteredAppointments = appointments.filter(appointment =>
-    //     appointment.doctor.fullName.toLowerCase().includes(searchText.toLowerCase()) ||
-    //     appointment.status.toLowerCase().includes(searchText.toLowerCase())
-    //   );
+    const hasActiveAppointments = appoinments.some(appointment => appointment.status !== 'CANCELED');
 
     const columns = [
         {
@@ -171,24 +173,31 @@ const CancelAppointment = () => {
             ),
         },
         {
+            title: 'Tên người mẹ',
+            render: (record: AppointmentData) => (
+                <div>{record.fetalRecords[0].mother.fullName}</div>
+            ),
+        },
+        {
             title: 'Trạng Thái', // Đổi tên thành "Trạng Thái"
             dataIndex: 'status',
             key: 'status',
+            render:(status: AppointmentStatus)=> getStatusTag(status)
         },
         {
             title: 'Ngày Hẹn', // Đổi tên thành "Ngày Hẹn"
             dataIndex: 'appointmentDate',
             key: 'appointmentDate',
         },
-        {
-            title: 'Hành Động', // Đổi tên thành "Hành Động"
+        ...(hasActiveAppointments ? [{
+            title: 'Hành Động',
             key: 'action',
-            render: (record: any) => (
-                <Button danger onClick={() => handleCancelClick(record)}>
-                    Hủy
-                </Button>
+            render: (text: any, record: any) => (
+              <Button danger onClick={() => handleCancelClick(record)}>
+                Hủy
+              </Button>
             ),
-        },
+          }] : []),
     ];
 
     const handleChangeDoctor = (value: string) => {
@@ -227,7 +236,7 @@ const CancelAppointment = () => {
                 />
 
                 <Input.Search
-                    placeholder="Search by doctor name or status"
+                    placeholder="Tìm kiếm bằng tên người mẹ"
                     onSearch={handleSearch}
                     className='w-[250px]'
                     style={{ marginBottom: 16 }}

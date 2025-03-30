@@ -63,7 +63,6 @@ const userAppointmentService = () => {
 
     const updateAppointmentStatus = useCallback(
         async (appointmentId: string, status: AppointmentStatus) => {
-
             const response = await callApi("put", `appointments/${appointmentId}/${status}`);
             return response;
         },
