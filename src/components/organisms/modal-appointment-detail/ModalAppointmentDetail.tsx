@@ -3,84 +3,83 @@ import { Modal, Typography, List, Avatar } from 'antd';
 const { Title, Text } = Typography;
 // Interface for the Mother
 export interface Mother {
-    id: string;
-    username: string;
-    email: string;
-    fullName: string;
-    phone: string;
-    role: string;
-    isDeleted: boolean;
+  id: string;
+  username: string;
+  email: string;
+  fullName: string;
+  phone: string;
+  role: string;
+  isDeleted: boolean;
 }
 
 // Interface for the Fetal Record
 export interface FetalRecord {
-    id: string;
-    name: string;
-    note: string;
-    dateOfPregnancyStart: string; // Format: YYYY-MM-DD
-    expectedDeliveryDate: string; // Format: YYYY-MM-DD
-    actualDeliveryDate: string | null; // Can be null if not yet delivered
-    healthStatus: string;
-    status: string; // e.g., "PREGNANT"
-    isDeleted: number; // Assuming this is a flag (0 or 1)
-    createdAt: string; // ISO date string
-    updatedAt: string; // ISO date string
-    checkupRecords: any[]; // Assuming this is an array of checkup records
-    mother: Mother; // Reference to the Mother interface
+  id: string;
+  name: string;
+  note: string;
+  dateOfPregnancyStart: string; // Format: YYYY-MM-DD
+  expectedDeliveryDate: string; // Format: YYYY-MM-DD
+  actualDeliveryDate: string | null; // Can be null if not yet delivered
+  healthStatus: string;
+  status: string; // e.g., "PREGNANT"
+  isDeleted: number; // Assuming this is a flag (0 or 1)
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
+  checkupRecords: any[]; // Assuming this is an array of checkup records
+  mother: Mother; // Reference to the Mother interface
 }
 
 // Interface for the Doctor
 export interface Doctor {
-    id: string;
-    username: string;
-    email: string;
-    fullName: string;
-    image: string | null; // URL to the doctor's image
-    phone: string;
-    role: string;
-    isDeleted: boolean;
+  id: string;
+  username: string;
+  email: string;
+  fullName: string;
+  image: string | null; // URL to the doctor's image
+  phone: string;
+  role: string;
+  isDeleted: boolean;
 }
 
 // Interface for the Appointment History
 export interface AppointmentHistory {
-    id: string;
-    status: string; // e.g., "PENDING"
-    notes: string | null; // Can be null if no notes
-    createdAt: string; // ISO date string
-    changedBy: Mother; // Reference to the Mother interface (who changed the status)
+  id: string;
+  status: string; // e.g., "PENDING"
+  notes: string | null; // Can be null if no notes
+  createdAt: string; // ISO date string
+  changedBy: Mother; // Reference to the Mother interface (who changed the status)
 }
 
 // Interface for the Appointment
 export interface AppointmentHistoryDetail {
-    id: string;
-    appointmentDate: string; // Format: YYYY-MM-DD
-    status: string; // e.g., "PENDING"
-    fetalRecords: FetalRecord[]; // Array of fetal records
-    doctor: Doctor; // Reference to the Doctor interface
-    appointmentServices: any[]; // Assuming this is an array of services
-    medicationBills: any[]; // Assuming this is an array of medication bills
-    history: AppointmentHistory[]; // Array of appointment history records
+  id: string;
+  appointmentDate: string; // Format: YYYY-MM-DD
+  status: string; // e.g., "PENDING"
+  fetalRecords: FetalRecord[]; // Array of fetal records
+  doctor: Doctor; // Reference to the Doctor interface
+  appointmentServices: any[]; // Assuming this is an array of services
+  medicationBills: any[]; // Assuming this is an array of medication bills
+  history: AppointmentHistory[]; // Array of appointment history records
 }
 
-const ModalAppointmentDetail = ({ isVisible, onClose, appointmentData }:{isVisible:any, onClose: any, appointmentData: AppointmentHistoryDetail}) => {
- console.log("ModalAppointmentDetail: ", appointmentData)
-    return (
+const ModalAppointmentDetail = ({ isVisible, onClose, appointmentData }: { isVisible: any, onClose: any, appointmentData: AppointmentHistoryDetail }) => {
+  console.log("ModalAppointmentDetail: ", appointmentData)
+  return (
     <Modal
-      title="Appointment Detail"
+      title="Chi tiết đặt lịch"
       visible={isVisible}
       onCancel={onClose}
       footer={null}
       className="rounded-lg"
     >
-      <Title level={4}>Appointment ID: {appointmentData?.id}</Title>
-      <Text strong>Appointment Date: </Text>
+      <Text strong>Ngày đặt lich: </Text>
       <Text>{appointmentData?.appointmentDate}</Text>
       <br />
-      <Text strong>Status: </Text>
+      <Text strong>Trạng thái: </Text>
       <Text>{appointmentData?.status}</Text>
       <br />
-      
-      <Title level={5}>Fetal Records</Title>
+
+      <Title level={5}>Hồ sơ thai nhi</Title>
       <List
         itemLayout="horizontal"
         dataSource={appointmentData?.fetalRecords}
@@ -91,13 +90,13 @@ const ModalAppointmentDetail = ({ isVisible, onClose, appointmentData }:{isVisib
               title={<Text strong>{record.name}</Text>}
               description={
                 <>
-                  <Text>Note: {record.note}</Text>
+                  <Text>Ghi chú: {record.note}</Text>
                   <br />
-                  <Text>Date of Pregnancy Start: {record.dateOfPregnancyStart}</Text>
+                  <Text>Ngày bắt đầu mang thai: {record.dateOfPregnancyStart}</Text>
                   <br />
-                  <Text>Expected Delivery Date: {record.expectedDeliveryDate}</Text>
+                  <Text>Ngày dự sinh: {record.expectedDeliveryDate}</Text>
                   <br />
-                  <Text>Health Status: {record.healthStatus}</Text>
+                  <Text>Trạng thái sức khoẻ: {record.healthStatus}</Text>
                 </>
               }
             />
@@ -105,7 +104,7 @@ const ModalAppointmentDetail = ({ isVisible, onClose, appointmentData }:{isVisib
         )}
       />
 
-      <Title level={5}>Doctor Information</Title>
+      <Title level={5}>Thông tin bác sĩ</Title>
       <List.Item>
         <List.Item.Meta
           avatar={<Avatar src={appointmentData?.doctor.image} />}
@@ -114,25 +113,25 @@ const ModalAppointmentDetail = ({ isVisible, onClose, appointmentData }:{isVisib
             <>
               <Text>Email: {appointmentData?.doctor.email}</Text>
               <br />
-              <Text>Phone: {appointmentData?.doctor.phone}</Text>
+              <Text>Số điện thoại: {appointmentData?.doctor.phone}</Text>
             </>
           }
         />
       </List.Item>
 
-      <Title level={5}>Appointment History</Title>
+      <Title level={5}>Lịch sử đặt lịch</Title>
       <List
         itemLayout="horizontal"
         dataSource={appointmentData?.history}
         renderItem={history => (
           <List.Item>
             <List.Item.Meta
-              title={<Text strong>Status: {history?.status}</Text>}
+              title={<Text strong>Trạng thái: {history?.status}</Text>}
               description={
                 <>
-                  <Text>Changed By: {history?.changedBy?.fullName}</Text>
+                  <Text>Thay đổi bở: {history?.changedBy?.fullName}</Text>
                   <br />
-                  <Text>Created At: {new Date(history?.createdAt).toLocaleString()}</Text>
+                  <Text>Thời gian đặt lịch: {new Date(history?.createdAt).toLocaleString()}</Text>
                 </>
               }
             />
