@@ -94,7 +94,41 @@ const useBlogService = () => {
     },
         [callApi]
     );
-    return { getBlogs, loading, setIsLoading, getBlog, createBlog, updateBlog, deleteBlog };
+
+    const getCommentByBlogId = useCallback(async (id: string) => {
+        try {
+
+
+            const response = await callApi("get", `comments/blog/${id}`);
+            return response;
+        } catch (e: any) {
+            message.error(e?.response?.data?.message || "Lấy danh sách comment thất bại");
+        }
+    },
+        [callApi]
+    );
+
+    const createComment = useCallback(
+        async (values) => {
+            try {
+                const { content, blogId, userId, parentId } = values;
+                const payload = {
+                    content,
+                    blogId,
+                    userId,
+                    ...(parentId && { parentId }), // Chỉ thêm parentId nếu nó tồn tại
+                };
+
+                const response = await callApi('post', 'comments', payload);
+                return response;
+            } catch (e) {
+                console.log(e.message || 'Gửi bình luận thất bại');
+                throw e; // Ném lỗi để xử lý ở nơi gọi hàm nếu cần
+            }
+        },
+        [callApi]
+    );
+    return { getBlogs, loading, setIsLoading, getBlog, createBlog, updateBlog, deleteBlog, getCommentByBlogId, createComment };
 };
 
 export default useBlogService;
