@@ -90,25 +90,6 @@ const NurseCheckIn: React.FC = () => {
         });
     };
 
-    const getStatusTag = (status: AppointmentStatus) => {
-        switch (status) {
-            case AppointmentStatus.PENDING:
-                return <Tag color="orange">Đang chờ xác nhận</Tag>;
-            case AppointmentStatus.CONFIRMED:
-                return <Tag color="blue">Đã xác nhận</Tag>;
-            case AppointmentStatus.CHECKED_IN:
-                return <Tag color="cyan">Đã đến bệnh viện</Tag>;
-            case AppointmentStatus.IN_PROGRESS:
-                return <Tag color="purple">Đang khám</Tag>;
-            case AppointmentStatus.COMPLETED:
-                return <Tag color="green">Hoàn tất</Tag>;
-            case AppointmentStatus.CANCELED:
-                return <Tag color="red">Đã hủy</Tag>;
-            default:
-                return <Tag color="default">Không xác định</Tag>;
-        }
-    };
-
     const columns = [
 
         {
@@ -222,5 +203,24 @@ export const appointmentStatus = [
     { label: "Hoàn tất", value: "COMPLETED" },
     { label: "Đã hủy", value: "CANCELED" },
 ];
+
+export const getStatusTag = (status: AppointmentStatus) => {
+    switch (status) {
+        case AppointmentStatus.PENDING:
+            return <Tag color="orange">Đang chờ xác nhận</Tag>;
+        case AppointmentStatus.CONFIRMED:
+            return <Tag color="blue">Đã xác nhận</Tag>;
+        case AppointmentStatus.CHECKED_IN:
+            return <Tag color="cyan">Đã đến bệnh viện</Tag>;
+        case AppointmentStatus.IN_PROGRESS:
+            return <Tag color="purple">Đang khám</Tag>;
+        case AppointmentStatus.COMPLETED:
+            return <Tag color="green">Hoàn tất</Tag>;
+        case AppointmentStatus.CANCELED:
+            return <Tag color="red">Đã hủy</Tag>;
+        default:
+            return <Tag color="default">Không xác định</Tag>;
+    }
+};
 
 export default NurseCheckIn;
