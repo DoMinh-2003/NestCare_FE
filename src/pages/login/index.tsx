@@ -70,6 +70,9 @@ function CustomerLoginPage() {
           <FcGoogle className="text-[26px]" />
           <span>Đăng nhập bằng Google</span>
         </button>
+        <p className="text-center text-lg text-gray-500 font-sans">
+          <Link to={USER_ROUTES.FORGOT_PASSWORD} className=" text-red-500 hover:opacity-85 hover:text-red-500 font-sans">Quên mật khẩu</Link>
+        </p>
       </div>
     </div>
   );
