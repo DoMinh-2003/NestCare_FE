@@ -35,7 +35,7 @@ interface Appointment {
 const NurseCheckIn: React.FC = () => {
     const [appointments, setAppointments] = useState<Appointment[]>([]);
     const { getAppointmentsByStatus, updateAppointmentsByStatus } = useAppointmentService()
-    const {getAppointmentsByDate} = userAppointmentService();
+    const { getAppointmentsByDate } = userAppointmentService();
     const [statusFilter, setStatusFilter] = useState<string>('PENDING')
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [appointmentId, setAppointmentId] = useState<string>('')
@@ -110,23 +110,9 @@ const NurseCheckIn: React.FC = () => {
     };
 
     const columns = [
-        {
-            title: 'Tên bác sĩ',
-            dataIndex: ['doctor', 'fullName'],
-            key: 'doctorName',
-            width: "20%"
-        },
+
         {
             title: 'Tên mẹ',
-            width: "20%",
-            render: (record: Appointment) => (
-                <div>
-                    {record.fetalRecords[0]?.mother.username}
-                </div>
-            )
-        },
-        {
-            title: 'Tên người dùng',
             width: "25%",
             render: (record: Appointment) => (
                 <div>
@@ -134,6 +120,13 @@ const NurseCheckIn: React.FC = () => {
                 </div>
             )
         },
+        {
+            title: 'Tên bác sĩ',
+            dataIndex: ['doctor', 'fullName'],
+            key: 'doctorName',
+            width: "20%"
+        },
+
         {
             width: "20%",
             title: 'Trạng thái',
@@ -176,7 +169,7 @@ const NurseCheckIn: React.FC = () => {
 
     const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
         console.log(today, value, statusFilter)
-        const response = await  getAppointmentsByDate(today, value, statusFilter)
+        const response = await getAppointmentsByDate(today, value, statusFilter)
         console.log("response: ", response);
         setAppointments(response);
         // if (response && value != '') {
