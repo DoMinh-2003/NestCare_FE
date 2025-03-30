@@ -61,6 +61,7 @@ import DoctorManageInprogressAppointments from "../pages/doctor/in-progress-appo
 import AllFetail from "../pages/customer/all-fetail";
 import NurseDashboard from "../pages/nurse/dashboard";
 import AppoinmentDetail from "../pages/doctor/appointment-detail";
+import CancelAppointment from "../pages/nurse/cancel-appointment";
 
 
 
@@ -353,6 +354,10 @@ export const router = createBrowserRouter([
       {
         path: NURSE_ROUTES.NURSE_APPOINTMENT,
         element: <NurseCheckIn />,
+      },
+      {
+        path: NURSE_ROUTES.NURSE_CANCEL_APPOINTMENT,
+        element: <CancelAppointment />,
       },
       {
         path: 'dashboard',

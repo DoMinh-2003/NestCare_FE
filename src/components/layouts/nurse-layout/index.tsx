@@ -28,7 +28,8 @@ const items: MenuItem[] = [
   getItem("Dashboard", "dashboard", <FaChartPie />),
   getItem("Quản lí người dùng", "users", <SlCalender />),
   getItem("Quản lí thanh toán", "orders", <SlCalender />),
-  getItem("Quản lí cuộc hẹn", "appointments", <SlCalender />),
+  getItem("Tạo cuộc hẹn", "appointments", <SlCalender />),
+  getItem("Huỷ cuộc cuộc hẹn", "cancel-appointments", <SlCalender />),
 ];
 
 const NurseLayout: React.FC = () => {
