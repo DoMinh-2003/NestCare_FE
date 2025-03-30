@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Input, message, Table, Tag } from "antd";
+import { Button, Form, Input, message, Table, Tag } from "antd";
 import usePackageService, { Package, PackageService } from "../../../services/usePackageService";
 import ModalServiceOfPackage from "../../../components/organisms/modal-services-of-package/ModalServiceOfPackage";
 import ModalCreateUpdatePackage, { PackageCreateUpdate } from "../../../components/organisms/modal-create-update-package/ModalCreateUpdatePackage";
@@ -15,6 +15,7 @@ const ManagePackage = () => {
     const [isModalOpenCreateUpdate, setIsModalOpenCreateUpdate] = useState(false);
     const [editingPackage, setEditingPackage] = useState<Package | null>(null);
     const [modalWidth, setModalWidth] = useState<number | string>(800);
+    const [form] = Form.useForm();
 
     useEffect(() => {
         getPackagesFromAdmin();
@@ -156,6 +157,11 @@ const ManagePackage = () => {
         },
     ];
 
+    const handleCancelModalOpenCreateUpdate = ()=>{
+        setIsModalOpenCreateUpdate(false)
+        form.resetFields()
+    }
+    
     return (
         <div>
             <h1 className="text-3xl font-extrabold text-center mb-5">
@@ -174,8 +180,9 @@ const ManagePackage = () => {
                 </Button>
             </div>
             <ModalCreateUpdatePackage
+            form={form}
                 visible={isModalOpenCreateUpdate}
-                onCancel={() => setIsModalOpenCreateUpdate(false)}
+                onCancel={handleCancelModalOpenCreateUpdate}
                 onSubmit={handleSubmit}
                 initialValues={editingPackage}
                 width={modalWidth}

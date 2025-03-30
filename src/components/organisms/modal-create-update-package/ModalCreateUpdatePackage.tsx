@@ -7,65 +7,45 @@ import { formatMoney } from "../../../utils/formatMoney";
 
 export interface PackageServiceCreateUpdate {
     serviceId: string;
-    slot: 5;
+    slot: number; // Số lượng slot cho dịch vụ
 }
 
 export interface PackageCreateUpdate {
     name: string;
     description: string;
     price: number;
-    packageServices: PackageServiceCreateUpdate[];
+    durationValue: number; // Thêm trường durationValue
+    durationType: string; // Thêm trường durationType
+    packageServices: PackageServiceCreateUpdate[]; // Danh sách dịch vụ
     id?: string;
 }
 
-
-const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, width }: {
+const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, width, form }: {
     visible: boolean;
     onCancel: () => void;
     onSubmit: (values: PackageCreateUpdate) => void;
-    initialValues?: Package | null
+    initialValues?: Package | null;
     width?: number | string;
+    form: any
 }) => {
-    const [form] = Form.useForm();
     const { getServices } = useServiceService();
     const [services, setServices] = useState<Service[]>([]);
-    const [discountedPrice, setDiscountedPrice] = useState<number>(initialValues?.price || 0);
     const [totalPrice, setTotalPrice] = useState(0);
     const [oldServices, setOldServices] = useState<PackageService[]>([]);
+    const [discount, setDiscount] = useState<number>(0);
+    const [selectedServices, setSelectedServices] = useState<string[]>([]);
+    const [slots, setSlots] = useState<{ [key: string]: number }>({}); // Lưu số lượng slot cho từng dịch vụ
+
     useEffect(() => {
         getServicesFromCustomer();
         if (initialValues) {
-            console.log("initialValues: ", initialValues)
             form.setFieldsValue(initialValues);
-            setOldServices(initialValues?.packageServices)
+            setOldServices(initialValues?.packageServices);
         } else {
             form.resetFields();
         }
     }, [initialValues, form]);
 
-    useEffect(() => {
-        getServicesFromCustomer();
-    }, []);
-
-    const handleDiscountChange = (value: number | null) => {
-        const originalPrice = initialValues?.price || 0;
-        const discount = value || 0;
-        const calculatedPrice = originalPrice - (originalPrice * discount) / 100;
-        setDiscountedPrice(calculatedPrice);
-    };
-
-    const handleChange = (value: string[]) => {
-        console.log(`Selected: `, value);
-
-        // Lọc danh sách service đã chọn
-        const selectedServices = services.filter(service => value.includes(service.id));
-
-        // Tính tổng giá
-        const total = selectedServices.reduce((sum, service) => sum + Number(service.price), 0);
-
-        setTotalPrice(total); // Cập nhật tổng giá
-        console.log(`price: `, totalPrice);
-    };
     const getServicesFromCustomer = async () => {
         const response = await getServices();
         if (response && Array.isArray(response.data)) {
@@ -79,19 +59,15 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
     const handleOk = async () => {
         try {
             const values = await form.validateFields();
-            const discount = values.discount || 0; // Phần trăm giảm giá
-
-            const calculatedPrice = totalPrice - (totalPrice * discount) / 100; // Giá sau giảm
-
             const formattedValues = {
                 ...values,
-                price: calculatedPrice, // Gửi đi giá đã tính toán lại
-                packageService: values.packageService.map((serviceId: string) => ({
+                price: totalPrice, 
+                packageService: selectedServices.map(serviceId => ({
                     serviceId,
-                    slot: 5, // Giá trị mặc định cho slot
+                    slot: slots[serviceId], // Lấy số slot từ trường nhập
                 })),
             };
-
+            setDiscount(0);
             form.resetFields();
             onSubmit(formattedValues);
         } catch (error) {
@@ -99,44 +75,47 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
         }
     };
 
+    const calculateTotalPrice = () => {
+        const total = selectedServices.reduce((sum, serviceId) => {
+            const service = services.find(s => s.id === serviceId);
+            const slot = slots[serviceId] || 0; // Sử dụng số slot mới
+            return sum + (service ? service.price * slot : 0);
+        }, 0);
 
-    const columns = [
-        {
-            title: "Tên gói",
-            render: (record: PackageService) => (
-                <div>
-                    {record.service.name}
-                </div>
-            )
-        },
-        {
-            title: "Giá",
-            render: (record: PackageService) => (
-                <div>
-                    {formatMoney(record.service.price)}
-                </div>
-            )
-        },
-        {
-            title: 'Hành động',
-            render: (record: PackageService) => (
-                <div className="flex gap-2">
-                    <EditOutlined onClick={() => handleOpenModalUpdateService(record)} className="text-blue" />
-                    <DeleteOutlined onClick={() => handleDeleteServicePromPackage(record.service.id)} className="text-red-500" />
-                </div>
-            )
-        },
-    ];
+        const priceDiscount = total - (total * (discount / 100));
+        setTotalPrice(priceDiscount); // Cập nhật tổng giá
+    };
 
-    const handleOpenModalUpdateService = (record: PackageService) => {
+    useEffect(() => {
+        calculateTotalPrice(); // Tính toán tổng giá ngay lập tức
+    }, [discount, slots])
 
-    }
+    const handleServiceChange = (value: string[]) => {
+        // Cập nhật danh sách dịch vụ đã chọn
+        setSelectedServices(value);
 
-    const handleDeleteServicePromPackage = (id: string) => {
-        console.log("id: ", id)
-        console.log("oldServices: ", oldServices)
-        setOldServices(oldServices.filter(item => item.service.id != id))
-    }
+        // Tạo một đối tượng mới để lưu số lượng slot
+        const newSlots = {};
+        value.forEach(serviceId => {
+            newSlots[serviceId] = slots[serviceId] || 1; // Giữ số slot hiện tại hoặc mặc định là 1
+        });
+        setSlots(newSlots);
+        calculateTotalPrice();
+    };
+
+    const handleSlotChangeService = (serviceId: string, value: number) => {
+        setSlots({
+            ...slots,
+            [serviceId]: value,
+        });
+        calculateTotalPrice(); // Tính toán lại tổng giá khi số slot thay đổi
+    };
+
+    const handleSetDiscount = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const discountValue = Number(e.target.value);
+        setDiscount(discountValue);
+        calculateTotalPrice(); // Tính toán lại tổng giá khi giảm giá thay đổi
+    };
 
     return (
         <Modal
@@ -171,65 +150,127 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
                     <Input.TextArea rows={3} placeholder="Nhập mô tả" />
                 </Form.Item>
 
+                <Form.Item
+                    name="durationValue"
+                    label="Giá trị thời gian"
+                    rules={[{ required: true, message: "Vui lòng nhập giá trị thời gian!" }]}
+                >
+                    <InputNumber min={1} style={{ width: "100%" }} placeholder="Nhập giá trị thời gian" />
+                </Form.Item>
 
-                {/* create */}
-                {
-                    !initialValues && <Form.Item
-                        name="packageService"
-                        label="Chọn gói dịch vụ"
-                        rules={[{ required: true, message: "Vui lòng nhập giá!" }]}
-                    >
-                        <Select
-                            mode="multiple"
-                            style={{ width: '100%' }}
-                            placeholder="Chọn gói dịch vụ"
-                            onChange={handleChange}
-                            options={
-                                services.map((item) => (
-                                    { value: item.id, label: item.name }
-                                ))
-                            }
+                <Form.Item
+                    name="durationType"
+                    label="Loại thời gian"
+                    rules={[{ required: true, message: "Vui lòng chọn loại thời gian!" }]}
+                >
+                    <Select placeholder="Chọn loại thời gian">
+                        <Select.Option value="DAY">Ngày</Select.Option>
+                        <Select.Option value="WEEK">Tuần</Select.Option>
+                        <Select.Option value="MONTH">Tháng</Select.Option>
+                    </Select>
+                </Form.Item>
+
+                {/* Chọn gói dịch vụ */}
+                <Form.Item
+                    name="packageService"
+                    label="Chọn gói dịch vụ"
+                    rules={[{ required: true, message: "Vui lòng chọn gói dịch vụ!" }]}
+                >
+                    <Select
+                        mode="multiple"
+                        style={{ width: '100%' }}
+                        placeholder="Chọn gói dịch vụ"
+                        onChange={handleServiceChange}
+                        options={services.map((item) => (
+                            { value: item.id, label: item.name }
+                        ))}
+                    />
+                </Form.Item>
+
+                {/* Hiển thị trường nhập slot cho mỗi dịch vụ đã chọn */}
+                {selectedServices.map(serviceId => (
+                    <Form.Item key={serviceId} label={`Số slot cho ${services.find(s => s.id === serviceId)?.name}`}>
+                        <InputNumber
+                            min={1}
+                            value={slots[serviceId] || 1}
+                            onChange={(value) => handleSlotChangeService(serviceId, value)}
+                            placeholder="Nhập số slot"
                         />
                     </Form.Item>
-                }
-                {/* update */}
-                <div>
-                    <div>
+                ))}
+                <Form.Item
+                    name="discount"
+                    label="Giảm giá (%)"
+                    rules={[
                         {
-                            initialValues && <Form.Item
-                                name="packageService"
-                                label="Chọn gói dịch vụ"
-                                rules={[{ required: true, message: "Vui lòng nhập giá!" }]}
-                            >
-                                <Select
-                                    mode="multiple"
-                                    style={{ width: '100%' }}
-                                    placeholder="Chọn gói dịch vụ"
-                                    options={
-                                        services.map((item) => (
-                                            { value: item.id, label: item.name }
-                                        ))
-                                    }
-                                />
-                            </Form.Item>
+                            validator: (_, value) => {
+                                if (!value) {
+                                    return Promise.reject(new Error('Vui lòng nhập phần trăm giảm giá!'));
+                                }
+                                const numValue = Number(value);
+                                if (numValue < 1 || numValue > 100) {
+                                    return Promise.reject(new Error('Giảm giá phải nằm trong khoảng từ 1 đến 100!'));
+                                }
+                                return Promise.resolve();
+                            }
                         }
-                        <Form.Item
-                            name="discount"
-                            label="Giảm giá (%)"
-                            rules={[{ required: true, message: "Vui lòng nhập giảm giá!" }]}
-                        >
-                            <InputNumber min={0} max={100} style={{ width: "100%" }} placeholder="Nhập % giảm giá" onChange={handleDiscountChange} />
-                        </Form.Item>
-                        <div>
-                            Tổng giá gói dịch vụ: {formatMoney(totalPrice)}
-                        </div>
-                        {
-                            initialValues && <Table columns={columns} dataSource={oldServices} rowKey="id" />
-                        }
-                    </div>
-                </div>
-            </Form>
+                    ]}
+                >
+                    <Input
+                        type="number"
+                        onChange={handleSetDiscount}
+                        placeholder="Nhập phần trăm giảm giá"
+                        style={{ width: '100%' }}
+                    />
+                </Form.Item>
 
+                <div>
+                    <strong>Tổng giá: {formatMoney(totalPrice)}</strong>
+                </div>
+
+                {/* Hiển thị bảng dịch vụ đã chọn */}
+                {oldServices.length > 0 && (
+                    <Table
+                        columns={[
+                            {
+                                title: "Tên gói",
+                                render: (record: PackageService) => (
+                                    <div>{record.service.name}</div>
+                                )
+                            },
+                            {
+                                title: "Giá",
+                                render: (record: PackageService) => (
+                                    <div>{formatMoney(record.service.price)}</div>
+                                )
+                            },
+                            {
+                                title: 'Số slot',
+                                render: (record: PackageService) => (
+                                    <InputNumber
+                                        min={1}
+                                        defaultValue={record.slot}
+                                        onChange={(value) => handleSlotChangeService(record.service.id, value)}
+                                    />
+                                )
+                            },
+                            {
+                                title: 'Hành động',
+                                render: (record: PackageService) => (
+                                    <div className="flex gap-2">
+                                        {/* <EditOutlined onClick={() => handleOpenModalUpdateService(record)} className="text-blue" />
+                                        <DeleteOutlined
+                                            onClick={() => handleDeleteServicePromPackage(record.service.id)} className="text-red-500" /> */}
+                                    </div>
+                                )
+                            },
+                        ]}
+                        dataSource={oldServices}
+                        rowKey="serviceId" // Sử dụng serviceId làm key
+                        pagination={false} // Tắt phân trang nếu không cần
+                    />
+                )}
+            </Form>
         </Modal>
     );
 };
