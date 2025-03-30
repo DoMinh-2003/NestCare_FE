@@ -56,6 +56,7 @@ export enum NURSE_ROUTES {
   NURSE_APPOINTMENT = "appointments",
   NURSE_CREATE_APPOINTMENT = "create-appointment",
   FETALS_DETAIL = "users/fetals/:id",
+  NURSE_CANCEL_APPOINTMENT = "cancel-appointments",
 }
 // Admin Routes
 export enum ADMIN_ROUTES {

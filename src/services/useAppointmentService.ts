@@ -85,7 +85,7 @@ const userAppointmentService = () => {
         async (date: string, search: string, status: string) => {
             try {
                 const response = await callApi("get", `appointments/date/${date}?search=${search}&status=${status}`);
-                console.log("getAppointmentsByDate", response )
+                console.log("getAppointmentsByDate", response)
                 return response;
             } catch (error: any) {
                 console.error(error?.response?.data?.message || "getAppointmentsByDate failed");
@@ -94,9 +94,33 @@ const userAppointmentService = () => {
         [callApi]
     );
 
+    const getAppointmentsByDoctorDate = useCallback(
+        async (doctorId: string, date: string, search: string, status: string) => {
+            let url;
+            if (search && status && status != '') {
+                url = `/appointments/doctor-date/${doctorId}/${date}?search=${search}&status=${status}`
+            } else if (search || search && status === '') {
+                url = `/appointments/doctor-date/${doctorId}/${date}?search=${search}`
+            } else if (status != '') {
+                url = `/appointments/doctor-date/${doctorId}/${date}?status=${status}`
+            } else {
+                url = `/appointments/doctor-date/${doctorId}/${date}`
+            }
+
+            try {
+                const response = await callApi("get", url);
+                console.log("getAppointmentsByDoctorDate", response)
+                return response;
+            } catch (error: any) {
+                console.error(error?.response?.data?.message || "getAppointmentsByDoctorDate failed");
+            }
+        },
+        [callApi]
+    );
+
     return {
         getAppointmentsByDate, updateMotherHeal, getAppointmentDetail, getAppointmentsByDoctor, setIsLoading,
-        updateAppointmentStatus, addServicesToAppointment, createAppointment
+        updateAppointmentStatus, addServicesToAppointment, createAppointment, getAppointmentsByDoctorDate
     };
 };
 

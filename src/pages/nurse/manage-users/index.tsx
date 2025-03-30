@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import { Input } from 'antd';
 import ModalAppointmentHistory from "../../../components/organisms/modal-appointment-history/ModalAppointmentHistory";
 import { CreateAppointment } from "../../../components/organisms/modal-create-appointment/ModalCreateAppointment";
+import Loading from "../../../components/molecules/loading/Loading";
 type SearchProps = GetProps<typeof Input.Search>;
 const { Search } = Input;
 // Interface for the Mother
@@ -53,7 +54,11 @@ const NurseManageUsers: React.FC = () => {
     const { createUser, updateUser, deleteUser, getUsers, getUsersSearch } = userUserService();
     const [form] = Form.useForm(); // Create a form reference
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
- 
+    // const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    // if (isLoading) {
+    //     return <Loading />
+    // }
 
     useEffect(() => {
         getUsersFromAdmin();
@@ -97,12 +102,16 @@ const NurseManageUsers: React.FC = () => {
     };
 
     const getUsersFromAdmin = async () => {
+ 
         const response = await getUsersSearch("", "");;
         console.log("response: ", response);
         if (response) {
+            
             setUsers(response.users.filter((item: UserData) => item.role === "user" && !item.isDeleted));
         }
+   
     };
+
     const handleOpenModalDelete = (record: UserData) => {
         console.log("record: ", record)
         setCurrentUser(record);
@@ -190,7 +199,7 @@ const NurseManageUsers: React.FC = () => {
             <div className='text-3xl font-semibold text-center my-5'>
                 Quản lý người dùng
             </div>
-           
+
             <ModalDelete
                 handleCancelModalDelete={handleCancelModalDelete}
                 handleOkModalDelete={handleOkModalDelete}
