@@ -46,6 +46,7 @@ const AdminLayout: React.FC = () => {
     localStorage.removeItem("USER");
     dispatch(logout());
     navigate("/");
+
     message.success("Đăng xuất");
   };
 

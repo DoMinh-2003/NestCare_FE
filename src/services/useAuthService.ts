@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import useApiService from "../hooks/useApi";
 import { message } from "antd";
+import { navigateByRole } from '../utils/index';
 
 const useAuthService = () => {
   const { callApi, loading, setIsLoading } = useApiService();
@@ -39,24 +40,11 @@ const useAuthService = () => {
           message.success("Đăng nhập thành công");
 
           // Điều hướng dựa trên role
-          switch (response?.role) {
-            case "doctor":
-              router("/doctor");
-              break;
-            case "nurse":
-              router("/nurse");
-              break;
-            case "admin":
-              router("/admin");
-              break;
-            default:
-              router("/");
-              break;
-          }
+          navigateByRole(response?.role, router)
           return response?.data;
         } else {
           // Nếu không có token, coi như thất bại
-          message.error(response?.message || "Mật khẩu hoặc tài khoản không đúng");
+          console.log(response?.message || "Mật khẩu hoặc tài khoản không đúng");
         }
       } catch (e: any) {
         // Xử lý lỗi khi API gặp exception (ví dụ: mạng lỗi)
