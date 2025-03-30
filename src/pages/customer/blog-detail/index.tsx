@@ -16,6 +16,12 @@ const BlogDetail = () => {
     const [replyingTo, setReplyingTo] = useState(null);
     const [submitting, setSubmitting] = useState(false);
     const { id } = useParams();
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+    useEffect(() => {
+        const user = localStorage.getItem('USER');
+        setIsLoggedIn(!!user);
+    }, []);
 
     useEffect(() => {
         const fetchBlog = async () => {
@@ -56,24 +62,31 @@ const BlogDetail = () => {
     const topLevelComments = useMemo(() => buildCommentTree(comments), [comments]);
 
     const handlePostComment = async (content, parentId = null) => {
+        const user = localStorage.getItem('USER');
+        if (!user) {
+            message.warning('Bạn cần đăng nhập để bình luận!');
+            return;
+        }
+
         setSubmitting(true);
         try {
-            const userId = 'dde53461-99d8-4ab2-b8fd-7c0d39e075be'; // Giả định userId, bạn cần lấy từ context hoặc state
+            const userId = JSON.parse(user).id; // Giả sử USER lưu dưới dạng JSON và có id
             await createComment({
                 content,
                 blogId: id,
                 userId,
-                ...(parentId && { parentId }), // Chỉ thêm parentId nếu có
+                ...(parentId && { parentId }),
             });
             message.success('Bình luận đã được gửi');
             const updatedComments = await getCommentByBlogId(id);
-            setComments(updatedComments); // Cập nhật danh sách bình luận
+            setComments(updatedComments);
         } catch (error) {
-            // Lỗi đã được xử lý trong createComment, không cần lặp lại message.error
+            message.error('Lỗi khi gửi bình luận!');
         } finally {
             setSubmitting(false);
         }
     };
+
 
     if (loading) {
         return <BlogDetailSkeleton />;
@@ -122,21 +135,29 @@ const BlogDetail = () => {
                     )}
                 />
                 <Divider />
-                <Form onFinish={handleSubmit}>
-                    <Form.Item>
-                        <Input.TextArea
-                            rows={4}
-                            placeholder="Viết bình luận của bạn..."
-                            value={commentContent}
-                            onChange={(e) => setCommentContent(e.target.value)}
-                        />
-                    </Form.Item>
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit" loading={submitting}>
-                            Gửi
-                        </Button>
-                    </Form.Item>
-                </Form>
+                {isLoggedIn ? (
+                    <Form onFinish={handleSubmit}>
+                        <Form.Item>
+                            <Input.TextArea
+                                rows={4}
+                                placeholder="Viết bình luận của bạn..."
+                                value={commentContent}
+                                onChange={(e) => setCommentContent(e.target.value)}
+                            />
+                        </Form.Item>
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit" loading={submitting}>
+                                Gửi
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                ) : (
+                    <div style={{ textAlign: 'center', marginTop: 16 }}>
+                        <Text type="secondary">
+                            Bạn cần <a href="/auth/login">đăng nhập</a> để bình luận.
+                        </Text>
+                    </div>
+                )}
             </div>
         );
     };
