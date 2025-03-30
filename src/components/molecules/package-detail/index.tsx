@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Image, message, Skeleton } from 'antd';
+import { Button, Image, message, Skeleton } from 'antd';
 import CustomBreadcrumbs, { BreadcrumbsProps } from '../../atoms/breadcrumbs/CustomBreadcrumbs';
 import usePackageService from '../../../services/usePackageService';
 import { Package } from '../../../model/Pakage';
@@ -15,6 +15,8 @@ const PackageDetail = () => {
 	const { getPackageById } = usePackageService();
 	const { createOrder } = useOrderService();
 	const navigate = useNavigate();
+	const [buttonLoading, setButtonLoading] = useState(false)
+
 
 	// Fetch package data
 	useEffect(() => {
@@ -38,8 +40,16 @@ const PackageDetail = () => {
 		}
 
 		const userObject = JSON.parse(storedUser);
-		const response = await createOrder({ userId: userObject.id, packageId: id });
-		if (response) window.location.href = response;
+		setButtonLoading(true)
+		try {
+
+			const response = await createOrder({ userId: userObject.id, packageId: id });
+			if (response) window.location.href = response;
+		} catch (error) {
+			console.error('Error creating order:', error);
+		} finally {
+			setButtonLoading(false);
+		}
 	};
 
 	// Loading state
@@ -101,15 +111,17 @@ const PackageDetail = () => {
 			</div>
 
 			{/* Call to Action */}
-			<div className="mt-8 flex justify-center">
-				<button
+			<div className='flex justify-center'>
+				<Button
 					className="px-8 py-4 rounded-lg bg-gradient-to-r from-pink-400 to-red-500 text-white shadow-lg transform hover:scale-105 transition-transform duration-300"
 					onClick={handleBookingPackage}
+					loading={buttonLoading}
 				>
 					Mua ngay
-				</button>
+				</Button>
 			</div>
 		</div>
+
 	);
 };
 

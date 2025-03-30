@@ -34,7 +34,8 @@ export enum USER_ROUTES {
   BLOG_DETAIL = "/blog/:id",
   PROFILE = "/profile",
   MY_SERVICES = '/my-services',
-  ALL_FETAIL = "/all-fetal"
+  ALL_FETAIL = "/all-fetal",
+  BOOKING_RESULT = "/booking-result"
 }
 
 export enum DOCTOR_ROUTES {

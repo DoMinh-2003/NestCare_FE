@@ -179,12 +179,19 @@ function BookingDoctor() {
 			}
 
 			const response = await userCreateAppointments(appointment)
+			console.log('====================================');
+			console.log("--------------------------------response", response);
+			console.log('====================================');
 			if (response) {
-				message.success({
-					content: "Đặt lịch hẹn thành công!",
-					icon: <CheckCircleOutlined style={{ color: "#52c41a" }} />,
-					duration: 5,
-				})
+				if (!response.id) {
+					window.location.href = response
+				} else {
+					message.success({
+						content: "Đặt lịch hẹn thành công!",
+						icon: <CheckCircleOutlined style={{ color: "#52c41a" }} />,
+						duration: 3,
+					})
+				}
 				form.resetFields()
 				setSelectedDate(null)
 				setSelectedTime(null)
@@ -330,6 +337,7 @@ function BookingDoctor() {
 														</span>
 													</Badge.Ribbon>
 												)}
+												disabled
 											>
 												{fetals
 													?.filter((fetal) => fetal?.status === "PREGNANT")
