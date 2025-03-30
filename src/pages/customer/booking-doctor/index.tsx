@@ -36,6 +36,9 @@ import useSlotService from "../../../services/useSlotsService"
 import type { Slot } from "../../../model/Slot"
 import moment from "moment"
 import { motion } from "framer-motion"
+import { useNavigate } from "react-router-dom"
+import { USER_ROUTES } from "../../../constants/routes"
+import { toast } from "react-toastify"
 
 const { Option } = Select
 const { Title, Text, Paragraph } = Typography
@@ -86,6 +89,7 @@ function BookingDoctor() {
 	const { getAvailableDoctor } = userUserService()
 	const { userCreateAppointments } = useAppointmentService()
 	const { getSlots } = useSlotService()
+	const navigate = useNavigate()
 
 	const handleGetFetalsByMotherId = async (userId: string) => {
 		try {
@@ -192,10 +196,13 @@ function BookingDoctor() {
 						duration: 3,
 					})
 				}
+
 				form.resetFields()
 				setSelectedDate(null)
 				setSelectedTime(null)
 				setSubmitted(null)
+				navigate(USER_ROUTES.APPOINTMENT_HISTORY)
+				message.info("Xem trang lịch sử đặt lịch khám")
 			}
 		} catch (error) {
 			message.error("Đặt lịch hẹn thất bại: " + (error.message || "Vui lòng thử lại sau"))

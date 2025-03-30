@@ -82,7 +82,7 @@ function AvailableService() {
 	const [allServices, setAllServices] = useState<PackageService[]>([])
 	const [loading, setLoading] = useState(true)
 	const [searchText, setSearchText] = useState("")
-	const [sortBy, setSortBy] = useState<"name" | "price" | "slots">("name")
+	const [sortBy, setSortBy] = useState<"name" | "price" | "slots">()
 	const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc")
 	const [filterBySlots, setFilterBySlots] = useState<"all" | "available" | "unavailable">("all")
 	const [selectedService, setSelectedService] = useState<PackageService | null>(null)
@@ -91,6 +91,7 @@ function AvailableService() {
 	const [bookingModalVisible, setBookingModalVisible] = useState(false)
 	const [hoveredCard, setHoveredCard] = useState<string | null>(null)
 	const [activeTab, setActiveTab] = useState<string>("all")
+	const [filterByPackage, setFilterByPackage] = useState<string | null>(null)
 
 	const user = getUserDataFromLocalStorage()
 	const navigate = useNavigate()
@@ -101,7 +102,7 @@ function AvailableService() {
 
 	useEffect(() => {
 		applyFiltersAndSort()
-	}, [allServices, searchText, sortBy, sortOrder, filterBySlots, activeTab])
+	}, [allServices, searchText, sortBy, sortOrder, filterBySlots, activeTab, filterByPackage])
 
 	const fetchServices = async () => {
 		try {
@@ -140,12 +141,10 @@ function AvailableService() {
 	const applyFiltersAndSort = () => {
 		let result = [...allServices]
 
-		// Filter by tab (package)
 		if (activeTab !== "all") {
 			result = result.filter((service) => service.packageId === activeTab)
 		}
 
-		// Apply search filter
 		if (searchText) {
 			const lowerSearchText = searchText.toLowerCase()
 			result = result.filter(
@@ -155,7 +154,6 @@ function AvailableService() {
 			)
 		}
 
-		// Apply slots filter
 		if (filterBySlots === "available") {
 			result = result.filter((service) => service.slot > 0)
 		} else if (filterBySlots === "unavailable") {
@@ -423,6 +421,7 @@ function AvailableService() {
 		)
 	}
 
+
 	return (
 		<div className="available-services-container" style={{ padding: "24px" }}>
 			<motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
@@ -450,20 +449,6 @@ function AvailableService() {
 					}
 					key="all"
 				/>
-				{packages.map((pkg) => (
-					<TabPane
-						tab={
-							<span>
-								<GiftOutlined /> {pkg.package.name}
-								<Badge
-									count={pkg.services.reduce((total, service) => total + service.slot, 0)}
-									style={{ marginLeft: 8, backgroundColor: "#52c41a" }}
-								/>
-							</span>
-						}
-						key={pkg.package.id}
-					/>
-				))}
 			</Tabs>
 
 			<motion.div
@@ -504,7 +489,7 @@ function AvailableService() {
 						</Col>
 						<Col xs={24} md={8}>
 							<div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", flexWrap: "wrap" }}>
-								<Tooltip title="Sắp xếp theo tên">
+								{/* <Tooltip title="Sắp xếp theo tên">
 									<Button
 										icon={<SortAscendingOutlined />}
 										onClick={() => toggleSort("name")}
@@ -530,7 +515,7 @@ function AvailableService() {
 									>
 										Lượt {sortBy === "slots" && (sortOrder === "asc" ? "↑" : "↓")}
 									</Button>
-								</Tooltip>
+								</Tooltip> */}
 							</div>
 						</Col>
 					</Row>
