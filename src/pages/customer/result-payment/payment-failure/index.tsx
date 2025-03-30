@@ -1,7 +1,9 @@
+import { Image } from 'antd';
+import { CreditCard, HeartCrack } from "lucide-react";
+import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import paymentFailureImg from '../../../../../public/images/failure.png';
 import useOrderService from '../../../../services/useOrderService';
-import { useEffect } from 'react';
 
 const PaymentFailure = () => {
 	// const { state } = useLocation();
@@ -26,23 +28,34 @@ const PaymentFailure = () => {
 	}, [orderId])
 
 	return (
-		<>
-			<div className="border border-solid h-fit p-5 flex flex-col items-center gap-5 max-w-[550px] mx-auto rounded-md bg-[#fff3f3]" style={{ boxShadow: "15px 15px 30px #bebebe, -15px -15px 30px #ffffff" }}>
-				<img src={paymentFailureImg} alt="payment-success" className='h-[300px]' />
-				<h1 className="text-2xl font-bold text-red-800">Thanh Toán Thất Bại!</h1>
-				<p className='text-xl font-sans'>Đã có lỗi trong quá trình thanh toán. Hãy thử lại !</p>
-				<Link to="/">
-					<button className="text-gray-900 mt-5 bg-blue-500 text-lg px-12 py-3 rounded-lg bg-gray-200 cursor-pointer border border-gray-200 transition duration-300 shadow-[6px_6px_12px_#c5c5c5,-6px_-6px_12px_#ffffff] active:text-gray-500 active:shadow-[inset_4px_4px_12px_#c5c5c5,inset_-4px_-4px_12px_#ffffff]">
-						Trở về trang chủ
-					</button>
-				</Link>
-				<Link to="/services">
-					<button className="text-gray-900 mt-5 bg-blue-500 px-7 py-3 text-lg rounded-lg bg-gray-200 cursor-pointer border border-gray-200 transition duration-300 shadow-[6px_6px_12px_#c5c5c5,-6px_-6px_12px_#ffffff] active:text-gray-500 active:shadow-[inset_4px_4px_12px_#c5c5c5,inset_-4px_-4px_12px_#ffffff]">
-						Xem thông tin dịch vụ
-					</button>
-				</Link>
+		<div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-blue-50 to-pink-50 p-4">
+			<div className="mx-auto max-w-[600px] flex flex-col items-center justify-center gap-6 rounded-2xl border border-pink-100 bg-white p-8 shadow-lg">
+				<div className="relative h-40 w-40 md:h-56 md:w-56">
+					<div className="absolute -top-6 -right-6 z-10 rounded-full bg-pink-100 p-3">
+						<HeartCrack className="h-8 w-8 text-pink-500" stroke="red" strokeWidth={2} />
+					</div>
+					<Image preview={false} src={paymentFailureImg} alt="mother-baby-care" className="object-contain" />
+				</div>
+
+				<div className="mt-2 text-center">
+					<h1 className="text-2xl font-bold text-red-800 md:text-3xl">Đăng Ký Thất Bại!</h1>
+					<p className="mt-2 text-center text-lg font-medium text-gray-700">
+						Vui lòng kiểm tra lại thông tin đăng ký và thử lại sau 15 phút. Nếu bạn vấn gặp vấn đề về thanh toán
+					</p>
+				</div>
+
+				<div className="mt-4 flex w-full flex-col gap-3 sm:flex-row sm:justify-center">
+					<Link to="/services" className="w-full sm:w-auto">
+						<button className="w-full rounded-full bg-teal-500 px-8 py-3 text-base font-medium text-white shadow-md transition duration-300 hover:bg-teal-600 active:bg-teal-700 sm:w-auto">
+							<div className="flex items-center justify-center gap-2">
+								<CreditCard className="h-4 w-4" />
+								<span>Xem các gói dịch vụ</span>
+							</div>
+						</button>
+					</Link>
+				</div>
 			</div>
-		</>
+		</div>
 	);
 };
 

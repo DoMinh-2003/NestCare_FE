@@ -1,36 +1,47 @@
 
-import { Image } from 'antd';
+import { Image, Spin } from 'antd';
 import { Calendar, Heart, Home } from "lucide-react";
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import paymentSuccessImg from '../../../../../public/images/paySuccess.png';
-import useOrderService from '../../../../services/useOrderService';
+import paymentSuccessImg from '../../../../public/images/paySuccess.png'
+import paymentCancelImg from '../../../../public/images/cancel.png'
+import paymentFailureImg from '../../../../public/images/failure.png'
+import axios from 'axios';
+import api from '../../../config/api';
+import { toast } from 'react-toastify';
+
+interface PaymentBookingProps {
+	bookingId: string;
+	status: string;
+}
 
 
-const PaymentSuccess = () => {
+const PaymentBooking = () => {
 
-	const { orderId } = useParams();
+	const { bookingId } = useParams();
+	const [appoimentUpate, setAppoimentUpdate] = useState(false);
 
-	const { userUpdateOrder } = useOrderService();
-
-	const updateStatus = async (orderId: string, status: "PENDING" | "PAID" | "CANCELED") => {
+	const updateStatus = async (bookingId: string, status: string) => {
 		try {
-			console.log('====================================');
-			console.log("ORderId-------", orderId, status);
-			console.log('====================================');
-			const response = await userUpdateOrder(orderId, status);
+			const response = await api.put('/appoitments/' + bookingId + '/' + status);
 			console.log(response);
-
+			if (response) {
+				setAppoimentUpdate(true)
+			}
 		} catch (err) {
 			console.error('Error updating order status:', err);
 		}
 	}
 
 	useEffect(() => {
-		if (orderId) {
-			updateStatus(orderId, 'PAID');
+		if (bookingId) {
+			updateStatus(bookingId, 'PENDING');
 		}
-	}, [orderId])
+	}, [bookingId])
+
+	if (!appoimentUpate) {
+		<Spin />
+	}
 
 	return (
 		<div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-blue-50 to-pink-50 p-4">
@@ -62,11 +73,11 @@ const PaymentSuccess = () => {
 				</div>
 
 				<div className="mt-4 flex w-full flex-col gap-3 sm:flex-row sm:justify-center">
-					<Link to="/" className="w-full sm:w-auto">
+					<Link to="/appointment-history" className="w-full sm:w-auto">
 						<button className="w-full rounded-full bg-teal-500 px-8 py-3 text-base font-medium text-white shadow-md transition duration-300 hover:bg-teal-600 active:bg-teal-700 sm:w-auto">
 							<div className="flex items-center justify-center gap-2">
 								<Home className="h-4 w-4" />
-								<span>Trang chủ</span>
+								<span>Xem lịch khám</span>
 							</div>
 						</button>
 					</Link>
@@ -76,4 +87,4 @@ const PaymentSuccess = () => {
 	);
 };
 
-export default PaymentSuccess;
+export default PaymentBooking;

@@ -1,49 +1,43 @@
-"use client"
 
-import { useEffect, useState } from "react"
 import {
-	Button,
-	message,
-	Table,
-	Form,
-	Modal,
-	Select,
-	Tag,
-	Space,
-	Dropdown,
-	Menu,
-	Typography,
-	DatePicker,
-	Tabs,
-	Card,
-	Spin,
-	Badge,
-	DatePickerProps,
-} from "antd"
-import { Link, Outlet, useNavigate } from "react-router-dom"
-import userAppointmentService from "../../../services/useAppointmentService"
-import { formatDate } from "../../../utils/formatDate"
-import { AppointmentStatus, PregnancyStatus } from "../../../constants/status"
-import { tableText } from "../../../constants/function"
-import { formatMoney } from "../../../utils/formatMoney"
-import ModalCreateReminder from "../../../components/organisms/modal-create-reminder/ModalCreateReminder"
-import userReminderService from "../../../services/useReminders"
-import useServiceService from "../../../services/useServiceService"
-import ModalAddServices from "../../../components/organisms/modal-add-service-of-appointment"
-import {
-	DownOutlined,
-	FileTextOutlined,
+	BellOutlined,
 	CalendarOutlined,
 	ClockCircleOutlined,
+	FileTextOutlined,
 	HeartOutlined,
-	ReloadOutlined,
-	BellOutlined,
-	MedicineBoxOutlined,
-	HistoryOutlined,
 	PlusOutlined,
+	ReloadOutlined
 } from "@ant-design/icons"
-import moment from "moment"
+import {
+	Badge,
+	Button,
+	Card,
+	DatePicker,
+	DatePickerProps,
+	Form,
+	message,
+	Modal,
+	Select,
+	Space,
+	Spin,
+	Table,
+	Tabs,
+	Tag,
+	Typography
+} from "antd"
 import dayjs from "dayjs"
+import moment from "moment"
+import { useEffect, useState } from "react"
+import { Link, Outlet, useNavigate } from "react-router-dom"
+import ModalAddServices from "../../../components/organisms/modal-add-service-of-appointment"
+import ModalCreateReminder from "../../../components/organisms/modal-create-reminder/ModalCreateReminder"
+import { tableText } from "../../../constants/function"
+import { AppointmentStatus, PregnancyStatus } from "../../../constants/status"
+import userAppointmentService from "../../../services/useAppointmentService"
+import userReminderService from "../../../services/useReminders"
+import useServiceService from "../../../services/useServiceService"
+import { formatDate } from "../../../utils/formatDate"
+import { formatMoney } from "../../../utils/formatMoney"
 
 const { Option } = Select
 const { Text, Title } = Typography

@@ -1,95 +1,185 @@
-// PaymentResult.tsx
-import { useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
-import { USER_ROUTES } from '../../../constants/routes';
-import style from './style.module.scss';
-import useOrderService from '../../../services/useOrderService';
+
+import { useEffect } from "react"
+import { useSearchParams, useNavigate } from "react-router-dom"
+import { USER_ROUTES } from "../../../constants/routes"
+import style from "./style.module.scss"
+import useOrderService from "../../../services/useOrderService"
+import api from "../../../config/api"
 
 const PaymentResult = () => {
-	const [searchParams] = useSearchParams();
-	const navigate = useNavigate();
-	const { userUpdateOrder } = useOrderService();
+	const [searchParams] = useSearchParams()
+	const navigate = useNavigate()
+	const { userUpdateOrder } = useOrderService()
 
-	const updateStatus = async (orderId: string, status: "PENDING" | "PAID" | "CANCELED") => {
+	const updateBookingStatus = async (bookingId: string, status: "PENDING" | "PAID" | "CANCELED") => {
 		try {
-			console.log('====================================');
-			console.log("ORderId-------", orderId, status);
-			console.log('====================================');
-			const response = await userUpdateOrder(orderId, status);
-			console.log(response);
+			console.log("Updating booking status:", bookingId, status)
+			const response = await api.put(`/appointments/${bookingId}/${status}`)
+			console.log("Booking status update response:", response)
+			return response
+		} catch (error) {
+			console.error("Error updating booking status:", error)
+			throw error
+		}
+	}
 
-		} catch (err) {
-			console.error('Error updating order status:', err);
+	const updateOrderStatus = async (orderId: string, status: "PENDING" | "PAID" | "CANCELED") => {
+		try {
+			console.log("Updating order status:", orderId, status)
+			const response = await userUpdateOrder(orderId, status)
+			console.log("Order status update response:", response)
+			return response
+		} catch (error) {
+			console.error("Error updating order status:", error)
+			throw error
 		}
 	}
 
 	useEffect(() => {
-		const responseCode = searchParams.get('vnp_ResponseCode');
-		const orderId = searchParams.get('order');
-		const transactionStatus = searchParams.get('vnp_TransactionStatus');
+		const responseCode = searchParams.get("vnp_ResponseCode")
+		const orderId = searchParams.get("order")
+		const bookingId = searchParams.get("bookingId")
+		const transactionStatus = searchParams.get("vnp_TransactionStatus")
 
-		console.log('Search Params:', Object.fromEntries(searchParams));
-		console.log('Response Code:', responseCode);
-		console.log('Order ID:', orderId);
+		console.log("Payment Result Parameters:", {
+			responseCode,
+			orderId,
+			bookingId,
+			transactionStatus,
+			allParams: Object.fromEntries(searchParams),
+		})
 
-		// Set a 3-second delay before processing the redirect
+		// Set a delay before processing the redirect to ensure UI renders
 		const timer = setTimeout(async () => {
-			if (!responseCode) {
-				console.log('No responseCode, redirecting to PAYMENT_FAILURE');
-				navigate(USER_ROUTES.PAYMENT_FAILURE, { state: { orderId, errorCode: 'N/A' }, replace: true });
-				return;
+			try {
+				// Handle case when no response code is present
+				if (!responseCode) {
+					console.log("No response code found, redirecting to payment failure")
+					if (orderId) {
+						navigate(USER_ROUTES.PAYMENT_FAILURE, {
+							state: { orderId, errorCode: "N/A" },
+							replace: true,
+						})
+					} else if (bookingId) {
+						navigate(USER_ROUTES.PAYMENT_FAILURE, {
+							state: { bookingId, errorCode: "N/A" },
+							replace: true,
+						})
+					} else {
+						navigate(USER_ROUTES.PAYMENT_FAILURE, {
+							state: { errorCode: "N/A" },
+							replace: true,
+						})
+					}
+					return
+				}
+
+				// Process based on response code
+				switch (responseCode) {
+					case "00": // Payment successful
+						console.log("Payment successful")
+
+						// Handle booking payment success
+						if (bookingId) {
+							console.log("Processing successful booking payment")
+							await updateBookingStatus(bookingId, "PENDING")
+							navigate(USER_ROUTES.BOOKING_RESULT, {
+								state: { bookingId, success: true },
+								replace: true,
+							})
+						}
+						// Handle order payment success
+						else if (orderId) {
+							console.log("Processing successful order payment")
+							await updateOrderStatus(orderId, "PAID")
+							navigate(USER_ROUTES.PAYMENT_SUCCESS, {
+								state: { orderId },
+								replace: true,
+							})
+						}
+						break
+
+					case "24": // Customer canceled
+						console.log("Payment canceled by customer")
+
+						// Handle booking payment cancellation
+						if (bookingId) {
+							await updateBookingStatus(bookingId, "CANCELED")
+							navigate(USER_ROUTES.PAYMENT_CANCEL, {
+								state: { bookingId, errorCode: responseCode },
+								replace: true,
+							})
+						}
+						// Handle order payment cancellation
+						else if (orderId) {
+							await updateOrderStatus(orderId, "CANCELED")
+							navigate(USER_ROUTES.PAYMENT_CANCEL, {
+								state: { orderId, errorCode: responseCode },
+								replace: true,
+							})
+						}
+						break
+
+					// Failure cases
+					case "07": // Suspected fraud
+					case "09": // Card not registered for Internet Banking
+					case "10": // Authentication failed (too many attempts)
+					case "11": // Payment timeout
+					case "12": // Card/Account locked
+					case "13": // Wrong OTP
+					case "51": // Insufficient balance
+					case "65": // Exceeded daily limit
+					case "75": // Bank under maintenance
+					case "79": // Too many wrong password attempts
+					case "99": // Other unspecified errors
+					default: // Any unhandled codes
+						console.log(`Payment failed with code: ${responseCode}`)
+
+						// Handle booking payment failure
+						if (bookingId) {
+							await updateBookingStatus(bookingId, "CANCELED")
+							navigate(USER_ROUTES.PAYMENT_FAILURE, {
+								state: { bookingId, errorCode: responseCode || "Unknown" },
+								replace: true,
+							})
+						}
+						// Handle order payment failure
+						else if (orderId) {
+							await updateOrderStatus(orderId, "PENDING")
+							navigate(USER_ROUTES.PAYMENT_FAILURE, {
+								state: { orderId, errorCode: responseCode || "Unknown" },
+								replace: true,
+							})
+						}
+						break
+				}
+			} catch (error) {
+				console.error("Error processing payment result:", error)
+
+				// Handle unexpected errors during processing
+				const targetId = bookingId || orderId
+				const idType = bookingId ? "bookingId" : "orderId"
+
+				navigate(USER_ROUTES.PAYMENT_FAILURE, {
+					state: { [idType]: targetId, errorCode: "processing_error" },
+					replace: true,
+				})
 			}
-
-			// Handle VNPAY response codes
-			switch (responseCode) {
-				case '00': // Payment successful
-					console.log('Navigating to PAYMENT_SUCCESS');
-					await updateStatus(orderId as string, "PAID");
-					navigate(USER_ROUTES.PAYMENT_SUCCESS, { state: { orderId }, replace: true });
-					break;
-
-				case '24': // Customer canceled
-					console.log('Navigating to PAYMENT_CANCEL');
-					await updateStatus(orderId as string, "CANCELED");
-					navigate(USER_ROUTES.PAYMENT_CANCEL, { state: { orderId, errorCode: responseCode }, replace: true });
-					break;
-
-				// Failure cases
-				case '07': // Suspected fraud
-				case '09': // Card not registered for Internet Banking
-				case '10': // Authentication failed (too many attempts)
-				case '11': // Payment timeout
-				case '12': // Card/Account locked
-				case '13': // Wrong OTP
-				case '51': // Insufficient balance
-				case '65': // Exceeded daily limit
-				case '75': // Bank under maintenance
-				case '79': // Too many wrong password attempts
-				case '99': // Other unspecified errors
-					console.log(`Navigating to PAYMENT_FAILURE with code ${responseCode}`);
-					await updateStatus(orderId as string, "PENDING");
-					navigate(USER_ROUTES.PAYMENT_FAILURE, { state: { orderId, errorCode: responseCode }, replace: true });
-					break;
-
-				default: // Any unhandled codes
-					console.log('Navigating to PAYMENT_FAILURE (default)');
-					await updateStatus(orderId as string, "PENDING");
-					navigate(USER_ROUTES.PAYMENT_FAILURE, { state: { orderId, errorCode: responseCode || 'Unknown' }, replace: true });
-					break;
-			}
-		}, 2000);
+		}, 2000)
 
 		// Cleanup the timer if the component unmounts before the delay completes
-		return () => clearTimeout(timer);
-	}, [searchParams, navigate]);
+		return () => clearTimeout(timer)
+	}, [searchParams, navigate, userUpdateOrder])
 
 	return (
-		<div className='flex flex-col items-center justify-center my-auto'>
-			<div className={`${style.loadingText}`}>
-				Đang xử lý<span className={style.dot}>.</span><span className={style.dot}>.</span><span className={style.dot}>.</span>
+		<div className="flex flex-col items-center justify-center min-h-[60vh] my-auto">
+			<div className={`${style.loadingText} text-xl font-medium mb-6`}>
+				Đang xử lý thanh toán<span className={style.dot}>.</span>
+				<span className={style.dot}>.</span>
+				<span className={style.dot}>.</span>
 			</div>
 			<div className={style.spinner}>
-				<div className='spinner'>
+				<div className="spinner">
 					<span></span>
 					<span></span>
 					<span></span>
@@ -100,8 +190,10 @@ const PaymentResult = () => {
 					<span></span>
 				</div>
 			</div>
+			<p className="mt-6 text-gray-500">Vui lòng không đóng trang này</p>
 		</div>
-	);
-};
+	)
+}
 
-export default PaymentResult;
+export default PaymentResult
+

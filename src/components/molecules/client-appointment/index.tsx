@@ -1,312 +1,780 @@
 
-import type React from "react"
-import { useState, useEffect, useCallback } from "react"
-import { Card, Typography, Button, Tabs, Tag, Row, Col, Spin, Empty, message } from "antd"
-import { CalendarOutlined, UserOutlined } from "@ant-design/icons"
+import { useEffect, useState } from "react"
+import {
+	Tabs,
+	Card,
+	Table,
+	Tag,
+	Button,
+	Drawer,
+	Timeline,
+	Empty,
+	Spin,
+	Select,
+	DatePicker,
+	Badge,
+	Typography,
+	Divider,
+	Modal,
+	Form,
+	Input,
+	message,
+} from "antd"
+import { Calendar, Clock, User, FileText, AlertCircle, CheckCircle, XCircle, Activity, Heart, CalendarIcon, RefreshCw } from 'lucide-react'
 import dayjs from "dayjs"
-import AppointmentDetail from "../appointment-detail"
-import CreateReminderModal from "../modal/createRemindModal"
-import useAppointmentService from "../../../services/useApoitment"
-import { toast } from "react-toastify"
+import relativeTime from "dayjs/plugin/relativeTime"
+import "dayjs/locale/vi"
+import { getUserDataFromLocalStorage } from "../../../constants/function"
+import api from "../../../config/api"
 
-const { Title, Text } = Typography
+dayjs.extend(relativeTime)
+dayjs.locale("vi")
+
 const { TabPane } = Tabs
+const { Title, Text } = Typography
+const { RangePicker } = DatePicker
+const { TextArea } = Input
 
-// Types based on your JSON structure
-interface Mother {
-	id: string
-	username: string
-	email: string
-	fullName: string
-	phone: string
+// Status mapping for visual representation
+const statusConfig = {
+	AWAITING_DEPOSIT: {
+		color: "gold",
+		text: "Chờ đặt cọc",
+		icon: <AlertCircle size={16} />,
+		priority: 2,
+	},
+	PENDING: {
+		color: "blue",
+		text: "Đang chờ xác nhận",
+		icon: <Clock size={16} />,
+		priority: 3,
+	},
+	CONFIRMED: {
+		color: "cyan",
+		text: "Đã xác nhận",
+		icon: <CheckCircle size={16} />,
+		priority: 4,
+	},
+	CHECKED_IN: {
+		color: "geekblue",
+		text: "Đã check-in",
+		icon: <User size={16} />,
+		priority: 5,
+	},
+	IN_PROGRESS: {
+		color: "purple",
+		text: "Đang khám",
+		icon: <Activity size={16} />,
+		priority: 6,
+	},
+	COMPLETED: {
+		color: "green",
+		text: "Hoàn thành",
+		icon: <CheckCircle size={16} />,
+		priority: 7,
+	},
+	CANCELED: {
+		color: "red",
+		text: "Đã hủy",
+		icon: <XCircle size={16} />,
+		priority: 8,
+	},
+	FAIL: {
+		color: "volcano",
+		text: "Thất bại",
+		icon: <XCircle size={16} />,
+		priority: 9,
+	},
 }
 
-interface Doctor {
-	id: string
-	username: string
-	email: string
-	fullName: string
-	phone: string
+// Format date for display
+const formatDate = (dateString) => {
+	return dayjs(dateString).format("DD/MM/YYYY")
 }
 
-interface FetalRecord {
-	id: string
-	name: string
-	note: string
-	dateOfPregnancyStart: string
-	expectedDeliveryDate: string
-	actualDeliveryDate: string | null
-	healthStatus: string
-	status: string
-	mother: Mother
-	checkupRecords: any[]
+// Format time for display
+const formatTime = (timeString) => {
+	if (!timeString) return ""
+	return timeString.substring(0, 5)
 }
 
-interface Appointment {
-	id: string
-	appointmentDate: string
-	status: string
-	fetalRecords: FetalRecord[]
-	doctor: Doctor
-	appointmentServices: any[]
-	medicationBills: any[]
-	history: any[]
-}
+function AppointmentDashboard() {
+	const [fetalRecords, setFetalRecords] = useState([])
+	const [loading, setLoading] = useState(true)
+	const [selectedAppointment, setSelectedAppointment] = useState(null)
+	const [drawerVisible, setDrawerVisible] = useState(false)
+	const [activeTab, setActiveTab] = useState("all")
+	const [filterStatus, setFilterStatus] = useState("all")
+	const [dateRange, setDateRange] = useState(null)
+	const [refreshing, setRefreshing] = useState(false)
+	// Thêm state để lưu ID của thai nhi được chọn
+	const [selectedFetalId, setSelectedFetalId] = useState(null)
+	const [cancelModalVisible, setCancelModalVisible] = useState(false)
+	const [cancelLoading, setCancelLoading] = useState(false)
+	const [appointmentToCancel, setAppointmentToCancel] = useState(null)
+	const [form] = Form.useForm()
 
-// Status mapping for display
-const STATUS_COLORS = {
-	PENDING: "orange",
-	CONFIRMED: "blue",
-	CHECKED_IN: "cyan",
-	IN_PROGRESS: "purple",
-	COMPLETED: "green",
-	CANCELED: "red",
-}
+	const user = getUserDataFromLocalStorage()
 
-const STATUS_LABELS = {
-	PENDING: "Đang chờ",
-	CONFIRMED: "Đã xác nhận",
-	CHECKED_IN: "Đã đến",
-	IN_PROGRESS: "Đang thực hiện",
-	COMPLETED: "Đã hoàn thành",
-	CANCELED: "Đã hủy",
-}
+	// Hủy cuộc hẹn
+	const cancelAppointment = async (values) => {
+		if (!appointmentToCancel) return
 
-const FETAL_STATUS_COLORS = {
-	PREGNANT: "green",
-	BORN: "blue",
-	MISSED: "orange",
-	STILLBIRTH: "red",
-	ABORTED: "magenta",
-	MISCARRIAGE: "volcano",
-}
-
-const FETAL_STATUS_LABELS = {
-	PREGNANT: "Đang mang thai",
-	BORN: "Đã sinh",
-	MISSED: "Thai lưu",
-	STILLBIRTH: "Chết non",
-	ABORTED: "Phá thai",
-	MISCARRIAGE: "Sảy thai",
-}
-
-// Map tabs to appointment statuses
-const TAB_STATUS_MAP = {
-	upcoming: ["PENDING", "CONFIRMED", "CHECKED_IN", "IN_PROGRESS"],
-	past: ["COMPLETED"],
-	canceled: ["CANCELED"],
-	failed: ["FAIL"],
-}
-
-const AppointmentDashboard: React.FC = () => {
-	const [appointments, setAppointments] = useState<Appointment[]>([])
-	const [isLoading, setIsLoading] = useState(true)
-	const [activeTab, setActiveTab] = useState("upcoming")
-	const [isReminderModalVisible, setIsReminderModalVisible] = useState(false)
-	const [currentUser, setCurrentUser] = useState<any>(null)
-	const { getAppointmentsByStatus, updateAppointmentStatus } = useAppointmentService()
-
-	// Fetch appointments based on the active tab
-	const fetchAppointments = useCallback(async () => {
-		setIsLoading(true)
+		setCancelLoading(true)
 		try {
-			// Get the statuses for the current tab
-			const statuses = TAB_STATUS_MAP[activeTab]
+			// Gọi API để hủy cuộc hẹn
+			await api.put(`/appointments/${appointmentToCancel.id}/CANCELED`, {
+				reason: values.reason
+			})
 
-			// Fetch appointments for each status and combine them
-			const appointmentsPromises = statuses.map(status => getAppointmentsByStatus(status))
-			const appointmentsResults = await Promise.all(appointmentsPromises)
+			message.success("Hủy cuộc hẹn thành công")
+			setCancelModalVisible(false)
+			form.resetFields()
 
-			// Flatten the array of arrays into a single array of appointments
-			const allAppointments = appointmentsResults.flat()
+			// Cập nhật lại danh sách cuộc hẹn
+			await fetchFetalRecords()
 
-			// Filter and sort appointments
-			const filteredAppointments = filterAppointmentsByDate(allAppointments, activeTab)
-
-			setAppointments(filteredAppointments)
-
-			// Get user from localStorage
-			if (!currentUser) {
-				const user = localStorage.getItem("USER")
-				if (user) {
-					setCurrentUser(JSON.parse(user))
-				}
+			// Nếu đang xem chi tiết cuộc hẹn bị hủy, đóng drawer
+			if (selectedAppointment && selectedAppointment.id === appointmentToCancel.id) {
+				setDrawerVisible(false)
 			}
 		} catch (error) {
-			console.error("Error fetching appointments:", error)
-			message.error("Không thể tải dữ liệu lịch hẹn")
+			console.error("Error canceling appointment:", error)
+			message.error("Không thể hủy cuộc hẹn. Vui lòng thử lại sau.")
 		} finally {
-			setIsLoading(false)
+			setCancelLoading(false)
+			setAppointmentToCancel(null)
 		}
-	}, [activeTab, getAppointmentsByStatus, currentUser])
-
-	// Filter appointments based on date and tab
-	const filterAppointmentsByDate = (appointments: Appointment[], tab: string) => {
-		const today = dayjs()
-
-		let filtered = [...appointments]
-
-		if (tab === "upcoming") {
-			filtered = filtered.filter(appointment => {
-				const appointmentDate = dayjs(appointment.appointmentDate)
-				return appointmentDate.isAfter(today) || appointmentDate.isSame(today, "day")
-			})
-
-			// Sort by date (oldest first for upcoming)
-			filtered.sort((a, b) => {
-				return dayjs(a.appointmentDate).diff(dayjs(b.appointmentDate))
-			})
-		} else if (tab === "past") {
-			filtered = filtered.filter(appointment => {
-				const appointmentDate = dayjs(appointment.appointmentDate)
-				return appointmentDate.isBefore(today)
-			})
-
-			// Sort by date (newest first for past)
-			filtered.sort((a, b) => {
-				return dayjs(b.appointmentDate).diff(dayjs(a.appointmentDate))
-			})
-		}
-
-		return filtered
 	}
 
-	// Load appointments when component mounts or tab changes
-	useEffect(() => {
-		fetchAppointments()
-	}, [fetchAppointments])
+	// Mở modal hủy cuộc hẹn
+	const handleOpenCancelModal = (record) => {
+		setAppointmentToCancel(record)
+		setCancelModalVisible(true)
+	}
 
-	// Handle appointment status change
-	const handleStatusChange = async (appointmentId: string, newStatus: string) => {
+	// Fetch fetal records and their appointments
+	const fetchFetalRecords = async () => {
+		setLoading(true)
 		try {
-			// Call API to update status
-			await updateAppointmentStatus(appointmentId, newStatus)
+			// In a real app, replace this with your actual API call
+			const response = await api.get("/fetal-records", user.id)
+			setFetalRecords(response.data || [])
+		} catch (error) {
+			console.error("Error fetching fetal records:", error)
+		} finally {
+			setLoading(false)
+		}
+	}
 
-			// Update local state
-			setAppointments(prevAppointments =>
-				prevAppointments.map(appointment =>
-					appointment.id === appointmentId ? { ...appointment, status: newStatus } : appointment
-				)
-			)
+	// Fetch appointment details
+	const fetchAppointmentDetails = async (appointmentId, fetalId) => {
+		try {
+			const response = await api.get(`/appointments/${appointmentId}`)
+			setSelectedAppointment(response.data)
+			setSelectedFetalId(fetalId)
+		} catch (error) {
+			console.error("Error fetching appointment details:", error)
+		}
+	}
 
-			// Refresh appointments if the new status would move it to a different tab
-			const currentTabStatuses = TAB_STATUS_MAP[activeTab]
-			if (!currentTabStatuses.includes(newStatus)) {
-				fetchAppointments()
+	// Refresh data
+	const handleRefresh = async () => {
+		setRefreshing(true)
+		await fetchFetalRecords()
+		setRefreshing(false)
+	}
+
+	useEffect(() => {
+		fetchFetalRecords()
+	}, [])
+
+	// Filter appointments based on status and date range
+	const getFilteredAppointments = (appointments) => {
+		if (!appointments) return []
+
+		return appointments.filter((appointment) => {
+			// Filter by status
+			if (filterStatus !== "all" && appointment.status !== filterStatus) {
+				return false
 			}
 
-			message.success(`Cập nhật trạng thái thành công: ${STATUS_LABELS[newStatus]}`)
-		} catch (error) {
-			console.error("Error updating appointment status:", error)
-			message.error("Không thể cập nhật trạng thái lịch hẹn")
-		}
+			// Filter by date range
+			if (dateRange && dateRange[0] && dateRange[1]) {
+				const appointmentDate = dayjs(appointment.appointmentDate)
+				return appointmentDate.isAfter(dateRange[0]) && appointmentDate.isBefore(dateRange[1])
+			}
+
+			return true
+		})
 	}
 
-	const handleTabChange = (key: string) => {
-		setActiveTab(key)
+	// Sort appointments by date and priority
+	const getSortedAppointments = (appointments) => {
+		return [...appointments].sort((a, b) => {
+			// First sort by date (upcoming first)
+			const dateA = dayjs(a.appointmentDate)
+			const dateB = dayjs(b.appointmentDate)
+
+			if (dateA.isBefore(dateB)) return -1
+			if (dateA.isAfter(dateB)) return 1
+
+			// If same date, sort by priority (based on status)
+			const priorityA = statusConfig[a.status]?.priority || 0
+			const priorityB = statusConfig[b.status]?.priority || 0
+
+			return priorityA - priorityB
+		})
 	}
 
-	if (isLoading) {
+	// Kiểm tra xem cuộc hẹn có thể hủy không
+	const canCancelAppointment = (status) => {
+		return status === "AWAITING_DEPOSIT" || status === "PENDING"
+	}
+
+	// Table columns for appointments
+	const columns = [
+		{
+			title: "Ngày khám",
+			dataIndex: "appointmentDate",
+			key: "appointmentDate",
+			render: (text) => {
+				const isToday = dayjs(text).isSame(dayjs(), "day")
+				const isPast = dayjs(text).isBefore(dayjs(), "day")
+
+				return (
+					<div>
+						<div className="flex items-center">
+							<Calendar size={16} className="mr-2 text-teal-500" />
+							<span className={`font-medium ${isToday ? "text-blue-600" : isPast ? "text-gray-500" : "text-teal-600"}`}>
+								{formatDate(text)}
+							</span>
+						</div>
+						{isToday && <Tag color="blue">Hôm nay</Tag>}
+						{isPast && !isToday && <Tag color="gray">Đã qua</Tag>}
+					</div>
+				)
+			},
+			sorter: (a, b) => dayjs(a.appointmentDate).unix() - dayjs(b.appointmentDate).unix(),
+		},
+		{
+			title: "Giờ khám",
+			dataIndex: "slot",
+			key: "slot",
+			render: (slot) => (
+				<div className="flex items-center">
+					<Clock size={16} className="mr-2 text-blue-500" />
+					<span>{slot ? `${formatTime(slot.startTime)} - ${formatTime(slot.endTime)}` : "Chưa có"}</span>
+				</div>
+			),
+		},
+		{
+			title: "Bác sĩ",
+			dataIndex: "doctor",
+			key: "doctor",
+			render: (doctor) => (
+				<div className="flex items-center">
+					<User size={16} className="mr-2 text-purple-500" />
+					<span>{doctor?.fullName || "Chưa phân công"}</span>
+				</div>
+			),
+		},
+		{
+			title: "Trạng thái",
+			dataIndex: "status",
+			key: "status",
+			render: (status) => {
+				const config = statusConfig[status] || { color: "default", text: status, icon: null }
+				return (
+					<Tag color={config.color} icon={config.icon} className="px-2 py-1">
+						{config.text}
+					</Tag>
+				)
+			},
+			filters: Object.keys(statusConfig).map((status) => ({ text: statusConfig[status].text, value: status })),
+			onFilter: (value, record) => record.status === value,
+		},
+		{
+			title: "Thao tác",
+			key: "action",
+			render: (_, record) => (
+				<div className="flex gap-2">
+					<Button
+						type="primary"
+						size="small"
+						onClick={() => {
+							fetchAppointmentDetails(record.id, record.fetalId)
+							setDrawerVisible(true)
+						}}
+					>
+						Chi tiết
+					</Button>
+
+					{/* Chỉ hiển thị nút hủy cho các cuộc hẹn có trạng thái AWAITING_DEPOSIT hoặc PENDING */}
+					{canCancelAppointment(record.status) && (
+						<Button
+							type="default"
+							danger
+							size="small"
+							onClick={() => handleOpenCancelModal(record)}
+							icon={<XCircle size={14} />}
+						>
+							Hủy lịch
+						</Button>
+					)}
+				</div>
+			),
+		},
+	]
+
+	// Render appointment status timeline
+	const renderStatusTimeline = (history) => {
+		if (!history || history.length === 0) return <Empty description="Chưa có lịch sử trạng thái" />
+
 		return (
-			<div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "400px" }}>
-				<Spin size="large" />
+			<Timeline mode="left">
+				{history.map((item) => {
+					const config = statusConfig[item.status] || { color: "blue", text: item.status, icon: null }
+					return (
+						<Timeline.Item key={item.id} color={config.color} dot={config.icon}>
+							<div>
+								<Text strong>{config.text}</Text>
+								<div>
+									<Text type="secondary">{dayjs(item.createdAt).format("DD/MM/YYYY HH:mm")}</Text>
+								</div>
+								{item.notes && <div className="mt-1">{item.notes}</div>}
+								<div className="text-xs text-gray-500">Cập nhật bởi: {item.changedBy?.fullName || "Hệ thống"}</div>
+							</div>
+						</Timeline.Item>
+					)
+				})}
+			</Timeline>
+		)
+	}
+
+	// Render appointment detail drawer
+	const renderAppointmentDetail = () => {
+		if (!selectedAppointment) return null
+
+		const { appointmentDate, status, doctor, slot, fetalRecords, history, id } = selectedAppointment
+		const statusConfigValue = statusConfig[status] || { color: "default", text: status, icon: null }
+
+		// Lọc ra chỉ thai nhi được chọn
+		const selectedFetal = fetalRecords?.find((record) => record.id === selectedFetalId) || fetalRecords?.[0]
+
+		return (
+			<div className="p-2">
+				<div className="mb-6 flex justify-between items-start">
+					<div>
+						<Title level={4} className="mb-1">
+							Chi tiết cuộc hẹn
+						</Title>
+						<Tag color={statusConfigValue.color} icon={statusConfigValue.icon} className="px-3 py-1 text-sm">
+							{statusConfigValue.text}
+						</Tag>
+					</div>
+
+					{/* Thêm nút hủy cuộc hẹn trong drawer nếu trạng thái phù hợp */}
+					{canCancelAppointment(status) && (
+						<Button
+							danger
+							onClick={() => {
+								setAppointmentToCancel(selectedAppointment)
+								setCancelModalVisible(true)
+							}}
+							icon={<XCircle size={16} />}
+						>
+							Hủy lịch
+						</Button>
+					)}
+				</div>
+
+				<Card className="mb-4">
+					<div className="grid gap-4">
+						<div className="flex items-start">
+							<Calendar className="mr-3 mt-1 text-teal-500" size={20} />
+							<div>
+								<div className="text-gray-500">Ngày khám</div>
+								<div className="font-medium text-lg">{formatDate(appointmentDate)}</div>
+							</div>
+						</div>
+
+						<div className="flex items-start">
+							<Clock className="mr-3 mt-1 text-blue-500" size={20} />
+							<div>
+								<div className="text-gray-500">Thời gian</div>
+								<div className="font-medium text-lg">
+									{slot ? `${formatTime(slot.startTime)} - ${formatTime(slot.endTime)}` : "Chưa có"}
+								</div>
+							</div>
+						</div>
+
+						<div className="flex items-start">
+							<User className="mr-3 mt-1 text-purple-500" size={20} />
+							<div>
+								<div className="text-gray-500">Bác sĩ</div>
+								<div className="font-medium text-lg">{doctor?.fullName || "Chưa phân công"}</div>
+								{doctor?.phone && <div className="text-sm text-gray-500">{doctor.phone}</div>}
+							</div>
+						</div>
+
+						<div className="flex items-start">
+							<Heart className="mr-3 mt-1 text-pink-500" size={20} />
+							<div>
+								<div className="text-gray-500">Thai nhi</div>
+								<div className="font-medium text-lg">{selectedFetal?.name}</div>
+								{selectedFetal?.note && <div className="text-sm text-gray-600">{selectedFetal.note}</div>}
+								<div className="text-sm text-gray-600">Tình trạng: {selectedFetal?.healthStatus}</div>
+							</div>
+						</div>
+					</div>
+				</Card>
+
+				{selectedFetal?.checkupRecords && selectedFetal.checkupRecords.length > 0 && (
+					<>
+						<Divider orientation="left">Lịch sử khám thai</Divider>
+						<div className="mb-4">
+							<Table
+								dataSource={selectedFetal.checkupRecords.sort(
+									(a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+								)}
+								rowKey="id"
+								pagination={{ pageSize: 5 }}
+								size="small"
+								columns={[
+									{
+										title: "Ngày khám",
+										dataIndex: "createdAt",
+										key: "createdAt",
+										render: (text) => formatDate(text),
+									},
+									{
+										title: "Cân nặng mẹ",
+										dataIndex: "motherWeight",
+										key: "motherWeight",
+										render: (text) => (text ? `${text} kg` : "N/A"),
+									},
+									{
+										title: "Huyết áp",
+										dataIndex: "motherBloodPressure",
+										key: "motherBloodPressure",
+									},
+									{
+										title: "Cân nặng thai",
+										dataIndex: "fetalWeight",
+										key: "fetalWeight",
+										render: (text) => (text ? `${text} kg` : "N/A"),
+									},
+									{
+										title: "Chiều cao thai",
+										dataIndex: "fetalHeight",
+										key: "fetalHeight",
+										render: (text) => (text ? `${text} cm` : "N/A"),
+									},
+									{
+										title: "Nhịp tim thai",
+										dataIndex: "fetalHeartbeat",
+										key: "fetalHeartbeat",
+										render: (text) => (text ? `${text} bpm` : "N/A"),
+									},
+								]}
+								expandable={{
+									expandedRowRender: (record) => (
+										<div className="p-3">
+											<p>
+												<strong>Tình trạng sức khỏe mẹ:</strong> {record.motherHealthStatus || "Không có thông tin"}
+											</p>
+											{record.warning && (
+												<p>
+													<strong>Cảnh báo:</strong> {record.warning}
+												</p>
+											)}
+										</div>
+									),
+								}}
+							/>
+						</div>
+					</>
+				)}
+
+				<Divider orientation="left">Lịch sử trạng thái</Divider>
+				{renderStatusTimeline(history)}
 			</div>
+		)
+	}
+
+	// Render tabs for each fetal record
+	const renderFetalTabs = () => {
+		if (loading) {
+			return (
+				<div className="flex justify-center items-center h-64">
+					<Spin size="large" tip="Đang tải dữ liệu..." />
+				</div>
+			)
+		}
+
+		if (!fetalRecords || fetalRecords.length === 0) {
+			return <Empty description="Không tìm thấy hồ sơ thai nhi" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+		}
+
+		// Calculate total appointments across all fetal records
+		const allAppointments = fetalRecords.flatMap(
+			(record) => record.appointments?.map((apt) => ({ ...apt, fetalId: record.id, fetalName: record.name })) || [],
+		)
+
+		return (
+			<Tabs
+				defaultActiveKey="all"
+				onChange={setActiveTab}
+				tabBarExtraContent={
+					<Button icon={<RefreshCw size={16} />} onClick={handleRefresh} loading={refreshing}>
+						Làm mới
+					</Button>
+				}
+			>
+				<TabPane
+					tab={
+						<span>
+							<CalendarIcon size={16} className="mr-2" />
+							Tất cả cuộc hẹn
+							<Badge count={allAppointments.length} style={{ marginLeft: 8 }} />
+						</span>
+					}
+					key="all"
+				>
+					<div className="mb-4 flex flex-wrap gap-4 items-center">
+						<Select
+							placeholder="Lọc theo trạng thái"
+							style={{ width: 200 }}
+							onChange={setFilterStatus}
+							value={filterStatus}
+							allowClear
+							options={[
+								{ value: "all", label: "Tất cả trạng thái" },
+								...Object.keys(statusConfig).map((status) => ({
+									value: status,
+									label: (
+										<div className="flex items-center">
+											{statusConfig[status].icon}
+											<span className="ml-2">{statusConfig[status].text}</span>
+										</div>
+									),
+								})),
+							]}
+						/>
+
+						<RangePicker placeholder={["Từ ngày", "Đến ngày"]} onChange={setDateRange} format="DD/MM/YYYY" />
+					</div>
+
+					<Table
+						dataSource={getSortedAppointments(getFilteredAppointments(allAppointments))}
+						columns={[
+							...columns.slice(0, 1),
+							{
+								title: "Thai nhi",
+								dataIndex: "fetalName",
+								key: "fetalName",
+								render: (text) => (
+									<div className="flex items-center">
+										<Heart size={16} className="mr-2 text-pink-500" />
+										<span>{text}</span>
+									</div>
+								),
+							},
+							...columns.slice(1),
+						]}
+						rowKey="id"
+						pagination={{ pageSize: 10 }}
+						locale={{ emptyText: "Không có cuộc hẹn nào" }}
+					/>
+				</TabPane>
+
+				{fetalRecords.map((record) => (
+					<TabPane
+						tab={
+							<span>
+								<Heart size={16} className="mr-2" />
+								{record.name}
+								<Badge count={record.appointments?.length || 0} style={{ marginLeft: 8 }} />
+							</span>
+						}
+						key={record.id}
+					>
+						<Card className="mb-4 bg-blue-50">
+							<div className="flex flex-wrap gap-6">
+								<div className="flex items-start">
+									<Heart className="mr-3 mt-1 text-pink-500" size={20} />
+									<div>
+										<div className="text-gray-500">Thai nhi</div>
+										<div className="font-medium text-lg">{record.name}</div>
+										{record.note && <div className="text-sm text-gray-600">{record.note}</div>}
+									</div>
+								</div>
+
+								<div className="flex items-start">
+									<Calendar className="mr-3 mt-1 text-teal-500" size={20} />
+									<div>
+										<div className="text-gray-500">Ngày bắt đầu thai kỳ</div>
+										<div className="font-medium">{formatDate(record.dateOfPregnancyStart)}</div>
+									</div>
+								</div>
+
+								<div className="flex items-start">
+									<Calendar className="mr-3 mt-1 text-blue-500" size={20} />
+									<div>
+										<div className="text-gray-500">Ngày dự sinh</div>
+										<div className="font-medium">{formatDate(record.expectedDeliveryDate)}</div>
+										<div className="text-sm text-gray-600">{dayjs(record.expectedDeliveryDate).fromNow()}</div>
+									</div>
+								</div>
+
+								<div className="flex items-start">
+									<Activity className="mr-3 mt-1 text-green-500" size={20} />
+									<div>
+										<div className="text-gray-500">Tình trạng sức khỏe</div>
+										<div className="font-medium">{record.healthStatus}</div>
+									</div>
+								</div>
+							</div>
+						</Card>
+
+						<div className="mb-4 flex flex-wrap gap-4 items-center">
+							<Select
+								placeholder="Lọc theo trạng thái"
+								style={{ width: 200 }}
+								onChange={setFilterStatus}
+								value={filterStatus}
+								allowClear
+								options={[
+									{ value: "all", label: "Tất cả trạng thái" },
+									...Object.keys(statusConfig).map((status) => ({
+										value: status,
+										label: (
+											<div className="flex items-center">
+												{statusConfig[status].icon}
+												<span className="ml-2">{statusConfig[status].text}</span>
+											</div>
+										),
+									})),
+								]}
+							/>
+
+							<RangePicker placeholder={["Từ ngày", "Đến ngày"]} onChange={setDateRange} format="DD/MM/YYYY" />
+						</div>
+
+						<Table
+							dataSource={getSortedAppointments(
+								getFilteredAppointments(record.appointments?.map((apt) => ({ ...apt, fetalId: record.id })) || []),
+							)}
+							columns={columns}
+							rowKey="id"
+							pagination={{ pageSize: 10 }}
+							locale={{ emptyText: "Không có cuộc hẹn nào" }}
+						/>
+					</TabPane>
+				))}
+			</Tabs>
 		)
 	}
 
 	return (
-		<div style={{ padding: "20px" }}>
-			<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-				<Title level={3}>Quản lý lịch hẹn khám</Title>
-				<Button type="primary" onClick={() => setIsReminderModalVisible(true)}>
-					Tạo ghi chú
-				</Button>
+		<div className="container mx-auto py-6 px-4">
+			<div className="mb-6">
+				<Title level={2} className="mb-2">
+					Lịch sử cuộc hẹn
+				</Title>
+				<Text type="secondary">Xem và quản lý tất cả các cuộc hẹn khám thai của bạn</Text>
 			</div>
 
-			<Tabs activeKey={activeTab} onChange={handleTabChange}>
-				<TabPane tab="Sắp tới" key="upcoming">
-					{renderAppointmentList(appointments)}
-				</TabPane>
-				<TabPane tab="Đã qua" key="past">
-					{renderAppointmentList(appointments)}
-				</TabPane>
-				<TabPane tab="Đã hủy" key="canceled">
-					{renderAppointmentList(appointments)}
-				</TabPane>
-				<TabPane tab="Thất bại" key="failed">
-					{renderAppointmentList(appointments)}
-				</TabPane>
-			</Tabs>
+			{renderFetalTabs()}
 
-			<CreateReminderModal
-				visible={isReminderModalVisible}
-				onCancel={() => setIsReminderModalVisible(false)}
-				motherId={currentUser?.id || ""}
-				onSuccess={() => toast.success("Tạo ghi chú thành công")}
-			/>
+			<Drawer
+				title={
+					<div className="flex items-center">
+						<FileText size={20} className="mr-2 text-teal-500" />
+						<span>Chi tiết cuộc hẹn</span>
+					</div>
+				}
+				placement="right"
+				onClose={() => setDrawerVisible(false)}
+				open={drawerVisible}
+				width={500}
+			>
+				{renderAppointmentDetail()}
+			</Drawer>
+
+			{/* Modal hủy cuộc hẹn */}
+			<Modal
+				title={
+					<div className="flex items-center text-red-500">
+						<XCircle size={20} className="mr-2" />
+						<span>Hủy lịch khám</span>
+					</div>
+				}
+				open={cancelModalVisible}
+				onCancel={() => {
+					setCancelModalVisible(false)
+					form.resetFields()
+					setAppointmentToCancel(null)
+				}}
+				footer={[
+					<Button
+						key="back"
+						onClick={() => {
+							setCancelModalVisible(false)
+							form.resetFields()
+							setAppointmentToCancel(null)
+						}}
+					>
+						Hủy bỏ
+					</Button>,
+					<Button
+						key="submit"
+						type="primary"
+						danger
+						loading={cancelLoading}
+						onClick={() => form.submit()}
+					>
+						Xác nhận hủy lịch
+					</Button>,
+				]}
+			>
+				<div className="mb-4">
+					<p>Bạn có chắc chắn muốn hủy lịch khám này không?</p>
+					{appointmentToCancel && (
+						<div className="mt-2 p-3 bg-gray-50 rounded-md">
+							<p><strong>Ngày khám:</strong> {formatDate(appointmentToCancel.appointmentDate)}</p>
+							{appointmentToCancel.slot && (
+								<p><strong>Giờ khám:</strong> {formatTime(appointmentToCancel.slot.startTime)} - {formatTime(appointmentToCancel.slot.endTime)}</p>
+							)}
+							{appointmentToCancel.doctor && (
+								<p><strong>Bác sĩ:</strong> {appointmentToCancel.doctor.fullName}</p>
+							)}
+						</div>
+					)}
+				</div>
+
+				<Form
+					form={form}
+					layout="vertical"
+					onFinish={cancelAppointment}
+				>
+					<Form.Item
+						name="reason"
+						label="Lý do hủy lịch"
+						rules={[{ required: true, message: 'Vui lòng nhập lý do hủy lịch khám!' }]}
+					>
+						<TextArea
+							rows={4}
+							placeholder="Vui lòng nhập lý do hủy lịch khám..."
+							maxLength={200}
+							showCount
+						/>
+					</Form.Item>
+				</Form>
+			</Modal>
 		</div>
 	)
-
-	function renderAppointmentList(appointments: Appointment[]) {
-		if (appointments.length === 0) {
-			return <Empty description="Không có lịch hẹn nào" style={{ margin: "40px 0" }} />
-		}
-
-		return (
-			<Row gutter={[16, 16]} style={{ marginTop: "16px" }}>
-				{appointments.map((appointment) => (
-					<Col xs={24} sm={12} lg={8} key={appointment.id}>
-						<Card
-							title="Lịch hẹn khám"
-							extra={<Tag color={STATUS_COLORS[appointment.status]}>{STATUS_LABELS[appointment.status]}</Tag>}
-							style={{ height: "100%" }}
-						>
-							<div style={{ marginBottom: "16px" }}>
-								<p>
-									<CalendarOutlined style={{ marginRight: "8px" }} />
-									{dayjs(appointment.appointmentDate).format("DD/MM/YYYY")}
-								</p>
-								<p>
-									<UserOutlined style={{ marginRight: "8px" }} />
-									Bác sĩ: {appointment.doctor.fullName}
-								</p>
-							</div>
-
-							{appointment.fetalRecords.length > 0 && (
-								<div style={{ marginBottom: "16px" }}>
-									<Text strong>Thai nhi:</Text>
-									<div style={{ marginTop: "8px" }}>
-										{appointment.fetalRecords.slice(0, 2).map((fetal) => (
-											<div
-												key={fetal.id}
-												style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}
-											>
-												<Text>{fetal.name}</Text>
-												<Tag color={FETAL_STATUS_COLORS[fetal.status]}>{FETAL_STATUS_LABELS[fetal.status]}</Tag>
-											</div>
-										))}
-										{appointment.fetalRecords.length > 2 && (
-											<Text type="secondary" style={{ fontSize: "12px" }}>
-												+{appointment.fetalRecords.length - 2} thai nhi khác
-											</Text>
-										)}
-									</div>
-								</div>
-							)}
-
-							<div style={{ marginTop: "auto" }}>
-								<AppointmentDetail
-									appointment={appointment}
-									onStatusChange={handleStatusChange}
-									onRefresh={fetchAppointments}
-								/>
-							</div>
-						</Card>
-					</Col>
-				))}
-			</Row>
-		)
-	}
 }
 
 export default AppointmentDashboard
