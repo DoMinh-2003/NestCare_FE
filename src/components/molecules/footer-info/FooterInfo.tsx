@@ -10,7 +10,7 @@ const FooterInfo = () => {
                 Địa chỉ: Lưu Hữu Phước Tân Lập, Đông Hoà, Dĩ An, Bình Dương, Vietnam
             </div>
             <div className='mt-5'>
-                Hỗ trợ: info@sihospital.com.vn
+                Hỗ trợ: info@nestcare.com.vn
             </div>
             <div className='mt-5 flex gap-3'>
                 <FacebookOutlined />

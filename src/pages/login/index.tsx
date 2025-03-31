@@ -25,11 +25,12 @@ function CustomerLoginPage() {
             ĐĂNG NHẬP
           </h1>
           <img
-            className="inline-block w-[60px] cursor-pointer"
-            src="https://sihospital.com.vn/images/logo.png"
-            alt=""
+            className="inline-block h-36 w-40 cursor-pointer"
+            src="/nestCareLogo.png"
+            alt="NestCare Logo"
             onClick={() => navigate(USER_ROUTES.HOME)}
           />
+
         </div>
         <AuthField
           label="Tên đăng nhập"

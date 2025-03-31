@@ -1,7 +1,7 @@
 
 import ContactCard from '../contact-card/ContactCard'
 import {
-    MailOutlined,
+  MailOutlined,
 } from '@ant-design/icons';
 
 const Email = () => {
@@ -9,7 +9,7 @@ const Email = () => {
     <div>
       <ContactCard
         title='Email'
-        content={["info@sihospital.com.vn"]}
+        content={["info@nestcare.com.vn"]}
         icon={<MailOutlined />}
       />
     </div>
