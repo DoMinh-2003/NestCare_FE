@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import userReminderService from '../../../services/useReminders';
+import useReminderService from '../../../services/useReminders';
 import { Empty } from 'antd';
 
 const Reminder = () => {
     const [reminders, setReminders] = useState([]);
-    const { getReminderByMother } = userReminderService();
+    const { getReminderByMother } = useReminderService();
 
     useEffect(() => {
         const fetchDoctors = async () => {

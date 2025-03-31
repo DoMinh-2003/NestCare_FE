@@ -1,16 +1,17 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import useFetalService from '../../../services/useFetalService';
 import { useEffect, useState } from 'react';
 import { Table, Button, Popconfirm, message, Form } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
 import ModalCreateUpdateFetal from '../../../components/organisms/modal-create-update-fetal/ModalCreateUpdateFetal';
 import { tableText } from '../../../constants/function';
-
 import ModalCreateAppointment, { CreateAppointment } from '../../../components/organisms/modal-create-appointment/ModalCreateAppointment';
 import ModalCheckUpRecord, { CheckupRecord } from '../../../components/organisms/modal-checkup-records/ModalCheckUpRecord';
 import { Appointment } from '../manage-users';
 import ModalAppointmentHistory from '../../../components/organisms/modal-appointment-history/ModalAppointmentHistory';
 import ModalCreateFetalCheckupRecord from '../../../components/organisms/modal-create-checup-record/ModalCreateFetalCheckupRecord';
+import ModalGetReminders, { Reminder } from '../../../components/organisms/modal-get-reminders/ModalGetReminders';
+import useReminderService from '../../../services/useReminders';
 
 export interface FetalData {
     id?: string
@@ -40,7 +41,6 @@ export interface FetalRecord {
 
 }
 
-
 const FetalDetail = () => {
     const { id } = useParams();
     const { getFetalsByMotherId, createFetal, updateFetal, deleteFetal } = useFetalService();
@@ -55,7 +55,16 @@ const FetalDetail = () => {
     const [appointmentData, setAppointmentData] = useState<Appointment>()
     const [isModalCreateCheckup, setIsModalCreateCheckup] = useState(false);
     const [fetalId, setFetalId] = useState<string>('')
-    const navigate = useNavigate();
+    const [isModalReminder, setIsModalReminder] = useState(false);
+    const [reminders, setReminders] = useState<Reminder[]>([]);
+    const { getReminderByDoctor } = useReminderService();
+
+    useEffect(() => {
+        if (id) {
+            getFetalsByMotherIdFromNurse();
+            getReminderByDoctorFromNurse()
+        }
+    }, [id]);
 
     const showModalCreateCheckup = (id: string) => {
         setFetalId(id);
@@ -79,11 +88,13 @@ const FetalDetail = () => {
         setisModalVisibleAppointmentHistory(false);
     };
 
-    useEffect(() => {
-        if (id) {
-            getFetalsByMotherIdFromNurse();
+    const getReminderByDoctorFromNurse = async () => {
+        const response = await getReminderByDoctor(id + '')
+        if (response) {
+            console.log("getReminderByDoctorFromNurse: ", response)
+            setReminders(response)
         }
-    }, [id]);
+    }
 
     const getFetalsByMotherIdFromNurse = async () => {
         const response = await getFetalsByMotherId(id);
@@ -123,6 +134,15 @@ const FetalDetail = () => {
         form.resetFields()
         getFetalsByMotherIdFromNurse();
 
+    };
+
+    //Modal Reminder
+    const showModalReminder = () => {
+        setIsModalReminder(true);
+    };
+    //Modal Reminder
+    const handleCloseModal = () => {
+        setIsModalReminder(false);
     };
 
     const columns = [
@@ -201,28 +221,40 @@ const FetalDetail = () => {
 
     const handleCreateRespone = (values: CreateAppointment) => {
         if (values) {
-       
+
             getFetalsByMotherIdFromNurse()
         }
     }
+
     const handleCancelCreateAppointment = () => {
         setIsModalVisible(false)
     }
+
     return (
         <div>
+
+            <ModalGetReminders
+                visible={isModalReminder}
+                reminders={reminders}
+                onClose={handleCloseModal}
+            />
+
             <ModalCreateFetalCheckupRecord
                 id={fetalId}
                 isVisible={isModalCreateCheckup}
                 onClose={handleCloseCreateCheckup}
             />
+
             <ModalAppointmentHistory
                 isVisible={isModalVisibleAppointmentHistory}
                 onClose={handleClose}
                 appointmentData={appointmentData}
             />
+            
             <ModalCreateAppointment fetals={fetals} createRespone={handleCreateRespone} isVisible={isModalVisible} onClose={handleCancelCreateAppointment} />
+
             <ModalCheckUpRecord records={checkUpRecords} handleCancelModalCheckUpRecord={handleCancelModalCheckUpRecord} isModalOpen={isModalOpenCheckUpRecords} />
-            <div className='text-3xl font-semibold text-center'>
+            <div className='text-3xl font-semibold text-center my-2'>
                 Hồ sơ thai nhi của mẹ {fetals[0]?.mother?.fullName}
             </div>
             <Button
@@ -239,6 +271,22 @@ const FetalDetail = () => {
                 style={{ marginBottom: 16 }}
             >
                 Đặt lịch
+            </Button>
+            <Button
+                type="primary"
+                className='ml-2'
+                onClick={showModal}
+                style={{ marginBottom: 16 }}
+            >
+                Tạo nhắc nhở
+            </Button>
+            <Button
+                type="primary"
+                className='ml-2'
+                onClick={showModalReminder}
+                style={{ marginBottom: 16 }}
+            >
+                Xem nhắc nhở
             </Button>
             <Table
                 components={{

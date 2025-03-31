@@ -5,7 +5,7 @@ import useApiService from "../hooks/useApi";
 import { toast } from "react-toastify";
 import { message } from "antd";
 
-const userReminderService = () => {
+const useReminderService = () => {
     const { callApi, loading, setIsLoading } = useApiService();
     const router = useNavigate();
     const dispatch = useDispatch();
@@ -59,4 +59,4 @@ const userReminderService = () => {
     return { createReminderByDoctor, setIsLoading, getReminderByMother, getReminderByDoctor };
 };
 
-export default userReminderService;
+export default useReminderService;

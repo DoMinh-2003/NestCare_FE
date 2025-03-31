@@ -42,7 +42,7 @@ import useFetalService from "../../../services/useFetalService"
 import axios from "axios"
 import api from "../../../config/api"
 import ModalCreateReminder from "../../../components/organisms/modal-create-reminder/ModalCreateReminder"
-import userReminderService from "../../../services/useReminders"
+import useReminderService from "../../../services/useReminders"
 import ModalCreateAppointment, { CreateAppointment } from "../../../components/organisms/modal-create-appointment/ModalCreateAppointment"
 
 const { Title, Text, Paragraph } = Typography
@@ -133,7 +133,7 @@ const DoctorFetalView: React.FC = () => {
     const [fetals, setFetals] = useState<FetalRecord[]>([]);
 
 
-    const { createReminderByDoctor } = userReminderService()
+    const { createReminderByDoctor } = useReminderService()
 
     useEffect(() => {
         const fetchFetalModel = async () => {
