@@ -39,6 +39,7 @@ import { motion } from "framer-motion"
 import { useNavigate } from "react-router-dom"
 import { USER_ROUTES } from "../../../constants/routes"
 import { toast } from "react-toastify"
+import FetalCreation from "../create-fetals"
 
 const { Option } = Select
 const { Title, Text, Paragraph } = Typography
@@ -90,6 +91,12 @@ function BookingDoctor() {
 	const { userCreateAppointments } = useAppointmentService()
 	const { getSlots } = useSlotService()
 	const navigate = useNavigate()
+	const [isModalOpen, setIsModalOpen] = useState(false);
+
+	const showModal = () => {
+		setIsModalOpen(true);
+		console.log("a");
+	};
 
 	const handleGetFetalsByMotherId = async (userId: string) => {
 		try {
@@ -163,6 +170,13 @@ function BookingDoctor() {
 	const onFinish = (values) => {
 		setSubmitted(values)
 	}
+	const handleClose = () => {
+		setIsModalOpen(false);
+		if (user?.id) {
+			handleGetFetalsByMotherId(user.id)
+		}
+	};
+
 
 	const handleSubmitAppointment = async (values) => {
 		setSubmitting(true)
@@ -355,7 +369,15 @@ function BookingDoctor() {
 													))}
 											</Select>
 										) : (
-											<Empty description="Không có thai nhi" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+											<div className="flex flex-col justify-center">
+												<Empty description="Không có thai nhi" image={Empty.PRESENTED_IMAGE_SIMPLE} />
+												<Button
+													onClick={showModal}
+													className="flex-1 focus:outline-none mx-auto text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
+												>
+													Tạo Hồ Sơ Thai Nhi Ngay
+												</Button>
+											</div>
 										)}
 									</Form.Item>
 								</motion.div>
@@ -650,6 +672,7 @@ function BookingDoctor() {
 					</>
 				)}
 			</Card>
+			<FetalCreation open={isModalOpen} onClose={handleClose} />
 		</motion.div>
 	)
 }

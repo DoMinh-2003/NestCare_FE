@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import userReminderService from '../../../services/useReminders';
+import { Empty } from 'antd';
 
 const Reminder = () => {
     const [reminders, setReminders] = useState([]);
@@ -18,6 +19,11 @@ const Reminder = () => {
         }
         fetchDoctors();
     }, []);
+
+
+    if (!reminders) {
+        return <Empty description="Không có nhắc nhở" />
+    }
 
     return (
         <div className="p-4">

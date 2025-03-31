@@ -132,7 +132,7 @@ function AvailableService() {
 			setFilteredServices(allServicesFromPackages)
 		} catch (error) {
 			console.error("Error fetching services:", error)
-			message.error("Không thể tải dữ liệu dịch vụ")
+			// message.error("Không thể tải dữ liệu dịch vụ")
 		} finally {
 			setLoading(false)
 		}
