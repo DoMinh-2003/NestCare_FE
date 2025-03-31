@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Modal, message, Select, Tag } from 'antd';
+import { Table, Button, Modal, message, Select, Tag, DatePicker } from 'antd';
 import useAppointmentService from '../../../services/useApoitment';
-import type { GetProps } from 'antd';
+import type { DatePickerProps, GetProps } from 'antd';
 import { Input } from 'antd';
 import ModalUpdateMotherHealth from '../../../components/organisms/modal-update-mother-heal/ModalUpdateMotherHealth';
 import { AppointmentStatus } from '../../../constants/status';
 import { formatDate } from '../../../utils/formatDate';
 import userAppointmentService from '../../../services/useAppointmentService';
 import moment from 'moment';
+import dayjs from 'dayjs';
 type SearchProps = GetProps<typeof Input.Search>;
 const { Search } = Input;
 interface FetalRecord {
@@ -39,10 +40,17 @@ const NurseCheckIn: React.FC = () => {
     const [statusFilter, setStatusFilter] = useState<string>('PENDING')
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [appointmentId, setAppointmentId] = useState<string>('')
-
+    const [day, setDay] = useState<string>('')
+    const today = dayjs();
     useEffect(() => {
         getAppointmentsByStatusFromNurse();
-    }, [statusFilter])
+    }, [statusFilter, day])
+
+    useEffect(() => {
+        const today = moment().format('YYYY-MM-DD');
+        console.log(today)
+        setDay(today);
+    }, [])
 
     const showModal = (id: string) => {
         setIsModalVisible(true);
@@ -53,13 +61,15 @@ const NurseCheckIn: React.FC = () => {
         setIsModalVisible(false);
     };
 
-    const today = moment().format('YYYY-MM-DD');
+
 
     const getAppointmentsByStatusFromNurse = async () => {
-        const response = await getAppointmentsByDate(today, '', statusFilter)
-        console.log("getAppointmentsByStatusFromNurse: ", response)
-        if (response) {
-            setAppointments(response)
+        if (day) {
+            const response = await getAppointmentsByDate(day, '', statusFilter)
+            console.log("getAppointmentsByStatusFromNurse: ", response)
+            if (response) {
+                setAppointments(response)
+            }
         }
     }
 
@@ -149,8 +159,8 @@ const NurseCheckIn: React.FC = () => {
     }
 
     const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
-        console.log(today, value, statusFilter)
-        const response = await getAppointmentsByDate(today, value, statusFilter)
+        console.log(day, value, statusFilter)
+        const response = await getAppointmentsByDate(day, value, statusFilter)
         console.log("response: ", response);
         setAppointments(response);
         // if (response && value != '') {
@@ -165,12 +175,17 @@ const NurseCheckIn: React.FC = () => {
         // }
     }
 
+    const onChange: DatePickerProps['onChange'] = (date, dateString) => {
+        console.log(date, dateString);
+        setDay(dateString)
+    };
+
     return (
         <div>
             <div className='text-3xl font-bold text-center my-5'>Quản lý cuộc hẹn</div>
             <div className='flex gap-2'>
                 <div className='flex gap-2 mb-2'>
-                    <Search placeholder="Tìm kiếm bằng tên" className='w-[200px]' onSearch={onSearch} enterButton />
+                    <Search placeholder="Tìm kiếm bằng tên mẹ" className='w-[250px]' onSearch={onSearch} enterButton />
                 </div>
                 <Select
                     placeholder="Chọn gói dịch vụ"
@@ -183,6 +198,9 @@ const NurseCheckIn: React.FC = () => {
                         ))
                     }
                 />
+                <div>
+                    <DatePicker defaultValue={today} format="YYYY-MM-DD" onChange={onChange} />
+                </div>
             </div>
             <ModalUpdateMotherHealth
                 id={appointmentId}
@@ -196,6 +214,7 @@ const NurseCheckIn: React.FC = () => {
 };
 
 export const appointmentStatus = [
+    { label: "Đang đặt cọc", value: "AWAITING_DEPOSIT" },
     { label: "Đang chờ xác nhận", value: "PENDING" },
     { label: "Đã xác nhận", value: "CONFIRMED" },
     { label: "Đã đến bệnh viện", value: "CHECKED_IN" },
@@ -206,6 +225,8 @@ export const appointmentStatus = [
 
 export const getStatusTag = (status: AppointmentStatus) => {
     switch (status) {
+        case AppointmentStatus.AWAITING_DEPOSIT:
+            return <Tag color="purple">Đang đặt cọc</Tag>;
         case AppointmentStatus.PENDING:
             return <Tag color="orange">Đang chờ xác nhận</Tag>;
         case AppointmentStatus.CONFIRMED:

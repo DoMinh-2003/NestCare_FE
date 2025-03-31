@@ -39,6 +39,7 @@ const ManagePackage = () => {
     }, []);
 
     const handleOpenModal = (packageServices: PackageService[]) => {
+        console.log("handleOpenModal: ", packageServices)
         setServicesOfPackage(packageServices);
         setIsModalOpen(true);
     };
@@ -157,11 +158,11 @@ const ManagePackage = () => {
         },
     ];
 
-    const handleCancelModalOpenCreateUpdate = ()=>{
+    const handleCancelModalOpenCreateUpdate = () => {
         setIsModalOpenCreateUpdate(false)
         form.resetFields()
     }
-    
+
     return (
         <div>
             <h1 className="text-3xl font-extrabold text-center mb-5">
@@ -180,7 +181,7 @@ const ManagePackage = () => {
                 </Button>
             </div>
             <ModalCreateUpdatePackage
-            form={form}
+                form={form}
                 visible={isModalOpenCreateUpdate}
                 onCancel={handleCancelModalOpenCreateUpdate}
                 onSubmit={handleSubmit}

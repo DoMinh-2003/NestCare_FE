@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import useFetalService from '../../../services/useFetalService';
 import { useEffect, useState } from 'react';
 import { Table, Button, Popconfirm, message, Form } from 'antd';
@@ -55,6 +55,7 @@ const FetalDetail = () => {
     const [appointmentData, setAppointmentData] = useState<Appointment>()
     const [isModalCreateCheckup, setIsModalCreateCheckup] = useState(false);
     const [fetalId, setFetalId] = useState<string>('')
+    const navigate = useNavigate();
 
     const showModalCreateCheckup = (id: string) => {
         setFetalId(id);
@@ -77,6 +78,7 @@ const FetalDetail = () => {
     const handleClose = () => {
         setisModalVisibleAppointmentHistory(false);
     };
+
     useEffect(() => {
         if (id) {
             getFetalsByMotherIdFromNurse();
@@ -199,6 +201,7 @@ const FetalDetail = () => {
 
     const handleCreateRespone = (values: CreateAppointment) => {
         if (values) {
+       
             getFetalsByMotherIdFromNurse()
         }
     }

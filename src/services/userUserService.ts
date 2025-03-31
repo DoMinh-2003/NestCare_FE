@@ -95,7 +95,7 @@ const userUserService = () => {
   const deleteUser = useCallback(
     async (id: any) => {
       try {
-        const response = await callApi("put", `users/${id}/toggle-delete`, {
+        const response = await callApi("put", `users/toggle-delete/${id}`, {
           isDeleted: true
         });
         console.log("createUser: ", response)

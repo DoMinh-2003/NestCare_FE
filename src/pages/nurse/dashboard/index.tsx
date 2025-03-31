@@ -55,8 +55,8 @@ const NurseDashboard = () => {
                 }));
                 setChartData(formattedChartData);
 
-                setUserCount(usersResponse.length);
-                setOrderCount(ordersResponse.length);
+                setUserCount(usersResponse?.length);
+                setOrderCount(ordersResponse?.length);
             } catch (error) {
                 console.error("Error fetching data:", error);
             } finally {
@@ -135,7 +135,7 @@ const NurseDashboard = () => {
                         <Title level={4} style={{ marginTop: 8 }}>
                             Cuộc hẹn đang chờ
                         </Title>
-                        <Text strong>{appointments.length}</Text>
+                        <Text strong>{appointments?.length}</Text>
                     </Card>
                 </Col>
             </Row>
