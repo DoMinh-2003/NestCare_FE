@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import care from '/nestCareLogo.png';
 
 interface MainLogoProps{
      className?: string;
@@ -7,7 +8,7 @@ interface MainLogoProps{
 const MainLogo = ({className}:MainLogoProps) => {
   return (
     <Link to={"/"}>
-        <img className={className} src="https://sihospital.com.vn/images/logo.png" alt="" />
+        <img  className={className} src={care} alt="" />
     </Link>
   )
 }
