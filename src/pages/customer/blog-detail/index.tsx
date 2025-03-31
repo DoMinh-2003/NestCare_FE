@@ -5,11 +5,13 @@ import { Typography, Card, Avatar, Tag, Skeleton, Space, Divider, Row, Col, Imag
 import { CalendarOutlined, UserOutlined, TagOutlined } from '@ant-design/icons';
 import { formatDate } from '../../../utils/formatDate';
 import moment from 'moment';
+import useOrderService from '../../../services/useOrderService';
 
 const { Title, Paragraph, Text } = Typography;
 
 const BlogDetail = () => {
     const { getBlog, getCommentByBlogId, createComment } = useBlogService();
+    const { getOrderByUserId } = useOrderService();
     const [blog, setBlog] = useState(null);
     const [loading, setLoading] = useState(true);
     const [comments, setComments] = useState([]);
@@ -17,11 +19,24 @@ const BlogDetail = () => {
     const [submitting, setSubmitting] = useState(false);
     const { id } = useParams();
     const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [canComment, setCanComment] = useState(false);
 
     useEffect(() => {
         const user = localStorage.getItem('USER');
-        setIsLoggedIn(!!user);
+        if (user) {
+            setIsLoggedIn(true);
+            checkUserOrder(JSON.parse(user).id);
+        }
     }, []);
+
+    const checkUserOrder = async (userId) => {
+        try {
+            const orders = await getOrderByUserId(userId);
+            setCanComment(orders.length > 0);
+        } catch (error) {
+            setCanComment(false);
+        }
+    };
 
     useEffect(() => {
         const fetchBlog = async () => {
@@ -30,7 +45,7 @@ const BlogDetail = () => {
                 const blogData = await getBlog(id);
                 const commentData = await getCommentByBlogId(id);
                 setBlog(blogData.data);
-                setComments(commentData); // Giả sử commentData là mảng comments
+                setComments(commentData.length > 0 ? commentData : []);
             } catch (error) {
                 message.error('Lấy dữ liệu thất bại');
             } finally {
@@ -39,6 +54,8 @@ const BlogDetail = () => {
         };
         fetchBlog();
     }, [id, getBlog, getCommentByBlogId]);
+
+    const shouldShowComments = comments.length > 0;
 
     const buildCommentTree = (comments) => {
         const commentMap = {};
@@ -136,21 +153,39 @@ const BlogDetail = () => {
                 />
                 <Divider />
                 {isLoggedIn ? (
-                    <Form onFinish={handleSubmit}>
-                        <Form.Item>
-                            <Input.TextArea
-                                rows={4}
-                                placeholder="Viết bình luận của bạn..."
-                                value={commentContent}
-                                onChange={(e) => setCommentContent(e.target.value)}
-                            />
-                        </Form.Item>
-                        <Form.Item>
-                            <Button type="primary" htmlType="submit" loading={submitting}>
-                                Gửi
-                            </Button>
-                        </Form.Item>
-                    </Form>
+                    canComment ? (
+                        <>
+                            {shouldShowComments && (
+                                <CommentSection
+                                    topLevelComments={topLevelComments}
+                                    handlePostComment={handlePostComment}
+                                    replyingTo={replyingTo}
+                                    setReplyingTo={setReplyingTo}
+                                />
+                            )}
+                            <Form onFinish={handleSubmit}>
+                                <Form.Item>
+                                    <Input.TextArea
+                                        rows={4}
+                                        placeholder="Viết bình luận của bạn..."
+                                        value={commentContent}
+                                        onChange={(e) => setCommentContent(e.target.value)}
+                                    />
+                                </Form.Item>
+                                <Form.Item>
+                                    <Button type="primary" htmlType="submit" loading={submitting}>
+                                        Gửi
+                                    </Button>
+                                </Form.Item>
+                            </Form>
+                        </>
+                    ) : (
+                        <div style={{ textAlign: 'center', marginTop: 16 }}>
+                            <Text type="danger">
+                                Bạn cần <a href="/pricing">mua gói</a> để có thể bình luận.
+                            </Text>
+                        </div>
+                    )
                 ) : (
                     <div style={{ textAlign: 'center', marginTop: 16 }}>
                         <Text type="secondary">
@@ -160,7 +195,7 @@ const BlogDetail = () => {
                 )}
             </div>
         );
-    };
+    }
 
     const CommentItem = ({ comment, replyingTo, setReplyingTo, handlePostComment }) => {
         const [replyContent, setReplyContent] = useState('');
