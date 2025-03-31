@@ -176,7 +176,7 @@ const AdminManageUsers: React.FC = () => {
             </div>
             <div className='flex gap-2 justify-between px-2'>
                 <div className='gap-2 flex'>
-                    <Search placeholder="Tìm kiếm bằng tên" className='w-[200px]' onSearch={onSearch} enterButton />
+                    <Search placeholder="Tìm kiếm bằng tên hoặc email" className='w-[250px]' onSearch={onSearch} enterButton />
 
                     <Select
                         placeholder="Chọn vai trò"

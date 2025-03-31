@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
-import { Modal, Form, Input, InputNumber, Button, Select, Table } from "antd";
+import { Modal, Form, Input, InputNumber, Button, Select } from "antd";
 import useServiceService, { Service } from "../../../services/useServiceService";
-import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { Package, PackageService } from "../../../services/usePackageService";
 import { formatMoney } from "../../../utils/formatMoney";
 
 export interface PackageServiceCreateUpdate {
@@ -24,14 +22,13 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
     visible: boolean;
     onCancel: () => void;
     onSubmit: (values: PackageCreateUpdate) => void;
-    initialValues?: Package | null;
+    initialValues?: PackageCreateUpdate | null;
     width?: number | string;
     form: any
 }) => {
     const { getServices } = useServiceService();
     const [services, setServices] = useState<Service[]>([]);
     const [totalPrice, setTotalPrice] = useState(0);
-    const [oldServices, setOldServices] = useState<PackageService[]>([]);
     const [discount, setDiscount] = useState<number>(0);
     const [selectedServices, setSelectedServices] = useState<string[]>([]);
     const [slots, setSlots] = useState<{ [key: string]: number }>({}); // Lưu số lượng slot cho từng dịch vụ
@@ -39,8 +36,21 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
     useEffect(() => {
         getServicesFromCustomer();
         if (initialValues) {
-            form.setFieldsValue(initialValues);
-            setOldServices(initialValues?.packageServices);
+            console.log("initialValues: ", initialValues);
+            form.setFieldsValue({
+                name: initialValues.name,
+                description: initialValues.description,
+                durationValue: initialValues.durationValue,
+                durationType: initialValues.durationType,
+                packageService: initialValues.packageServices.map(service => service.service.id), // Lấy ID dịch vụ
+            });
+            const serviceIds = initialValues.packageServices.map(service => service.service.id);
+            setSelectedServices(serviceIds);
+            const initialSlots = {};
+            initialValues.packageServices.forEach(service => {
+                initialSlots[service.service.id] = service.slot; // Lưu số slot cho từng dịch vụ
+            });
+            setSlots(initialSlots);
         } else {
             form.resetFields();
         }
@@ -58,10 +68,11 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
 
     const handleOk = async () => {
         try {
+           if(!initialValues){
             const values = await form.validateFields();
             const formattedValues = {
                 ...values,
-                price: totalPrice, 
+                price: totalPrice,
                 packageService: selectedServices.map(serviceId => ({
                     serviceId,
                     slot: slots[serviceId], // Lấy số slot từ trường nhập
@@ -70,6 +81,7 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
             setDiscount(0);
             form.resetFields();
             onSubmit(formattedValues);
+           }
         } catch (error) {
             console.error("Validation failed:", error);
         }
@@ -88,7 +100,7 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
 
     useEffect(() => {
         calculateTotalPrice(); // Tính toán tổng giá ngay lập tức
-    }, [discount, slots])
+    }, [discount, slots]);
 
     const handleServiceChange = (value: string[]) => {
         // Cập nhật danh sách dịch vụ đã chọn
@@ -198,6 +210,7 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
                         />
                     </Form.Item>
                 ))}
+
                 <Form.Item
                     name="discount"
                     label="Giảm giá (%)"
@@ -227,49 +240,6 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
                 <div>
                     <strong>Tổng giá: {formatMoney(totalPrice)}</strong>
                 </div>
-
-                {/* Hiển thị bảng dịch vụ đã chọn */}
-                {oldServices.length > 0 && (
-                    <Table
-                        columns={[
-                            {
-                                title: "Tên gói",
-                                render: (record: PackageService) => (
-                                    <div>{record.service.name}</div>
-                                )
-                            },
-                            {
-                                title: "Giá",
-                                render: (record: PackageService) => (
-                                    <div>{formatMoney(record.service.price)}</div>
-                                )
-                            },
-                            {
-                                title: 'Số slot',
-                                render: (record: PackageService) => (
-                                    <InputNumber
-                                        min={1}
-                                        defaultValue={record.slot}
-                                        onChange={(value) => handleSlotChangeService(record.service.id, value)}
-                                    />
-                                )
-                            },
-                            {
-                                title: 'Hành động',
-                                render: (record: PackageService) => (
-                                    <div className="flex gap-2">
-                                        {/* <EditOutlined onClick={() => handleOpenModalUpdateService(record)} className="text-blue" />
-                                        <DeleteOutlined
-                                            onClick={() => handleDeleteServicePromPackage(record.service.id)} className="text-red-500" /> */}
-                                    </div>
-                                )
-                            },
-                        ]}
-                        dataSource={oldServices}
-                        rowKey="serviceId" // Sử dụng serviceId làm key
-                        pagination={false} // Tắt phân trang nếu không cần
-                    />
-                )}
             </Form>
         </Modal>
     );

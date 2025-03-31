@@ -64,6 +64,7 @@ const ModalCreateAppointment = ({ isVisible, onClose, createRespone, fetals }: {
         if (response) {
             createRespone(values);
             message.success('Tạo lịch hẹn thành công');
+            window.location.href =response
             onClose(); // Close the modal after submission
         }
     };

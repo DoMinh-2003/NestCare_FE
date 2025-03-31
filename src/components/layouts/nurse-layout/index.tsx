@@ -28,7 +28,7 @@ const items: MenuItem[] = [
   getItem("Dashboard", "dashboard", <FaChartPie />),
   getItem("Quản lí người dùng", "users", <SlCalender />),
   getItem("Quản lí thanh toán", "orders", <SlCalender />),
-  getItem("Tạo cuộc hẹn", "appointments", <SlCalender />),
+  getItem("Xác nhận cuộc hẹn", "appointments", <SlCalender />),
   getItem("Huỷ cuộc cuộc hẹn", "cancel-appointments", <SlCalender />),
 ];
 
