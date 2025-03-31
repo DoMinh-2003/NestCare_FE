@@ -28,9 +28,9 @@ const userReminderService = () => {
     );
 
     const getReminderByMother = useCallback(
-        async (id: string) => {
+        async () => {
             try {
-                const response = await callApi("get", `reminders/mother/${id}`);
+                const response = await callApi("get", `reminders/mother`);
                 console.log(response);
                 return response;
             } catch (e: any) {

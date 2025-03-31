@@ -5,7 +5,7 @@ import BlogCard from '../../../components/molecules/blog/BlogCard';
 import Pagination from '../../../components/molecules/blog/Pagination';
 import CategorySelection from '../../../components/molecules/blog/CategorySelection';
 import Sidebar from '../../../components/molecules/blog/Sidebar';
-import { Button, Modal } from 'antd';
+import { Button, Empty, Modal } from 'antd';
 
 const BlogPage = () => {
     const [blogs, setBlogs] = useState([]);
@@ -85,6 +85,9 @@ const BlogPage = () => {
         handleCreateBlog(formData);
     };
 
+
+
+
     return (
         <div className='p-8 max-w-7xl mx-auto'>
             {/* Nút và ghi chú */}
@@ -141,31 +144,46 @@ const BlogPage = () => {
                 </form>
             </Modal>
 
-            <div>
-                <CategorySelection
-                    onSelectedCategory={handleCategorySelected}
-                    activeCategory={activeCategory}
-                    categories={categories}
-                />
-            </div>
-            <div className="flex flex-col gap-12 md:flex-row">
-                <div className="md:w-3/4 lg:w-4/5 w-full">
-                    <BlogCard blogs={blogs} />
+            {/* Chỉ hiển thị CategorySelection và nút Tạo blog mới khi không có blog */}
+            {blogs.length === 0 ? (
+                <div>
+                    <CategorySelection
+                        onSelectedCategory={handleCategorySelected}
+                        activeCategory={activeCategory}
+                        categories={categories}
+                    />
+                    <Empty description="Chưa có blog nào." />
                 </div>
-                <div className="md:w-1/4 lg:w-1/5 w-full">
-                    <Sidebar blogs={blogs} />
-                </div>
-            </div>
-            <div>
-                <Pagination
-                    onPageChange={handlePageChange}
-                    currentPage={currentPage}
-                    pageSize={pageSize}
-                    blogs={blogs}
-                />
-            </div>
+            ) : (
+                <>
+                    <div>
+                        <CategorySelection
+                            onSelectedCategory={handleCategorySelected}
+                            activeCategory={activeCategory}
+                            categories={categories}
+                        />
+                    </div>
+                    <div className="flex flex-col gap-12 md:flex-row">
+                        <div className="md:w-3/4 lg:w-4/5 w-full">
+                            <BlogCard blogs={blogs} />
+                        </div>
+                        <div className="md:w-1/4 lg:w-1/5 w-full">
+                            <Sidebar blogs={blogs} />
+                        </div>
+                    </div>
+                    <div>
+                        <Pagination
+                            onPageChange={handlePageChange}
+                            currentPage={currentPage}
+                            pageSize={pageSize}
+                            blogs={blogs}
+                        />
+                    </div>
+                </>
+            )}
         </div>
     );
+
 };
 
 export default BlogPage;

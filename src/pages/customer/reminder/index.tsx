@@ -9,20 +9,16 @@ const Reminder = () => {
 
     useEffect(() => {
         const fetchDoctors = async () => {
-            const user = localStorage.getItem('USER');
-            if (user) {
-                const motherId = JSON.parse(user).id;
-                const response = await getReminderByMother(motherId);
-                console.log(response)
-                setReminders(response);
-            }
+            const response = await getReminderByMother();
+            console.log(response)
+            setReminders(response);
         }
         fetchDoctors();
     }, []);
 
 
-    if (!reminders) {
-        return <Empty description="Không có nhắc nhở" />
+    if (reminders.length === 0) {
+        return <Empty className='h-60' description="Không có nhắc nhở" />
     }
 
     return (
