@@ -12,6 +12,7 @@ import ModalAppointmentHistory from '../../../components/organisms/modal-appoint
 import ModalCreateFetalCheckupRecord from '../../../components/organisms/modal-create-checup-record/ModalCreateFetalCheckupRecord';
 import ModalGetReminders, { Reminder } from '../../../components/organisms/modal-get-reminders/ModalGetReminders';
 import useReminderService from '../../../services/useReminders';
+import ModalCreateReminder from '../../../components/organisms/modal-create-reminder/ModalCreateReminder';
 
 export interface FetalData {
     id?: string
@@ -57,7 +58,8 @@ const FetalDetail = () => {
     const [fetalId, setFetalId] = useState<string>('')
     const [isModalReminder, setIsModalReminder] = useState(false);
     const [reminders, setReminders] = useState<Reminder[]>([]);
-    const { getReminderByDoctor } = useReminderService();
+    const { getReminderByDoctor, createReminderByDoctor} = useReminderService();
+    const [reminderModalVisible, setReminderModalVisible] = useState(false)
 
     useEffect(() => {
         if (id) {
@@ -230,8 +232,29 @@ const FetalDetail = () => {
         setIsModalVisible(false)
     }
 
+    const handleCreateReminder = async (values: any) => {
+        try {
+            const response = await createReminderByDoctor(values)
+            if (response) {
+                message.success("Tạo nhắc nhở thành công!")
+                setReminderModalVisible(false)
+                getReminderByDoctorFromNurse()
+            } else {
+                message.error("Tạo nhắc nhở thất bại!")
+            }
+        } catch (error) {
+            message.error("Tạo nhắc nhở thất bại!")
+        }
+    }
+
     return (
         <div>
+            <ModalCreateReminder
+                visible={reminderModalVisible}
+                onCancel={() => setReminderModalVisible(false)}
+                onCreate={handleCreateReminder}
+                motherId={id}
+            />
 
             <ModalGetReminders
                 visible={isModalReminder}
@@ -250,7 +273,7 @@ const FetalDetail = () => {
                 onClose={handleClose}
                 appointmentData={appointmentData}
             />
-            
+
             <ModalCreateAppointment fetals={fetals} createRespone={handleCreateRespone} isVisible={isModalVisible} onClose={handleCancelCreateAppointment} />
 
             <ModalCheckUpRecord records={checkUpRecords} handleCancelModalCheckUpRecord={handleCancelModalCheckUpRecord} isModalOpen={isModalOpenCheckUpRecords} />
@@ -275,7 +298,7 @@ const FetalDetail = () => {
             <Button
                 type="primary"
                 className='ml-2'
-                onClick={showModal}
+                onClick={()=>setReminderModalVisible(true)}
                 style={{ marginBottom: 16 }}
             >
                 Tạo nhắc nhở

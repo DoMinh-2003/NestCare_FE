@@ -47,6 +47,7 @@ const ModalCreateReminder: React.FC<ModalCreateReminderProps> = ({
                 <Form.Item
                     name="motherId"
                     label="Mã mẹ bầu"
+                    hidden
                     rules={[{ required: true, message: "Vui lòng nhập motherId" }]}
                 >
                     <Input disabled />
@@ -91,10 +92,15 @@ const ModalCreateReminder: React.FC<ModalCreateReminderProps> = ({
                 >
                     <DatePicker format="YYYY-MM-DD" />
                 </Form.Item>
+                <Form.Item
+                >
+                    <div className="float-right">
+                        <Button type="primary" htmlType="submit">
+                            Tạo
+                        </Button>
+                    </div>
+                </Form.Item>
 
-                <Button type="primary" htmlType="submit">
-                    Tạo
-                </Button>
             </Form>
         </Modal>
     );
