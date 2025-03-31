@@ -9,6 +9,7 @@ import paymentFailureImg from '../../../../public/images/failure.png'
 import axios from 'axios';
 import api from '../../../config/api';
 import { toast } from 'react-toastify';
+import { getUserDataFromLocalStorage } from '../../../constants/function';
 
 interface PaymentBookingProps {
 	bookingId: string;
@@ -20,6 +21,27 @@ const PaymentBooking = () => {
 
 	const { bookingId } = useParams();
 	const [appoimentUpate, setAppoimentUpdate] = useState(false);
+	const [link, setLink] = useState('');
+	const user = getUserDataFromLocalStorage()
+
+	useEffect(() => {
+		if (user) {
+			switch (user.role) {
+				case 'user':
+					setLink('/appointment-history')
+					break;
+				case 'nurse':
+					setLink('/nurse/appointments')
+					break;
+				case 'doctor':
+					setLink('/doctor/appointments')
+					break;
+				default:
+					setLink('/appointment-history')
+					break;
+			}
+		}
+	}, [])
 
 	const updateStatus = async (bookingId: string, status: string) => {
 		try {
@@ -73,10 +95,10 @@ const PaymentBooking = () => {
 				</div>
 
 				<div className="mt-4 flex w-full flex-col gap-3 sm:flex-row sm:justify-center">
-					<Link to="/appointment-history" className="w-full sm:w-auto">
+					<Link to={link} className="w-full sm:w-auto">
 						<button className="w-full rounded-full bg-teal-500 px-8 py-3 text-base font-medium text-white shadow-md transition duration-300 hover:bg-teal-600 active:bg-teal-700 sm:w-auto">
 							<div className="flex items-center justify-center gap-2">
-								<Home className="h-4 w-4" />
+								<Heart className="h-4 w-4" />
 								<span>Xem lịch khám</span>
 							</div>
 						</button>

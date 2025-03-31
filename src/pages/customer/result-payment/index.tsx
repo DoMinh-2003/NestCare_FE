@@ -1,17 +1,19 @@
-
 import { useEffect } from "react"
 import { useSearchParams, useNavigate } from "react-router-dom"
 import { USER_ROUTES } from "../../../constants/routes"
 import style from "./style.module.scss"
 import useOrderService from "../../../services/useOrderService"
 import api from "../../../config/api"
+import { getUserDataFromLocalStorage } from "../../../constants/function"
 
 const PaymentResult = () => {
 	const [searchParams] = useSearchParams()
 	const navigate = useNavigate()
 	const { userUpdateOrder } = useOrderService()
 
-	const updateBookingStatus = async (bookingId: string, status: "PENDING" | "PAID" | "CANCELED") => {
+	const user = getUserDataFromLocalStorage()
+
+	const updateBookingStatus = async (bookingId: string, status: "PENDING" | "PAID" | "CANCELED" | "IN_PROGRESS") => {
 		try {
 			console.log("Updating booking status:", bookingId, status)
 			const response = await api.put(`/appointments/${bookingId}/${status}`)
@@ -39,6 +41,7 @@ const PaymentResult = () => {
 		const responseCode = searchParams.get("vnp_ResponseCode")
 		const orderId = searchParams.get("order")
 		const bookingId = searchParams.get("bookingId")
+		const appointmentId = searchParams.get("appointmentId")
 		const transactionStatus = searchParams.get("vnp_TransactionStatus")
 
 		console.log("Payment Result Parameters:", {
@@ -76,8 +79,8 @@ const PaymentResult = () => {
 
 				// Process based on response code
 				switch (responseCode) {
-					case "00": // Payment successful
-						console.log("Payment successful")
+					case "00": // Booking successful
+						console.log("Booking successful")
 
 						// Handle booking payment success
 						if (bookingId) {
@@ -96,12 +99,13 @@ const PaymentResult = () => {
 								state: { orderId },
 								replace: true,
 							})
+						} else if (appointmentId) { // doctor
+							console.log(appointmentId);
+							await updateBookingStatus(appointmentId, "IN_PROGRESS")
 						}
 						break
-
 					case "24": // Customer canceled
 						console.log("Payment canceled by customer")
-
 						// Handle booking payment cancellation
 						if (bookingId) {
 							await updateBookingStatus(bookingId, "CANCELED")
@@ -172,12 +176,11 @@ const PaymentResult = () => {
 	}, [searchParams, navigate, userUpdateOrder])
 
 	return (
-		<div className="flex flex-col items-center justify-center min-h-[60vh] my-auto">
-			<div className={`${style.loadingText} text-xl font-medium mb-6`}>
-				Đang xử lý thanh toán<span className={style.dot}>.</span>
-				<span className={style.dot}>.</span>
-				<span className={style.dot}>.</span>
-			</div>
+		<div className="flex flex-col items-center justify-center min-h-[60vh] my-auto"><div className={`${style.loadingText} text-xl font-medium mb-6`}>
+			Đang xử lý thanh toán<span className={style.dot}>.</span>
+			<span className={style.dot}>.</span>
+			<span className={style.dot}>.</span>
+		</div>
 			<div className={style.spinner}>
 				<div className="spinner">
 					<span></span>
@@ -196,4 +199,3 @@ const PaymentResult = () => {
 }
 
 export default PaymentResult
-
