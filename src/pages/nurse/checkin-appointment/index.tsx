@@ -40,6 +40,7 @@ const NurseCheckIn: React.FC = () => {
     const { getAppointmentsByDate } = userAppointmentService();
     const [day, setDay] = useState<string>('')
     const today = dayjs();
+    
     useEffect(() => {
         getAppointmentsByStatusFromNurse();
     }, [day])
