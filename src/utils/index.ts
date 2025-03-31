@@ -4,7 +4,7 @@ export const navigateByRole = (role: string, navigate) => {
             navigate("/admin/overview");
             break;
         case "doctor":
-            navigate("/doctor/overview");
+            navigate("/doctor/dashboard");
             break;
         case "nurse":
             navigate("/nurse/dashboard");
