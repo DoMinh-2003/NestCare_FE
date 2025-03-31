@@ -136,8 +136,8 @@ const Navbar = () => {
             <ModalBookingForm isModalOpen={isModalOpen} handleCancel={() => setIsModalOpen(false)} />
             <div className="flex justify-between items-center font-bold">
                 <div className="flex items-center">
-                    <MainLogo />
-                    <NavbarMenuList />
+                <MainLogo className="w-[100px] h-[100px]" />
+                <NavbarMenuList />
                 </div>
 
                 <div className='flex gap-6'>
