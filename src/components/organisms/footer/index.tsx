@@ -12,7 +12,7 @@ const Footer = () => {
         <div className="bg-zinc-700 mt-10 py-14">
             <div className="container mx-auto">
                 <div className="flex ">
-                    <MainLogo />
+                    <MainLogo className="w-[100px] h-[100px]" />
                     <HospitalName className="flex items-center ml-5"/>
                 </div>
                 <div className="grid grid-cols-5 gap-4">

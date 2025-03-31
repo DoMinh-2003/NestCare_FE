@@ -13,7 +13,7 @@ const PaymentResult = () => {
 
 	const user = getUserDataFromLocalStorage()
 
-	const updateBookingStatus = async (bookingId: string, status: "PENDING" | "PAID" | "CANCELED" | "IN_PROGRESS") => {
+	const updateBookingStatus = async (bookingId: string, status: "PENDING" | "PAID" | "CANCELED" | "IN_PROGRESS" | "DEPOSIT_FAILED" | "PAYMENT_FAILED") => {
 		try {
 			console.log("Updating booking status:", bookingId, status)
 			const response = await api.put(`/appointments/${bookingId}/${status}`)
@@ -112,7 +112,7 @@ const PaymentResult = () => {
 						console.log("Payment canceled by customer")
 						// Handle booking payment cancellation
 						if (bookingId) {
-							await updateBookingStatus(bookingId, "CANCELED")
+							await updateBookingStatus(bookingId, "DEPOSIT_FAILED")
 							navigate(USER_ROUTES.PAYMENT_CANCEL, {
 								state: { bookingId, errorCode: responseCode },
 								replace: true,
@@ -123,6 +123,14 @@ const PaymentResult = () => {
 							await updateOrderStatus(orderId, "CANCELED")
 							navigate(USER_ROUTES.PAYMENT_CANCEL, {
 								state: { orderId, errorCode: responseCode },
+								replace: true,
+							})
+						}
+
+						else if (appointmentId) {
+							await updateBookingStatus(appointmentId, "PAYMENT_FAILED")
+							navigate(USER_ROUTES.PAYMENT_CANCEL, {
+								state: { appointmentId, errorCode: responseCode },
 								replace: true,
 							})
 						}
@@ -156,6 +164,13 @@ const PaymentResult = () => {
 							await updateOrderStatus(orderId, "PENDING")
 							navigate(USER_ROUTES.PAYMENT_FAILURE, {
 								state: { orderId, errorCode: responseCode || "Unknown" },
+								replace: true,
+							})
+						}
+						else if (appointmentId) {
+							await updateBookingStatus(appointmentId, "PAYMENT_FAILED")
+							navigate(USER_ROUTES.PAYMENT_CANCEL, {
+								state: { appointmentId, errorCode: responseCode },
 								replace: true,
 							})
 						}

@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import useApiService from "../hooks/useApi";
 import { message } from "antd";
 import { navigateByRole } from '../utils/index';
+import { loginRedux } from "../redux/features/userSlice";
 
 const useAuthService = () => {
   const { callApi, loading, setIsLoading } = useApiService();
@@ -37,6 +38,7 @@ const useAuthService = () => {
         if (response?.token) {
           localStorage.setItem("token", response.token);
           localStorage.setItem("USER", JSON.stringify(response));
+          dispatch(loginRedux(response))
           message.success("Đăng nhập thành công");
 
           // Điều hướng dựa trên role
