@@ -28,8 +28,8 @@ function ForgotPassword() {
 				<Row justify="space-between">
 					<Button type='primary' style={{ marginBottom: '20px' }} onClick={() => navigate("/auth/login")}>Trở về đăng nhập</Button>
 					<img
-						className="inline-block w-[60px] cursor-pointer"
-						src="https://sihospital.com.vn/images/logo.png"
+						className="inline-block h-36 w-40 cursor-pointer"
+						src="/nestCareLogo.png"
 						alt=""
 						onClick={() => navigate(USER_ROUTES.HOME)}
 					/>

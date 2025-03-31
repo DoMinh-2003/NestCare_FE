@@ -35,16 +35,16 @@ const NewsDetailContainer = () => {
 }
 
 const BlogData = {
-    title: "SIHospital - Hội nghị Khoa học Kỹ thuật thường niên 2024: Hành trình kết nối tri thức y khoa",
+    title: "NestCare - Hội nghị Khoa học Kỹ thuật thường niên 2024: Hành trình kết nối tri thức y khoa",
     content: [
-        { description: "Chiều ngày 26/12/2024, không khí tại SIHOSPITAL trở nên sôi động hơn. Gần 70 Bác sĩ, Dược sĩ, và cán bộ y tế từ các Khoa/Phòng đã có mặt, mang theo tinh thần học hỏi và khát khao phát triển. Đây không chỉ là một hội nghị mà còn là một câu chuyện của sự kết nối, nơi những mong muốn cải tiến y khoa được ươm mầm.", image: "https://sihospital.com.vn//uploads/202412/52/qjfT8L-6t0a0626.jpg" },
-        { description: "Chiều ngày 26/12/2024, không khí tại SIHOSPITAL trở nên sôi động hơn. Gần 70 Bác sĩ, Dược sĩ, và cán bộ y tế từ các Khoa/Phòng đã có mặt, mang theo tinh thần học hỏi và khát khao phát triển. Đây không chỉ là một hội nghị mà còn là một câu chuyện của sự kết nối, nơi những mong muốn cải tiến y khoa được ươm mầm.", image: "https://sihospital.com.vn//uploads/202412/52/qjfT8L-6t0a0626.jpg" },
-        { description: "Chiều ngày 26/12/2024, không khí tại SIHOSPITAL trở nên sôi động hơn. Gần 70 Bác sĩ, Dược sĩ, và cán bộ y tế từ các Khoa/Phòng đã có mặt, mang theo tinh thần học hỏi và khát khao phát triển. Đây không chỉ là một hội nghị mà còn là một câu chuyện của sự kết nối, nơi những mong muốn cải tiến y khoa được ươm mầm.", image: "https://sihospital.com.vn//uploads/202412/52/qjfT8L-6t0a0626.jpg" },
-        { description: "Chiều ngày 26/12/2024, không khí tại SIHOSPITAL trở nên sôi động hơn. Gần 70 Bác sĩ, Dược sĩ, và cán bộ y tế từ các Khoa/Phòng đã có mặt, mang theo tinh thần học hỏi và khát khao phát triển. Đây không chỉ là một hội nghị mà còn là một câu chuyện của sự kết nối, nơi những mong muốn cải tiến y khoa được ươm mầm.", image: "https://sihospital.com.vn//uploads/202412/52/qjfT8L-6t0a0626.jpg" },
-        { description: "Chiều ngày 26/12/2024, không khí tại SIHOSPITAL trở nên sôi động hơn. Gần 70 Bác sĩ, Dược sĩ, và cán bộ y tế từ các Khoa/Phòng đã có mặt, mang theo tinh thần học hỏi và khát khao phát triển. Đây không chỉ là một hội nghị mà còn là một câu chuyện của sự kết nối, nơi những mong muốn cải tiến y khoa được ươm mầm.", image: "https://sihospital.com.vn//uploads/202412/52/qjfT8L-6t0a0626.jpg" },
+        { description: "Chiều ngày 26/12/2024, không khí tại NestCare trở nên sôi động hơn. Gần 70 Bác sĩ, Dược sĩ, và cán bộ y tế từ các Khoa/Phòng đã có mặt, mang theo tinh thần học hỏi và khát khao phát triển. Đây không chỉ là một hội nghị mà còn là một câu chuyện của sự kết nối, nơi những mong muốn cải tiến y khoa được ươm mầm.", image: "https://sihospital.com.vn//uploads/202412/52/qjfT8L-6t0a0626.jpg" },
+        { description: "Chiều ngày 26/12/2024, không khí tại NestCare trở nên sôi động hơn. Gần 70 Bác sĩ, Dược sĩ, và cán bộ y tế từ các Khoa/Phòng đã có mặt, mang theo tinh thần học hỏi và khát khao phát triển. Đây không chỉ là một hội nghị mà còn là một câu chuyện của sự kết nối, nơi những mong muốn cải tiến y khoa được ươm mầm.", image: "https://sihospital.com.vn//uploads/202412/52/qjfT8L-6t0a0626.jpg" },
+        { description: "Chiều ngày 26/12/2024, không khí tại NestCare trở nên sôi động hơn. Gần 70 Bác sĩ, Dược sĩ, và cán bộ y tế từ các Khoa/Phòng đã có mặt, mang theo tinh thần học hỏi và khát khao phát triển. Đây không chỉ là một hội nghị mà còn là một câu chuyện của sự kết nối, nơi những mong muốn cải tiến y khoa được ươm mầm.", image: "https://sihospital.com.vn//uploads/202412/52/qjfT8L-6t0a0626.jpg" },
+        { description: "Chiều ngày 26/12/2024, không khí tại NestCare trở nên sôi động hơn. Gần 70 Bác sĩ, Dược sĩ, và cán bộ y tế từ các Khoa/Phòng đã có mặt, mang theo tinh thần học hỏi và khát khao phát triển. Đây không chỉ là một hội nghị mà còn là một câu chuyện của sự kết nối, nơi những mong muốn cải tiến y khoa được ươm mầm.", image: "https://sihospital.com.vn//uploads/202412/52/qjfT8L-6t0a0626.jpg" },
+        { description: "Chiều ngày 26/12/2024, không khí tại NestCare trở nên sôi động hơn. Gần 70 Bác sĩ, Dược sĩ, và cán bộ y tế từ các Khoa/Phòng đã có mặt, mang theo tinh thần học hỏi và khát khao phát triển. Đây không chỉ là một hội nghị mà còn là một câu chuyện của sự kết nối, nơi những mong muốn cải tiến y khoa được ươm mầm.", image: "https://sihospital.com.vn//uploads/202412/52/qjfT8L-6t0a0626.jpg" },
     ],
     time: "2 tháng trước",
-    category: "Tin tức SIHospital"
+    category: "Tin tức NestCare"
 }
 
 export default NewsDetailContainer

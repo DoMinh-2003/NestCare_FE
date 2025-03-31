@@ -32,7 +32,7 @@ export interface InstructProps {
 }
 export const instruct: InstructProps[] = [
   {
-    title: "Quy trình khám bệnh SIHospital",
+    title: "Quy trình khám bệnh NestCare",
     link: "/medical-examination-process",
   },
   {
@@ -44,7 +44,7 @@ export const instruct: InstructProps[] = [
     link: "/rights-of-patients",
   },
   {
-    title: "Chính sách bảo mật SIHospital",
+    title: "Chính sách bảo mật NestCare",
     link: "/privacy-policy",
   },
   {

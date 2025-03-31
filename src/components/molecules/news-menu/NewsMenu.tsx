@@ -4,7 +4,7 @@ interface NewsMenuProps {
 }
 const NewsMenu = ({ selectedCategory, setSelectedCategory }: NewsMenuProps) => {
     const categories = [
-        "Tin tức SIHospital",
+        "Tin tức NestCare",
         "Thông tin y khoa"
     ];
 
