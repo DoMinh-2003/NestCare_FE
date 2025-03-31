@@ -3,19 +3,13 @@ import { FaUser } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { formatDate } from '../../../utils/formatDate';
 
-const BlogCard = ({ blogs, currentPage, pageSize, selectedCategory }) => {
-    const filteredBlogs = blogs
-        .filter(blog => !selectedCategory || blog.category === selectedCategory)
-        .slice((currentPage - 1) * pageSize, currentPage * pageSize);
-
+const BlogCard = ({ blogs }) => {
     return (
         <div className='grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-8'>
-            {filteredBlogs.map(blog => (
+            {blogs.map(blog => (
                 <Link to={`/blog/${blog.id}`} key={blog.id} className='p-5 shadow-lg rounded cursor-pointer'>
-                    {/* Bỏ phần hình ảnh, chỉ hiển thị tiêu đề và nội dung ngắn */}
                     <h3 className='mt-4 mb-2 font-bold hover:text-blue-600 cursor-pointer'>{blog.title}</h3>
-                    <p className='mb-2 text-gray-600'>{blog.description}</p> {/* Hiển thị phần mô tả ngắn */}
-
+                    <p className='mb-2 text-gray-600'>{blog.description}</p>
                     <p className='mb-2 text-sm text-gray-600'>
                         <FaUser className='inline-flex items-center mr-2' />
                         {blog.user?.fullName || "Admin"}

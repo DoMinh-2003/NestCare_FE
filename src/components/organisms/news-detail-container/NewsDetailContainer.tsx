@@ -4,14 +4,14 @@ import NewsDetailCard from '../../molecules/news-detail-card/NewsDetailCard'
 
 const NewsDetailContainer = () => {
 
-    const breadcrumbItems:BreadcrumbsProps[] = [
+    const breadcrumbItems: BreadcrumbsProps[] = [
         { title: "Trang chủ", link: "/" },
         { title: "Tin tức", link: "/news" },
         { title: "Tin tức chi tiết" }, // Không có link => chỉ hiển thị text
-      ];
+    ];
     return (
         <div className='w-[900px]'>
-            <CustomBreadcrumbs items={breadcrumbItems}/>
+            <CustomBreadcrumbs items={breadcrumbItems} />
             <div className='text-3xl font-bold mt-10'>
                 {BlogData.title}
             </div>

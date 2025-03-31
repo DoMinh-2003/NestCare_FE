@@ -60,6 +60,7 @@ export const instruct: InstructProps[] = [
 
 const news: InstructProps[] = [
   { title: "Tin tức NestCare", link: "/tin-tuc-nestcare" },
+  { title: "Blog", link: "/blog" },
   { title: "Thông tin y khoa", link: "/thong-tin-y-khoa" },
   { title: "Lớp tiền sản", link: "/lop-tien-san" },
   { title: "Videos", link: "/videos" },
