@@ -11,9 +11,24 @@ const userAppointmentService = () => {
     const dispatch = useDispatch();
 
     const getAppointmentsByDoctor = useCallback(
-        async (doctorId: string, date: string, status: string) => {
+        async (doctorId: string, date: string, search?: string, status?: string) => {
             try {
-                const response = await callApi("get", `appointments/doctor-date/${doctorId}/${date}/${status}`);
+                const baseUrl = `appointments/doctor-date/${doctorId}/${date}/`;
+
+                const params = new URLSearchParams();
+
+                if (search) {
+                    params.append('search', search);
+                }
+                if (status) {
+                    params.append('status', status);
+                }
+
+                const queryString = params.toString();
+
+                const finalUrl = queryString ? `${baseUrl}?${queryString}` : baseUrl;
+
+                const response = await callApi("get", finalUrl);
                 return response;
             } catch (e: any) {
                 console.error(e?.response?.data?.message || "GetAppointmentsByDoctor failed");

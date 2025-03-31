@@ -1,3 +1,4 @@
+"use client"
 
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
@@ -32,8 +33,9 @@ import {
 	PlusOutlined,
 	EditOutlined,
 } from "@ant-design/icons"
-import api from "../../../config/api"
 import { motion } from "framer-motion"
+import userAppointmentService from "../../../services/useAppointmentService"
+import useMedicineService from "../../../services/useMedicineService"
 
 const { Title, Text } = Typography
 const { TabPane } = Tabs
@@ -120,6 +122,14 @@ interface Medication {
 	name?: string // For display purposes
 }
 
+interface FetalCheckup {
+	fetalRecordId: string
+	fetalWeight: number
+	fetalHeight: number
+	fetalHeartbeat: number
+	warning: string | null
+}
+
 function AppointmentDetail() {
 	const { id } = useParams()
 	const [appointment, setAppointment] = useState<Appointment | null>(null)
@@ -129,21 +139,17 @@ function AppointmentDetail() {
 	const [form] = Form.useForm()
 	const [medications, setMedications] = useState<Medication[]>([])
 	const [availableMedications, setAvailableMedications] = useState<any[]>([])
+	const [fetalCheckups, setFetalCheckups] = useState<FetalCheckup[]>([])
+	const [showMedicationSection, setShowMedicationSection] = useState(false)
+	const { getAppointmentDetail } = userAppointmentService()
+	const { getMedicinesService } = useMedicineService()
 
 	const handleGetAppointmentDetail = async (appointmentId: string) => {
 		try {
 			setLoading(true)
-			const response = await api.get("/appointments/" + appointmentId)
+			const response = await getAppointmentDetail(appointmentId)
 			console.log("Appointment Detail:", response.data)
-			setAppointment(response.data)
-
-			// Mock available medications - in a real app, you would fetch this from your API
-			setAvailableMedications([
-				{ id: "med1", name: "Prenatal Vitamins", price: "150000" },
-				{ id: "med2", name: "Folic Acid", price: "120000" },
-				{ id: "med3", name: "Iron Supplement", price: "180000" },
-				{ id: "med4", name: "Calcium Supplement", price: "200000" },
-			])
+			setAppointment(response)
 		} catch (error) {
 			console.error("Error fetching appointment details:", error)
 			message.error("Failed to load appointment details")
@@ -152,10 +158,20 @@ function AppointmentDetail() {
 		}
 	}
 
+	const getMedicine = async () => {
+		try {
+			const response = await getMedicinesService("", 0)
+			setAvailableMedications(response.data.pageData)
+		} catch (error) {
+			console.log(error)
+		}
+	}
+
 	useEffect(() => {
 		if (id) {
 			handleGetAppointmentDetail(id)
 		}
+		getMedicine()
 	}, [id])
 
 	const showCheckupModal = (fetal: FetalRecord) => {
@@ -163,6 +179,8 @@ function AppointmentDetail() {
 		setCheckupModalVisible(true)
 		form.resetFields()
 		setMedications([])
+		setFetalCheckups([])
+		setShowMedicationSection(false)
 	}
 
 	const handleAddMedication = () => {
@@ -191,33 +209,60 @@ function AppointmentDetail() {
 		setMedications(newMedications)
 	}
 
-	const handleSubmitCheckup = async (values: any) => {
+	const handleAddFetalCheckup = (values: any) => {
 		if (!selectedFetal) return
+
+		// Create a new fetal checkup object
+		const newCheckup: FetalCheckup = {
+			fetalRecordId: selectedFetal.id,
+			fetalWeight: Number.parseFloat(values.fetalWeight),
+			fetalHeight: Number.parseFloat(values.fetalHeight),
+			fetalHeartbeat: Number.parseFloat(values.fetalHeartbeat),
+			warning: values.warning || null,
+		}
+
+		// Add to the fetalCheckups array
+		setFetalCheckups([...fetalCheckups, newCheckup])
+
+		// Show medication section after adding fetal checkup
+		setShowMedicationSection(true)
+
+		// Reset form for next fetal if needed
+		form.resetFields()
+
+		message.success(`Đã thêm thông tin khám cho thai nhi ${selectedFetal.name}`)
+	}
+
+	const handleSubmitCheckup = async () => {
+		if (fetalCheckups.length === 0) {
+			message.error("Vui lòng thêm ít nhất một thông tin khám thai nhi")
+			return
+		}
 
 		try {
 			const payload = {
-				fetalCheckups: [
-					{
-						fetalRecordId: selectedFetal.id,
-						fetalWeight: Number.parseFloat(values.fetalWeight),
-						fetalHeight: Number.parseFloat(values.fetalHeight),
-						fetalHeartbeat: Number.parseFloat(values.fetalHeartbeat),
-						warning: values.warning,
-					},
-				],
-				medications: medications.map((med) => ({
-					medicationId: med.medicationId,
-					quantity: med.quantity,
-				})),
+				fetalCheckups: fetalCheckups,
+				medications: medications
+					.filter((med) => med.medicationId && med.quantity > 0)
+					.map((med) => ({
+						medicationId: med.medicationId,
+						quantity: med.quantity,
+					})),
 			}
 
 			console.log("Submitting checkup data:", payload)
 
 			// In a real app, you would make an API call here
-			// await api.put('/appointments/' + id + '/checkup', payload);
+			// await api.put(`/appointments/${id}/checkup`, payload);
 
-			message.success("Checkup data saved successfully")
+			// For demonstration, we'll simulate a successful API call
+			message.success("Lưu thông tin khám thành công")
 			setCheckupModalVisible(false)
+
+			// Reset state
+			setFetalCheckups([])
+			setMedications([])
+			setShowMedicationSection(false)
 
 			// Refresh appointment data
 			if (id) {
@@ -225,7 +270,7 @@ function AppointmentDetail() {
 			}
 		} catch (error) {
 			console.error("Error saving checkup data:", error)
-			message.error("Failed to save checkup data")
+			message.error("Lỗi khi lưu thông tin khám")
 		}
 	}
 
@@ -384,7 +429,7 @@ function AppointmentDetail() {
 								</Descriptions.Item>
 								<Descriptions.Item label="Bác sĩ">{appointment.doctor.fullName}</Descriptions.Item>
 								<Descriptions.Item label="Dịch vụ">
-									{appointment.appointmentServices.map((service, index) => (
+									{appointment?.appointmentServices?.map((service, index) => (
 										<div key={service.id}>
 											{service.notes} - {Number.parseInt(service.price).toLocaleString("vi-VN")} VNĐ
 										</div>
@@ -424,7 +469,7 @@ function AppointmentDetail() {
 					style={{ marginBottom: 16 }}
 				>
 					<Timeline mode="left">
-						{appointment.history
+						{appointment?.history
 							.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 							.map((history) => (
 								<Timeline.Item
@@ -454,7 +499,7 @@ function AppointmentDetail() {
 				</Card>
 
 				<Tabs defaultActiveKey="1" type="card">
-					{appointment.fetalRecords.map((fetal, index) => (
+					{appointment?.fetalRecords?.map((fetal, index) => (
 						<TabPane
 							tab={
 								<span>
@@ -468,11 +513,9 @@ function AppointmentDetail() {
 								<Card
 									title={<Text strong>Thông tin thai nhi</Text>}
 									extra={
-										needsCheckup(fetal) ? (
-											<Button type="primary" icon={<EditOutlined />} onClick={() => showCheckupModal(fetal)}>
-												Cập nhật khám
-											</Button>
-										) : null
+										<Button type="primary" icon={<EditOutlined />} onClick={() => showCheckupModal(fetal)}>
+											Cập nhật khám
+										</Button>
 									}
 								>
 									<Row gutter={[16, 16]}>
@@ -563,109 +606,160 @@ function AppointmentDetail() {
 				footer={null}
 				width={800}
 			>
-				<Form
-					form={form}
-					layout="vertical"
-					onFinish={handleSubmitCheckup}
-					initialValues={{
-						fetalWeight: "",
-						fetalHeight: "",
-						fetalHeartbeat: "",
-						warning: "",
-					}}
-				>
-					<Row gutter={16}>
-						<Col span={8}>
-							<Form.Item
-								name="fetalWeight"
-								label="Cân nặng thai (kg)"
-								rules={[{ required: true, message: "Vui lòng nhập cân nặng thai" }]}
-							>
-								<InputNumber min={0} step={0.01} style={{ width: "100%" }} placeholder="Nhập cân nặng" />
-							</Form.Item>
-						</Col>
-						<Col span={8}>
-							<Form.Item
-								name="fetalHeight"
-								label="Chiều cao thai (cm)"
-								rules={[{ required: true, message: "Vui lòng nhập chiều cao thai" }]}
-							>
-								<InputNumber min={0} step={0.01} style={{ width: "100%" }} placeholder="Nhập chiều cao" />
-							</Form.Item>
-						</Col>
-						<Col span={8}>
-							<Form.Item
-								name="fetalHeartbeat"
-								label="Nhịp tim thai (bpm)"
-								rules={[{ required: true, message: "Vui lòng nhập nhịp tim thai" }]}
-							>
-								<InputNumber min={0} step={0.01} style={{ width: "100%" }} placeholder="Nhập nhịp tim" />
-							</Form.Item>
-						</Col>
-					</Row>
-
-					<Form.Item name="warning" label="Cảnh báo / Ghi chú">
-						<Input.TextArea rows={3} placeholder="Nhập cảnh báo hoặc ghi chú nếu có" />
-					</Form.Item>
-
-					<Divider orientation="left">Đơn thuốc</Divider>
-
-					{medications.map((medication, index) => (
-						<Row gutter={16} key={index} style={{ marginBottom: 16 }}>
-							<Col span={12}>
-								<Form.Item label={index === 0 ? "Thuốc" : ""} required>
-									<Select
-										style={{ width: "100%" }}
-										placeholder="Chọn thuốc"
-										value={medication.medicationId || undefined}
-										onChange={(value) => handleMedicationChange(index, "medicationId", value)}
-										options={availableMedications.map((med) => ({
-											value: med.id,
-											label: `${med.name} - ${Number.parseInt(med.price).toLocaleString("vi-VN")} VNĐ`,
-										}))}
-									/>
+				<div>
+					{/* Fetal Checkup Form */}
+					<Form
+						form={form}
+						layout="vertical"
+						onFinish={handleAddFetalCheckup}
+						initialValues={{
+							fetalWeight: "",
+							fetalHeight: "",
+							fetalHeartbeat: "",
+							warning: "",
+						}}
+					>
+						<Row gutter={16}>
+							<Col span={8}>
+								<Form.Item
+									name="fetalWeight"
+									label="Cân nặng thai (kg)"
+									rules={[{ required: true, message: "Vui lòng nhập cân nặng thai" }]}
+								>
+									<InputNumber min={0} step={0.01} style={{ width: "100%" }} placeholder="Nhập cân nặng" />
 								</Form.Item>
 							</Col>
 							<Col span={8}>
-								<Form.Item label={index === 0 ? "Số lượng" : ""} required>
-									<InputNumber
-										min={1}
-										style={{ width: "100%" }}
-										value={medication.quantity}
-										onChange={(value) => handleMedicationChange(index, "quantity", value)}
-									/>
+								<Form.Item
+									name="fetalHeight"
+									label="Chiều cao thai (cm)"
+									rules={[{ required: true, message: "Vui lòng nhập chiều cao thai" }]}
+								>
+									<InputNumber min={0} step={0.01} style={{ width: "100%" }} placeholder="Nhập chiều cao" />
 								</Form.Item>
 							</Col>
-							<Col span={4} style={{ display: "flex", alignItems: "flex-end" }}>
-								<Button
-									danger
-									onClick={() => handleRemoveMedication(index)}
-									style={{ marginBottom: index === 0 ? 0 : 24 }}
+							<Col span={8}>
+								<Form.Item
+									name="fetalHeartbeat"
+									label="Nhịp tim thai (bpm)"
+									rules={[{ required: true, message: "Vui lòng nhập nhịp tim thai" }]}
 								>
-									Xóa
-								</Button>
+									<InputNumber min={0} step={0.01} style={{ width: "100%" }} placeholder="Nhập nhịp tim" />
+								</Form.Item>
 							</Col>
 						</Row>
-					))}
 
-					<Button
-						type="dashed"
-						onClick={handleAddMedication}
-						style={{ width: "100%", marginBottom: 16 }}
-						icon={<PlusOutlined />}
-					>
-						Thêm thuốc
-					</Button>
+						<Form.Item name="warning" label="Cảnh báo / Ghi chú">
+							<Input.TextArea rows={3} placeholder="Nhập cảnh báo hoặc ghi chú nếu có" />
+						</Form.Item>
 
+						<Form.Item>
+							<Button type="primary" htmlType="submit">
+								Thêm thông tin khám
+							</Button>
+						</Form.Item>
+					</Form>
+
+					{/* Display added fetal checkups */}
+					{fetalCheckups.length > 0 && (
+						<>
+							<Divider orientation="left">Thông tin khám đã thêm</Divider>
+							<Table
+								dataSource={fetalCheckups}
+								columns={[
+									{
+										title: "Cân nặng thai (kg)",
+										dataIndex: "fetalWeight",
+										key: "fetalWeight",
+									},
+									{
+										title: "Chiều cao thai (cm)",
+										dataIndex: "fetalHeight",
+										key: "fetalHeight",
+									},
+									{
+										title: "Nhịp tim thai (bpm)",
+										dataIndex: "fetalHeartbeat",
+										key: "fetalHeartbeat",
+									},
+									{
+										title: "Cảnh báo",
+										dataIndex: "warning",
+										key: "warning",
+										render: (text: string | null) => text || "Không có",
+									},
+								]}
+								pagination={false}
+								rowKey={(record) => record.fetalRecordId}
+							/>
+						</>
+					)}
+
+					{/* Medication Section */}
+					{showMedicationSection && (
+						<>
+							<Divider orientation="left">Đơn thuốc</Divider>
+
+							{medications.map((medication, index) => (
+								<Row gutter={16} key={index} style={{ marginBottom: 16 }}>
+									<Col span={12}>
+										<Form.Item label={index === 0 ? "Thuốc" : ""} required>
+											<Select
+												style={{ width: "100%" }}
+												placeholder="Chọn thuốc"
+												value={medication.medicationId || undefined}
+												onChange={(value) => handleMedicationChange(index, "medicationId", value)}
+												options={availableMedications?.map((med) => ({
+													value: med.id,
+													label: `${med.name} - ${Number.parseInt(med.price).toLocaleString("vi-VN")} VNĐ`,
+												}))}
+											/>
+										</Form.Item>
+									</Col>
+									<Col span={8}>
+										<Form.Item label={index === 0 ? "Số lượng" : ""} required>
+											<InputNumber
+												min={1}
+												style={{ width: "100%" }}
+												value={medication.quantity}
+												onChange={(value) => handleMedicationChange(index, "quantity", value)}
+											/>
+										</Form.Item>
+									</Col>
+									<Col span={4} style={{ display: "flex", alignItems: "flex-end" }}>
+										<Button
+											danger
+											onClick={() => handleRemoveMedication(index)}
+											style={{ marginBottom: index === 0 ? 0 : 24 }}
+										>
+											Xóa
+										</Button>
+									</Col>
+								</Row>
+							))}
+
+							<Button
+								type="dashed"
+								onClick={handleAddMedication}
+								style={{ width: "100%", marginBottom: 16 }}
+								icon={<PlusOutlined />}
+							>
+								Thêm thuốc
+							</Button>
+						</>
+					)}
+
+					{/* Submit Button */}
+					<Divider />
 					<Form.Item>
 						<Space style={{ display: "flex", justifyContent: "flex-end" }}>
 							<Button onClick={() => setCheckupModalVisible(false)}>Hủy</Button>
-							<Button type="primary" htmlType="submit">
+							<Button type="primary" onClick={handleSubmitCheckup} disabled={fetalCheckups.length === 0}>
 								Lưu thông tin
 							</Button>
 						</Space>
 					</Form.Item>
-				</Form>
+				</div>
 			</Modal>
 		</motion.div>
 	)

@@ -39,19 +39,19 @@ const useMedicineService = () => {
     },
     [callApi, dispatch, router]
   );
-  
-  const getMedicinesService= useCallback(
+
+  const getMedicinesService = useCallback(
     async (keyword: string, isDeleted: number) => {
       try {
-        const response = await callApi("post", "medication/search",{
-            "searchCondition": {
-                "keyword": keyword,
-                "isDeleted": isDeleted | 0
-            },
-            "pageInfo": {
-                "pageNum": 1,
-                "pageSize": 100
-            }
+        const response = await callApi("post", "medication/search", {
+          "searchCondition": {
+            "keyword": keyword,
+            "isDeleted": isDeleted | 0
+          },
+          "pageInfo": {
+            "pageNum": 1,
+            "pageSize": 100
+          }
         });
         console.log("getMedicinesService: ", response)
         return response;

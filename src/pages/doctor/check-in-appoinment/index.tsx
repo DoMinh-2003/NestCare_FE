@@ -1,3 +1,6 @@
+"use client"
+
+import type React from "react"
 
 import {
 	BellOutlined,
@@ -6,15 +9,16 @@ import {
 	FileTextOutlined,
 	HeartOutlined,
 	PlusOutlined,
-	ReloadOutlined
+	ReloadOutlined,
 } from "@ant-design/icons"
 import {
 	Badge,
 	Button,
 	Card,
 	DatePicker,
-	DatePickerProps,
+	type DatePickerProps,
 	Form,
+	Input,
 	message,
 	Modal,
 	Select,
@@ -23,7 +27,7 @@ import {
 	Table,
 	Tabs,
 	Tag,
-	Typography
+	Typography,
 } from "antd"
 import dayjs from "dayjs"
 import moment from "moment"
@@ -79,7 +83,7 @@ interface Appointment {
 
 function DoctorManageCheckinAppointments() {
 	const [selectedDate, setSelectedDate] = useState(moment().format("YYYY-MM-DD"))
-	const [selectedDateObj, setSelectedDateObj] = useState(moment()) // Store the moment object for DatePicker
+	const [datePickerValue, setDatePickerValue] = useState<dayjs.Dayjs>(dayjs()) // Add state for DatePicker value
 	const [appointments, setAppointments] = useState<Appointment[]>([])
 	const [services, setServices] = useState<[]>([])
 	const [currentDoctor, setCurrentDoctor] = useState(null)
@@ -97,6 +101,8 @@ function DoctorManageCheckinAppointments() {
 	const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null)
 	const [fetalModalVisible, setFetalModalVisible] = useState(false)
 	const [selectedFetalRecords, setSelectedFetalRecords] = useState<FetalRecord[]>([])
+	const [search, setSearch] = useState("")
+	const [statusFilter, setStatusFilter] = useState<string>(AppointmentStatus.CHECKED_IN) // Set default to CHECKED_IN
 
 	const navigate = useNavigate()
 
@@ -105,7 +111,7 @@ function DoctorManageCheckinAppointments() {
 		if (!currentDoctor) return
 		setLoading(true)
 		try {
-			const response = await getAppointmentsByDoctor(currentDoctor.id, selectedDate, AppointmentStatus.CHECKED_IN)
+			const response = await getAppointmentsByDoctor(currentDoctor.id, selectedDate, search, statusFilter)
 			if (response) {
 				setAppointments(response.filter((item) => !item.isDeleted))
 			}
@@ -174,11 +180,12 @@ function DoctorManageCheckinAppointments() {
 		}
 	}, [])
 
+	// Update effect to include search and statusFilter dependencies
 	useEffect(() => {
 		if (currentDoctor && selectedDate) {
 			getAppointmentFromDoctor()
 		}
-	}, [currentDoctor, selectedDate])
+	}, [currentDoctor, selectedDate, search, statusFilter])
 
 	const getStatusTag = (status: AppointmentStatus) => {
 		switch (status) {
@@ -220,11 +227,7 @@ function DoctorManageCheckinAppointments() {
 			title: "Hồ Sơ khám",
 			key: "fetalRecords",
 			render: (record: Appointment) => {
-				return (
-					<Link to={`appoinment/${record.id}`}>
-						Xem
-					</Link>
-				)
+				return <Link to={`appoinment/${record.id}`}>Xem</Link>
 			},
 		},
 		{
@@ -253,6 +256,14 @@ function DoctorManageCheckinAppointments() {
 				) : (
 					"N/A"
 				),
+		},
+		{
+			title: "Tên sản phụ",
+			key: "motherName",
+			render: (record: Appointment) => {
+				const motherName = record.fetalRecords?.[0]?.mother?.fullName || "N/A"
+				return <span className="font-medium">{motherName}</span>
+			},
 		},
 		{
 			title: "Trạng thái",
@@ -318,6 +329,16 @@ function DoctorManageCheckinAppointments() {
 	]
 
 	const handleRefresh = () => {
+		// Reset all filters and set date to today
+		setSearch("")
+		setStatusFilter(AppointmentStatus.CHECKED_IN)
+
+		// Reset date to today
+		const today = dayjs()
+		setDatePickerValue(today)
+		setSelectedDate(today.format("YYYY-MM-DD"))
+
+		// Fetch appointments with reset filters
 		getAppointmentFromDoctor()
 	}
 
@@ -489,20 +510,28 @@ function DoctorManageCheckinAppointments() {
 		},
 	]
 
-
-	// const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-	// 	console.log(date, dateString);
-	// };
 	// Fixed date change handler
-	const handleDateChange = async (date: DatePickerProps['onChange']) => {
-		console.log('====================================');
-		console.log("=====date changed====", date);
-		console.log('====================================');
-
+	const handleDateChange = async (date: DatePickerProps["onChange"]) => {
 		if (date) {
-			const newDate = dayjs(date).format('YYYY-MM-DD');
-			setSelectedDate(newDate);
+			// Update both the DatePicker value and the selected date string
+			setDatePickerValue(date)
+			setSelectedDate(dayjs(date).format("YYYY-MM-DD"))
+		} else {
+			// If date is cleared, set to today
+			const today = dayjs()
+			setDatePickerValue(today)
+			setSelectedDate(today.format("YYYY-MM-DD"))
 		}
+	}
+
+	// Update search handler to properly set the search state
+	const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setSearch(e.target.value)
+	}
+
+	// Handle status tab change
+	const handleStatusChange = (activeKey: string) => {
+		setStatusFilter(activeKey)
 	}
 
 	return (
@@ -527,7 +556,9 @@ function DoctorManageCheckinAppointments() {
 				bodyStyle={{ padding: "24px" }}
 			>
 				<div className="flex items-center gap-4 mb-6">
-					<DatePicker onChange={handleDateChange} />
+					<DatePicker onChange={handleDateChange} value={datePickerValue} allowClear />
+
+					<Input onChange={handleSearch} placeholder="Tìm kiếm theo tên sản phụ" value={search} allowClear />
 
 					<Button
 						type="primary"
@@ -539,7 +570,11 @@ function DoctorManageCheckinAppointments() {
 					</Button>
 				</div>
 
-				<Tabs type="card" className="mb-6" tabBarStyle={{ marginBottom: "16px", fontWeight: "bold" }}>
+				<Tabs
+					type="card"
+					className="mb-6"
+					tabBarStyle={{ marginBottom: "16px", fontWeight: "bold" }}
+				>
 					<TabPane
 						tab={
 							<span>
