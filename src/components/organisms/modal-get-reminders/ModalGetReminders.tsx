@@ -91,7 +91,7 @@ const ModalGetReminders = ({ visible, reminders, onClose }: ReminderModalProps) 
                 visible={visible}
                 onOk={onClose}
                 onCancel={onClose}
-                width={900}
+                width={1200}
                 footer={""}
             >
                 <Table
