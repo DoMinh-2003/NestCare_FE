@@ -29,6 +29,7 @@ const items: MenuItem[] = [
   getItem("Quản lí người dùng", "users", <SlCalender />),
   getItem("Quản lí thanh toán", "orders", <SlCalender />),
   getItem("Xác nhận cuộc hẹn", "appointments", <SlCalender />),
+  getItem("Cập nhật thông tin", "update-mother-record", <SlCalender />),
   getItem("Huỷ cuộc cuộc hẹn", "cancel-appointments", <SlCalender />),
 ];
 

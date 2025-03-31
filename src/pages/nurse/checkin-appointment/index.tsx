@@ -3,12 +3,13 @@ import { Table, Button, Modal, message, Select, Tag, DatePicker } from 'antd';
 import useAppointmentService from '../../../services/useApoitment';
 import type { DatePickerProps, GetProps } from 'antd';
 import { Input } from 'antd';
-import ModalUpdateMotherHealth from '../../../components/organisms/modal-update-mother-heal/ModalUpdateMotherHealth';
 import { AppointmentStatus } from '../../../constants/status';
 import { formatDate } from '../../../utils/formatDate';
 import userAppointmentService from '../../../services/useAppointmentService';
 import moment from 'moment';
 import dayjs from 'dayjs';
+import { Slot } from '../../../model/Slot';
+
 type SearchProps = GetProps<typeof Input.Search>;
 const { Search } = Input;
 interface FetalRecord {
@@ -35,16 +36,13 @@ interface Appointment {
 
 const NurseCheckIn: React.FC = () => {
     const [appointments, setAppointments] = useState<Appointment[]>([]);
-    const { getAppointmentsByStatus, updateAppointmentsByStatus } = useAppointmentService()
+    const { updateAppointmentsByStatus } = useAppointmentService()
     const { getAppointmentsByDate } = userAppointmentService();
-    const [statusFilter, setStatusFilter] = useState<string>('PENDING')
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [appointmentId, setAppointmentId] = useState<string>('')
     const [day, setDay] = useState<string>('')
     const today = dayjs();
     useEffect(() => {
         getAppointmentsByStatusFromNurse();
-    }, [statusFilter, day])
+    }, [day])
 
     useEffect(() => {
         const today = moment().format('YYYY-MM-DD');
@@ -52,20 +50,9 @@ const NurseCheckIn: React.FC = () => {
         setDay(today);
     }, [])
 
-    const showModal = (id: string) => {
-        setIsModalVisible(true);
-        setAppointmentId(id)
-    };
-
-    const handleClose = () => {
-        setIsModalVisible(false);
-    };
-
-
-
     const getAppointmentsByStatusFromNurse = async () => {
         if (day) {
-            const response = await getAppointmentsByDate(day, '', statusFilter)
+            const response = await getAppointmentsByDate(day, '', "PENDING")
             console.log("getAppointmentsByStatusFromNurse: ", response)
             if (response) {
                 setAppointments(response)
@@ -81,27 +68,20 @@ const NurseCheckIn: React.FC = () => {
                 const response = await updateAppointmentsByStatus("CHECKED_IN", appointmentId)
                 if (response) {
                     message.success('Cuộc hẹn đã được chấp nhận!');
+                    getAppointmentsByStatusFromNurse()
                 }
                 // Cập nhật trạng thái trong state nếu cần
             },
         });
     };
 
-    const handleReject = (appointmentId: string) => {
-        Modal.confirm({
-            title: 'Xác nhận',
-            content: 'Bạn có chắc chắn muốn từ chối cuộc hẹn này?',
-            onOk: async () => {
-                const response = await updateAppointmentsByStatus("FAIL", appointmentId)
-                if (response) {
-                    message.success('Cuộc hẹn đã được từ chối!');
-                }
-            },
-        });
-    };
-
     const columns = [
-
+        {
+            title: 'Tên bác sĩ',
+            dataIndex: ['doctor', 'fullName'],
+            key: 'doctorName',
+            width: "20%"
+        },
         {
             title: 'Tên mẹ',
             width: "25%",
@@ -112,12 +92,14 @@ const NurseCheckIn: React.FC = () => {
             )
         },
         {
-            title: 'Tên bác sĩ',
-            dataIndex: ['doctor', 'fullName'],
-            key: 'doctorName',
+            title: 'Slot',
+            dataIndex: 'slot',
+            key: 'slot',
+            render: (slot: Slot) => (
+                <div>{slot.startTime} - {slot.endTime}</div>
+            ),
             width: "20%"
         },
-
         {
             width: "20%",
             title: 'Trạng thái',
@@ -135,32 +117,16 @@ const NurseCheckIn: React.FC = () => {
         {
             title: 'Hành động',
             key: 'action',
-            render: (text: any, record: Appointment) => (
-                record.status === "PENDING" ? <div className='flex gap-2'>
-                    <Button className='bg-blue hover:bg-blue text-white' type="default" onClick={() => showModal(record.id)}>Cập nhật thông tin sức khoẻ</Button>
+            render: (record: Appointment) => (<div className='flex gap-2'>
                     <Button type="primary" onClick={() => handleAccept(record.id)}>Chấp nhận</Button>
-                    <Button type="danger" onClick={() => handleReject(record.id)} style={{ marginLeft: 8 }}>Từ chối</Button>
                 </div>
-                    : <div>
-                        {record.status}
-                    </div>
             ),
         },
     ];
 
-    const handleChange = (value: string) => {
-        setStatusFilter(value);
-    }
-
-    const handleSubmit = (response: any) => {
-        if (response) {
-            getAppointmentsByStatusFromNurse();
-        }
-    }
-
-    const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
-        console.log(day, value, statusFilter)
-        const response = await getAppointmentsByDate(day, value, statusFilter)
+    const onSearch: SearchProps['onSearch'] = async (value, _e) => {
+        console.log(day, value, "PENDING")
+        const response = await getAppointmentsByDate(day, value, "PENDING")
         console.log("response: ", response);
         setAppointments(response);
         // if (response && value != '') {
@@ -177,37 +143,22 @@ const NurseCheckIn: React.FC = () => {
 
     const onChange: DatePickerProps['onChange'] = (date, dateString) => {
         console.log(date, dateString);
-        setDay(dateString)
+        if (typeof dateString === 'string') {
+            setDay(dateString)
+        }
     };
 
     return (
         <div>
-            <div className='text-3xl font-bold text-center my-5'>Quản lý cuộc hẹn</div>
+            <div className='text-3xl font-bold text-center my-5'>Xác nhận cuộc hẹn</div>
             <div className='flex gap-2'>
                 <div className='flex gap-2 mb-2'>
                     <Search placeholder="Tìm kiếm bằng tên mẹ" className='w-[250px]' onSearch={onSearch} enterButton />
                 </div>
-                <Select
-                    placeholder="Chọn gói dịch vụ"
-                    onChange={handleChange}
-                    className='w-[150px] mb-2'
-                    defaultValue={"PENDING"}
-                    options={
-                        appointmentStatus.map((item) => (
-                            { value: item.value, label: item.label }
-                        ))
-                    }
-                />
                 <div>
                     <DatePicker defaultValue={today} format="YYYY-MM-DD" onChange={onChange} />
                 </div>
             </div>
-            <ModalUpdateMotherHealth
-                id={appointmentId}
-                onSumit={handleSubmit}
-                isVisible={isModalVisible}
-                onClose={handleClose}
-            />
             <Table dataSource={appointments} columns={columns} rowKey="id" />
         </div>
     );

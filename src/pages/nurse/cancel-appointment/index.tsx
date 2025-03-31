@@ -3,7 +3,7 @@ import { Table, Input, Button, Modal, Form, message, Select } from 'antd';
 import userAppointmentService from '../../../services/useAppointmentService';
 import userUserService from '../../../services/userUserService';
 import moment from 'moment';
-import { appointmentStatus, getStatusTag } from '../appointment';
+import { appointmentStatus, getStatusTag } from '../checkin-appointment';
 import useAppointmentService from '../../../services/useApoitment';
 import { AppointmentStatus } from '../../../constants/status';
 // types.ts
@@ -141,7 +141,7 @@ const CancelAppointment = () => {
     const getDoctors = async () => {
         const response = await getUsers()
         if (response) {
-            setDoctors(response)
+            setDoctors(response.filter((item)=>item.role === 'doctor'))
         }
     }
 

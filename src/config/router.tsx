@@ -43,7 +43,7 @@ import FetailDetail from "../pages/doctor/fetal-detail";
 import BookingDoctor from "../pages/customer/booking-doctor";
 import AppointmentHistory from "../pages/customer/appointment-history";
 import AdminManageMedicines from "../pages/admin/manage-medicines";
-import NurseCheckIn from "../pages/nurse/appointment";
+import NurseCheckIn from "../pages/nurse/checkin-appointment";
 import WeekCheckup from "../pages/admin/week-checkup";
 import FetalChart from "../pages/customer/fetal-chart";
 import BlogPage from "../pages/customer/blog";
@@ -65,6 +65,7 @@ import CancelAppointment from "../pages/nurse/cancel-appointment";
 import PaymentBooking from "../components/molecules/payment-layout";
 import ForgotPassword from "../pages/customer/forgot-password";
 import Dashboard from "../pages/doctor/dashboard";
+import NurseUpdateMotherRecord from "../pages/nurse/update-mother-record";
 
 
 
@@ -365,6 +366,10 @@ export const router = createBrowserRouter([
       {
         path: NURSE_ROUTES.NURSE_CANCEL_APPOINTMENT,
         element: <CancelAppointment />,
+      },
+      {
+        path: NURSE_ROUTES.NURSE_UPDATE_MOTHER_RECORD,
+        element: <NurseUpdateMotherRecord />,
       },
       {
         path: 'dashboard',
