@@ -61,11 +61,17 @@ const ModalCreateAppointment = ({ isVisible, onClose, createRespone, fetals }: {
         console.log("appointmentData: ", appointmentData)
         const response = await createAppointment(appointmentData);
         console.log("response: ", response)
-        if (response) {
+        if (response && response.appointmentDate) {
+            createRespone(values);
+            message.success('Tạo lịch hẹn thành công');
+            onClose(); // Close the modal after submission
+            form.resetFields()
+        }else if(response){
             createRespone(values);
             message.success('Tạo lịch hẹn thành công');
             window.location.href =response
             onClose(); // Close the modal after submission
+            form.resetFields()
         }
     };
 

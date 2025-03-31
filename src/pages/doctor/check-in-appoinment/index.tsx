@@ -38,7 +38,7 @@ import ModalCreateReminder from "../../../components/organisms/modal-create-remi
 import { tableText } from "../../../constants/function"
 import { AppointmentStatus, PregnancyStatus } from "../../../constants/status"
 import userAppointmentService from "../../../services/useAppointmentService"
-import userReminderService from "../../../services/useReminders"
+import useReminderService from "../../../services/useReminders"
 import useServiceService from "../../../services/useServiceService"
 import { formatDate } from "../../../utils/formatDate"
 import { formatMoney } from "../../../utils/formatMoney"
@@ -94,7 +94,7 @@ function DoctorManageCheckinAppointments() {
 	const [modalVisible, setModalVisible] = useState(false)
 	const [modalData, setModalData] = useState<any[]>([])
 	const [modalTitle, setModalTitle] = useState("")
-	const { createReminderByDoctor } = userReminderService()
+	const { createReminderByDoctor } = useReminderService()
 	const [reminderModalVisible, setReminderModalVisible] = useState(false)
 	const [motherId, setMotherId] = useState<string | null>(null)
 	const [addServiceModalVisible, setAddServiceModalVisible] = useState(false)

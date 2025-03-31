@@ -99,25 +99,25 @@ const ManagePackage = () => {
             key: "price",
             render: (price: number) => formatMoney(price)
         },
-        {
-            title: "Chu kỳ",
-            dataIndex: "period",
-            key: "period",
-            render: (period: string) => {
-                switch (period) {
-                    case "WEEKLY":
-                        return "Hàng tuần";
-                    case "FULL":
-                        return "Toàn thời gian";
-                    case "MONTHLY":
-                        return "Hàng tháng";
-                    case "DAILY":
-                        return "Hàng ngày";
-                    default:
-                        return period;
-                }
-            },
-        },
+        // {
+        //     title: "Chu kỳ",
+        //     dataIndex: "period",
+        //     key: "period",
+        //     render: (period: string) => {
+        //         switch (period) {
+        //             case "WEEKLY":
+        //                 return "Hàng tuần";
+        //             case "FULL":
+        //                 return "Toàn thời gian";
+        //             case "MONTHLY":
+        //                 return "Hàng tháng";
+        //             case "DAILY":
+        //                 return "Hàng ngày";
+        //             default:
+        //                 return period;
+        //         }
+        //     },
+        // },
 
         // {
         //     title: "Giao hàng",
@@ -125,12 +125,12 @@ const ManagePackage = () => {
         //     key: "delivery_included",
         //     render: (value: number) => (value ? <Tag color="green">Có</Tag> : <Tag color="red">Không</Tag>),
         // },
-        {
-            title: "Cảnh báo",
-            dataIndex: "alerts_included",
-            key: "alerts_included",
-            render: (value: number) => (value ? <Tag color="green">Có</Tag> : <Tag color="red">Không</Tag>),
-        },
+        // {
+        //     title: "Cảnh báo",
+        //     dataIndex: "alerts_included",
+        //     key: "alerts_included",
+        //     render: (value: number) => (value ? <Tag color="green">Có</Tag> : <Tag color="red">Không</Tag>),
+        // },
         {
             title: "Trạng thái",
             dataIndex: "isDeleted",
