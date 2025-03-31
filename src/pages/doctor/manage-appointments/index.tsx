@@ -1,22 +1,51 @@
+"use client"
 
 import type React from "react"
+
+import {
+    BellOutlined,
+    CalendarOutlined,
+    ClockCircleOutlined,
+    FileTextOutlined,
+    HeartOutlined,
+    PlusOutlined,
+    ReloadOutlined,
+} from "@ant-design/icons"
+import {
+    Badge,
+    Button,
+    Card,
+    DatePicker,
+    type DatePickerProps,
+    Form,
+    Input,
+    message,
+    Modal,
+    Select,
+    Space,
+    Spin,
+    Table,
+    Tabs,
+    Tag,
+    Typography,
+} from "antd"
+import dayjs from "dayjs"
+import moment from "moment"
 import { useEffect, useState } from "react"
-import { Button, message, Table, Form, Modal, Select, Tag, Space, Dropdown, Menu, Typography, DatePicker } from "antd"
 import { Link, Outlet, useNavigate } from "react-router-dom"
-import userAppointmentService from "../../../services/useAppointmentService"
-import { formatDate } from "../../../utils/formatDate"
-import { AppointmentStatus, PregnancyStatus } from "../../../constants/status"
-import { tableText } from "../../../constants/function"
-import { formatMoney } from "../../../utils/formatMoney"
+import ModalAddServices from "../../../components/organisms/modal-add-service-of-appointment"
 import ModalCreateReminder from "../../../components/organisms/modal-create-reminder/ModalCreateReminder"
+import { tableText } from "../../../constants/function"
+import { AppointmentStatus, PregnancyStatus } from "../../../constants/status"
+import userAppointmentService from "../../../services/useAppointmentService"
 import userReminderService from "../../../services/useReminders"
 import useServiceService from "../../../services/useServiceService"
-import ModalAddServices from "../../../components/organisms/modal-add-service-of-appointment"
-import { DownOutlined, FileTextOutlined } from "@ant-design/icons"
-import moment from "moment"
+import { formatDate } from "../../../utils/formatDate"
+import { formatMoney } from "../../../utils/formatMoney"
 
 const { Option } = Select
-const { Text } = Typography
+const { Text, Title } = Typography
+const { TabPane } = Tabs
 
 interface FetalRecord {
     id: string
@@ -44,16 +73,22 @@ interface Appointment {
     medicationBills: any[]
     fullHistory: any[]
     isDeleted: boolean
+    slot?: {
+        id: string
+        startTime: string
+        endTime: string
+        isActive: boolean
+    }
 }
 
-const DoctorManageAppointments: React.FC = () => {
+function DoctorManageCheckinAppointments() {
+    const [selectedDate, setSelectedDate] = useState(moment().format("YYYY-MM-DD"))
+    const [datePickerValue, setDatePickerValue] = useState<dayjs.Dayjs>(dayjs()) // Add state for DatePicker value
     const [appointments, setAppointments] = useState<Appointment[]>([])
     const [services, setServices] = useState<[]>([])
     const [currentDoctor, setCurrentDoctor] = useState(null)
-    const [visible, setVisible] = useState(false)
+    const [loading, setLoading] = useState(false)
     const { getAppointmentsByDoctor, updateAppointmentStatus } = userAppointmentService()
-    const [selectedDate, setSelectedDate] = useState(moment(new Date()).format("YYYY-MM-DD"))
-    const [statusFilter, setStatusFilter] = useState<AppointmentStatus | null>('CHECKED_IN')
     const [form] = Form.useForm()
     const { getServices } = useServiceService()
     const [modalVisible, setModalVisible] = useState(false)
@@ -66,30 +101,24 @@ const DoctorManageAppointments: React.FC = () => {
     const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null)
     const [fetalModalVisible, setFetalModalVisible] = useState(false)
     const [selectedFetalRecords, setSelectedFetalRecords] = useState<FetalRecord[]>([])
+    const [search, setSearch] = useState("")
+    const [statusFilter, setStatusFilter] = useState<string>("") // Add status filter state
 
     const navigate = useNavigate()
 
     // Lấy danh sách cuộc hẹn
     const getAppointmentFromDoctor = async () => {
         if (!currentDoctor) return
+        setLoading(true)
         try {
-            const response = await getAppointmentsByDoctor(currentDoctor.id, selectedDate, statusFilter)
+            const response = await getAppointmentsByDoctor(currentDoctor.id, selectedDate, search, statusFilter)
             if (response) {
                 setAppointments(response.filter((item) => !item.isDeleted))
             }
         } catch (error) {
             message.error("Không thể tải danh sách cuộc hẹn")
-        }
-    }
-
-    // Khi đổi trạng thái
-    const handleChangeStatus = async (record: Appointment, newStatus: AppointmentStatus) => {
-        try {
-            await updateAppointmentStatus(record.id, newStatus)
-            message.success("Cập nhật trạng thái thành công!")
-            getAppointmentFromDoctor() // gọi lại để refresh danh sách
-        } catch (error) {
-            message.error("Cập nhật trạng thái thất bại!")
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -126,12 +155,8 @@ const DoctorManageAppointments: React.FC = () => {
         }
     }
 
-    const handleCancel = () => {
-        setVisible(false)
-    }
-
     const navigateToFetalDetail = (fetalId: string) => {
-        navigate(`fetals/${fetalId}`)
+        navigate(`/fetals/${fetalId}`)
     }
 
     useEffect(() => {
@@ -155,12 +180,12 @@ const DoctorManageAppointments: React.FC = () => {
         }
     }, [])
 
+    // Update effect to include search and statusFilter dependencies
     useEffect(() => {
-        if (currentDoctor) {
+        if (currentDoctor && selectedDate) {
             getAppointmentFromDoctor()
         }
-    }, [currentDoctor, selectedDate, statusFilter])
-
+    }, [currentDoctor, selectedDate, search, statusFilter])
 
     const getStatusTag = (status: AppointmentStatus) => {
         switch (status) {
@@ -199,130 +224,66 @@ const DoctorManageAppointments: React.FC = () => {
     // Cấu hình cột cho bảng chính
     const columns = [
         {
-            title: "Hồ Sơ thai nhi",
+            title: "Hồ Sơ khám",
             key: "fetalRecords",
             render: (record: Appointment) => {
-                const fetalCount = record.fetalRecords?.length || 0
-
-                if (fetalCount === 0) {
-                    return <Text type="secondary">Không có hồ sơ</Text>
-                } else if (fetalCount === 1) {
-                    return (
-                        <Link to={`fetals/${record.fetalRecords[0].id}`} className="text-blue">
-                            Xem hồ sơ: {record.fetalRecords[0].name}
-                        </Link>
-                    )
-                } else {
-                    return (
-                        <Dropdown
-                            overlay={
-                                <Menu>
-                                    {record.fetalRecords.map((fetal) => (
-                                        <Menu.Item key={fetal.id} onClick={() => navigateToFetalDetail(fetal.id)}>
-                                            <Space>
-                                                <FileTextOutlined />
-                                                {fetal.name}
-                                                {getPregnancyStatusTag(fetal.status)}
-                                            </Space>
-                                        </Menu.Item>
-                                    ))}
-                                    <Menu.Divider />
-                                    <Menu.Item key="view-all" onClick={() => showFetalRecords(record.fetalRecords)}>
-                                        Xem tất cả hồ sơ
-                                    </Menu.Item>
-                                </Menu>
-                            }
-                            trigger={["click"]}
-                        >
-                            <Button type="link">
-                                Xem {fetalCount} hồ sơ thai nhi <DownOutlined />
-                            </Button>
-                        </Dropdown>
-                    )
-                }
+                return <Link to={`appoinment/${record.id}`}>Xem</Link>
             },
         },
         {
             title: "Ngày hẹn",
             dataIndex: "appointmentDate",
             key: "appointmentDate",
-            render: (date: string) => formatDate(date),
+            render: (date: string) => (
+                <span className="font-medium">
+                    <CalendarOutlined className="mr-2 text-green-500" />
+                    {formatDate(date)}
+                </span>
+            ),
+            sorter: (a, b) => moment(a.appointmentDate).unix() - moment(b.appointmentDate).unix(),
+            defaultSortOrder: "ascend",
+        },
+        {
+            title: "Thời gian",
+            key: "time",
+            render: (record: Appointment) =>
+                record.slot ? (
+                    <span className="font-medium">
+                        <ClockCircleOutlined className="mr-2 text-purple-500" />
+                        {moment(record.slot.startTime, "H:mm:ss").format("HH:mm")} -{" "}
+                        {moment(record.slot.endTime, "H:mm:ss").format("HH:mm")}
+                    </span>
+                ) : (
+                    "N/A"
+                ),
+        },
+        {
+            title: "Tên sản phụ",
+            key: "motherName",
+            render: (record: Appointment) => {
+                const motherName = record.fetalRecords?.[0]?.mother?.fullName || "N/A"
+                return <span className="font-medium">{motherName}</span>
+            },
         },
         {
             title: "Trạng thái",
             dataIndex: "status",
             key: "status",
-            // Thay Tag bằng Select
-            render: (value: AppointmentStatus, record: Appointment) => (
-                <Select style={{ width: 180 }} value={value} onChange={(newStatus) => handleChangeStatus(record, newStatus)}>
-                    <Option value={AppointmentStatus.CHECKED_IN}>{getStatusTag(AppointmentStatus.CHECKED_IN)}</Option>
-                    <Option value={AppointmentStatus.IN_PROGRESS}>{getStatusTag(AppointmentStatus.IN_PROGRESS)}</Option>
-                    <Option value={AppointmentStatus.COMPLETED}>{getStatusTag(AppointmentStatus.COMPLETED)}</Option>
-                    <Option value={AppointmentStatus.CANCELED}>{getStatusTag(AppointmentStatus.CANCELED)}</Option>
-                </Select>
-            ),
-        },
-        {
-            title: "Dịch vụ",
-            dataIndex: "appointmentServices",
-            key: "appointmentServices",
-            render: (services: any[], record: Appointment) => (
-                <Space>
-                    <Button onClick={() => showDetails("Dịch vụ khám", services)} disabled={!services?.length}>
-                        Xem
-                    </Button>
-                    <Button onClick={() => openAddServiceModal(record)}>Thêm dịch vụ</Button>
-                </Space>
-            ),
-        },
-        {
-            title: "Hóa đơn thuốc",
-            dataIndex: "medicationBills",
-            key: "medicationBills",
-            render: (bills: any[]) => (
-                <Button onClick={() => showDetails("Hóa đơn thuốc", bills)} disabled={!bills?.length}>
-                    Xem
-                </Button>
-            ),
-        },
-        {
-            title: "Lịch sử khám",
-            dataIndex: "fullHistory",
-            key: "fullHistory",
-            render: (history: any[]) => (
-                <Button onClick={() => showDetails("Lịch sử khám", history)} disabled={!history?.length}>
-                    Xem
-                </Button>
-            ),
-        },
-        {
-            title: "Hành động",
-            key: "actions",
-            render: (record: Appointment) => {
-                // Lấy motherId từ fetal record đầu tiên nếu có
-                const mId = record.fetalRecords?.[0]?.mother?.id
-
-                return (
-                    <Button
-                        type="primary"
-                        onClick={() => {
-                            if (mId) {
-                                setMotherId(mId)
-                                setReminderModalVisible(true)
-                            } else {
-                                message.warning("Không tìm thấy thông tin mẹ để tạo nhắc nhở")
-                            }
-                        }}
-                        disabled={!mId}
-                    >
-                        Tạo nhắc nhở
-                    </Button>
-                )
-            },
+            render: (value: AppointmentStatus) => getStatusTag(value),
         },
     ]
 
     const handleRefresh = () => {
+        // Reset all filters and set date to today
+        setSearch("")
+        setStatusFilter("")
+
+        // Reset date to today
+        const today = dayjs()
+        setDatePickerValue(today)
+        setSelectedDate(today.format("YYYY-MM-DD"))
+
+        // Fetch appointments with reset filters
         getAppointmentFromDoctor()
     }
 
@@ -331,19 +292,39 @@ const DoctorManageAppointments: React.FC = () => {
         switch (modalTitle) {
             case "Dịch vụ khám":
                 return [
-                    { title: "Tên dịch vụ", dataIndex: "notes", key: "notes" },
+                    {
+                        title: "Tên dịch vụ",
+                        dataIndex: "notes",
+                        key: "notes",
+                        render: (text) => <span className="font-medium">{text}</span>,
+                    },
                     {
                         title: "Giá",
                         dataIndex: "price",
                         key: "price",
-                        render: (value: number) => formatMoney(value),
+                        render: (value: number) => <span className="font-medium text-green-600">{formatMoney(value)}</span>,
                     },
                 ]
             case "Hóa đơn thuốc":
                 return [
-                    { title: "Tên thuốc", dataIndex: "medicationName", key: "medicationName" },
-                    { title: "Liều lượng", dataIndex: "dosage", key: "dosage" },
-                    { title: "Giá", dataIndex: "price", key: "price" },
+                    {
+                        title: "Tên thuốc",
+                        dataIndex: "medicationName",
+                        key: "medicationName",
+                        render: (text) => <span className="font-medium">{text}</span>,
+                    },
+                    {
+                        title: "Liều lượng",
+                        dataIndex: "dosage",
+                        key: "dosage",
+                        render: (text) => <span className="font-medium text-blue-600">{text}</span>,
+                    },
+                    {
+                        title: "Giá",
+                        dataIndex: "price",
+                        key: "price",
+                        render: (value: number) => <span className="font-medium text-green-600">{formatMoney(value)}</span>,
+                    },
                 ]
             case "Lịch sử khám":
                 return [
@@ -351,15 +332,60 @@ const DoctorManageAppointments: React.FC = () => {
                         title: "Ngày khám",
                         dataIndex: "createdAt",
                         key: "createdAt",
-                        render: (text: string) => formatDate(text),
+                        render: (text: string) => (
+                            <span className="font-medium">
+                                <CalendarOutlined className="mr-2 text-blue-500" />
+                                {formatDate(text)}
+                            </span>
+                        ),
                     },
-                    { title: "Nhịp tim thai nhi (bpm)", dataIndex: "fetalHeartbeat", key: "fetalHeartbeat" },
-                    { title: "Chiều cao thai nhi (cm)", dataIndex: "fetalHeight", key: "fetalHeight" },
-                    { title: "Trọng lượng thai nhi (kg)", dataIndex: "fetalWeight", key: "fetalWeight" },
-                    { title: "Huyết áp mẹ (mmHg)", dataIndex: "motherBloodPressure", key: "motherBloodPressure" },
-                    { title: "Sức khỏe mẹ", dataIndex: "motherHealthStatus", key: "motherHealthStatus" },
-                    { title: "Cân nặng mẹ (kg)", dataIndex: "motherWeight", key: "motherWeight" },
-                    { title: "Cảnh báo", dataIndex: "warning", key: "warning" },
+                    {
+                        title: "Nhịp tim thai nhi (bpm)",
+                        dataIndex: "fetalHeartbeat",
+                        key: "fetalHeartbeat",
+                        render: (text) => <span className="font-medium text-red-500">{text}</span>,
+                    },
+                    {
+                        title: "Chiều cao thai nhi (cm)",
+                        dataIndex: "fetalHeight",
+                        key: "fetalHeight",
+                        render: (text) => <span className="font-medium text-green-600">{text}</span>,
+                    },
+                    {
+                        title: "Trọng lượng thai nhi (kg)",
+                        dataIndex: "fetalWeight",
+                        key: "fetalWeight",
+                        render: (text) => <span className="font-medium text-blue-600">{text}</span>,
+                    },
+                    {
+                        title: "Huyết áp mẹ (mmHg)",
+                        dataIndex: "motherBloodPressure",
+                        key: "motherBloodPressure",
+                        render: (text) => <span className="font-medium text-purple-600">{text}</span>,
+                    },
+                    {
+                        title: "Sức khỏe mẹ",
+                        dataIndex: "motherHealthStatus",
+                        key: "motherHealthStatus",
+                        render: (text) => <span className="font-medium">{text}</span>,
+                    },
+                    {
+                        title: "Cân nặng mẹ (kg)",
+                        dataIndex: "motherWeight",
+                        key: "motherWeight",
+                        render: (text) => <span className="font-medium text-orange-600">{text}</span>,
+                    },
+                    {
+                        title: "Cảnh báo",
+                        dataIndex: "warning",
+                        key: "warning",
+                        render: (text) =>
+                            text ? (
+                                <span className="font-medium text-red-600">{text}</span>
+                            ) : (
+                                <span className="text-gray-400">Không có</span>
+                            ),
+                    },
                 ]
             default:
                 return []
@@ -372,23 +398,40 @@ const DoctorManageAppointments: React.FC = () => {
             title: "Tên thai nhi",
             dataIndex: "name",
             key: "name",
+            render: (text) => (
+                <span className="font-medium">
+                    <HeartOutlined className="mr-2 text-red-500" />
+                    {text}
+                </span>
+            ),
         },
         {
             title: "Ngày bắt đầu thai kỳ",
             dataIndex: "dateOfPregnancyStart",
             key: "dateOfPregnancyStart",
-            render: (date: string) => formatDate(date),
+            render: (date: string) => (
+                <span className="font-medium">
+                    <CalendarOutlined className="mr-2 text-blue-500" />
+                    {formatDate(date)}
+                </span>
+            ),
         },
         {
             title: "Ngày dự sinh",
             dataIndex: "expectedDeliveryDate",
             key: "expectedDeliveryDate",
-            render: (date: string) => formatDate(date),
+            render: (date: string) => (
+                <span className="font-medium">
+                    <CalendarOutlined className="mr-2 text-green-500" />
+                    {formatDate(date)}
+                </span>
+            ),
         },
         {
             title: "Tình trạng sức khỏe",
             dataIndex: "healthStatus",
             key: "healthStatus",
+            render: (text) => <span className="font-medium text-blue-600">{text}</span>,
         },
         {
             title: "Trạng thái",
@@ -400,94 +443,211 @@ const DoctorManageAppointments: React.FC = () => {
             title: "Hành động",
             key: "action",
             render: (_, record: FetalRecord) => (
-                <Button type="primary" onClick={() => navigateToFetalDetail(record.id)}>
+                <Button
+                    type="primary"
+                    onClick={() => navigateToFetalDetail(record.id)}
+                    icon={<FileTextOutlined />}
+                    className="bg-blue-500 hover:bg-blue-600"
+                >
                     Xem chi tiết
                 </Button>
             ),
         },
     ]
 
-    const handleDateChange = (e) => {
-        console.log("e", e);
-        setSelectedDate(moment(e).format('YYYY-MM-DD'));
+    // Fixed date change handler
+    const handleDateChange = async (date: DatePickerProps["onChange"]) => {
+        if (date) {
+            // Update both the DatePicker value and the selected date string
+            setDatePickerValue(date)
+            setSelectedDate(dayjs(date).format("YYYY-MM-DD"))
+        } else {
+            // If date is cleared, set to today
+            const today = dayjs()
+            setDatePickerValue(today)
+            setSelectedDate(today.format("YYYY-MM-DD"))
+        }
+    }
+
+    // Update search handler to properly set the search state
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSearch(e.target.value)
+    }
+
+    // Handle status tab change
+    const handleStatusChange = (activeKey: string) => {
+        setStatusFilter(activeKey === "ALL" ? "" : activeKey)
     }
 
     return (
-        <div>
-            <h1 className="text-3xl font-extrabold text-center mb-5">Quản lí lịch khám</h1>
-            <div className="flex items-center gap-4 mb-6">
-                <Select
-                    style={{ width: 200 }}
-                    value={statusFilter}
-                    onChange={(newStatus) => setStatusFilter(newStatus)}
-                    placeholder="Lọc theo trạng thái"
-                >
-                    <Option value={AppointmentStatus.CHECKED_IN}>{getStatusTag(AppointmentStatus.CHECKED_IN)}</Option>
-                    <Option value={AppointmentStatus.IN_PROGRESS}>{getStatusTag(AppointmentStatus.IN_PROGRESS)}</Option>
-                    <Option value={AppointmentStatus.COMPLETED}>{getStatusTag(AppointmentStatus.COMPLETED)}</Option>
-                    <Option value={AppointmentStatus.CANCELED}>{getStatusTag(AppointmentStatus.CANCELED)}</Option>
-                </Select>
+        <div className="p-6">
+            <Card
+                title={
+                    <Title level={3} style={{ margin: 0, color: "#1890ff" }}>
+                        Quản lý lịch khám
+                    </Title>
+                }
+                bordered={true}
+                style={{
+                    boxShadow: "0 8px 24px rgba(0, 0, 0, 0.12)",
+                    borderRadius: "16px",
+                    overflow: "hidden",
+                }}
+                headStyle={{
+                    backgroundColor: "#f0f7ff",
+                    borderBottom: "1px solid #e6f0fa",
+                    padding: "20px 24px",
+                }}
+                bodyStyle={{ padding: "24px" }}
+            >
+                <div className="flex items-center gap-4 mb-6">
+                    <DatePicker onChange={handleDateChange} value={datePickerValue} allowClear />
 
-                <DatePicker
-                    onChange={(date) => handleDateChange(date)}
-                    defaultValue={moment(selectedDate)}
-                    format="DD/MM/YYYY"
-                    style={{ width: 200 }}
-                    placeholder="Chọn ngày"
+                    <Input onChange={handleSearch} placeholder="Tìm kiếm theo tên sản phụ" value={search} allowClear />
+
+                    <Button
+                        type="primary"
+                        onClick={handleRefresh}
+                        icon={<ReloadOutlined />}
+                        className="bg-blue-500 hover:bg-blue-600"
+                    >
+                        Làm mới
+                    </Button>
+                </div>
+
+                <Tabs
+                    type="card"
+                    className="mb-6"
+                    tabBarStyle={{ marginBottom: "16px", fontWeight: "bold" }}
+                    activeKey={statusFilter || "ALL"}
+                    onChange={handleStatusChange}
+                >
+                    <TabPane
+                        tab={
+                            <span>
+                                <Badge status="default" />
+                                Tất cả
+                            </span>
+                        }
+                        key="ALL"
+                    />
+                    <TabPane
+                        tab={
+                            <span>
+                                <Badge status="processing" color="cyan" />
+                                Đã đến bệnh viện
+                            </span>
+                        }
+                        key={AppointmentStatus.CHECKED_IN}
+                    />
+                    <TabPane
+                        tab={
+                            <span>
+                                <Badge status="processing" color="purple" />
+                                Đang khám
+                            </span>
+                        }
+                        key={AppointmentStatus.IN_PROGRESS}
+                    />
+                    <TabPane
+                        tab={
+                            <span>
+                                <Badge status="success" />
+                                Hoàn tất
+                            </span>
+                        }
+                        key={AppointmentStatus.COMPLETED}
+                    />
+                    <TabPane
+                        tab={
+                            <span>
+                                <Badge status="error" />
+                                Đã hủy
+                            </span>
+                        }
+                        key={AppointmentStatus.CANCELED}
+                    />
+                </Tabs>
+
+                {loading ? (
+                    <div className="flex justify-center items-center p-12">
+                        <Spin size="large" tip="Đang tải danh sách cuộc hẹn..." />
+                    </div>
+                ) : (
+                    <Table
+                        rowClassName={() => tableText()}
+                        columns={columns}
+                        dataSource={appointments}
+                        rowKey="id"
+                        pagination={{ pageSize: 10 }}
+                        locale={{ emptyText: "Không có cuộc hẹn nào" }}
+                        className="shadow-md rounded-lg overflow-hidden"
+                        bordered
+                        scroll={{ x: 1200 }}
+                    />
+                )}
+
+                {/* Modal thêm dịch vụ */}
+                <ModalAddServices
+                    visible={addServiceModalVisible}
+                    onCancel={() => setAddServiceModalVisible(false)}
+                    appointmentId={selectedAppointmentId}
+                    onSuccess={handleRefresh}
                 />
 
+                {/* Modal hiển thị dữ liệu dạng bảng */}
+                <Modal
+                    title={modalTitle}
+                    visible={modalVisible}
+                    onCancel={() => setModalVisible(false)}
+                    footer={null}
+                    width={1400}
+                >
+                    {modalData?.length ? (
+                        <Table
+                            dataSource={modalData}
+                            columns={getModalColumns()}
+                            rowKey="id"
+                            pagination={false}
+                            bordered
+                            className="shadow-sm rounded-lg overflow-hidden"
+                        />
+                    ) : (
+                        <p>Không có dữ liệu</p>
+                    )}
+                </Modal>
 
-            </div>
+                {/* Modal hiển thị danh sách thai nhi */}
+                <Modal
+                    title="Danh sách hồ sơ thai nhi"
+                    visible={fetalModalVisible}
+                    onCancel={() => setFetalModalVisible(false)}
+                    footer={null}
+                    width={1200}
+                >
+                    <Table
+                        dataSource={selectedFetalRecords}
+                        columns={fetalColumns}
+                        rowKey="id"
+                        pagination={false}
+                        bordered
+                        className="shadow-sm rounded-lg overflow-hidden"
+                    />
+                </Modal>
 
-            {/* Modal thêm dịch vụ */}
-            <ModalAddServices
-                visible={addServiceModalVisible}
-                onCancel={() => setAddServiceModalVisible(false)}
-                appointmentId={selectedAppointmentId}
-                onSuccess={handleRefresh}
-            />
-
-            {/* Modal hiển thị dữ liệu dạng bảng */}
-            <Modal
-                title={modalTitle}
-                visible={modalVisible}
-                onCancel={() => setModalVisible(false)}
-                footer={null}
-                width={1400}
-            >
-                {modalData?.length ? (
-                    <Table dataSource={modalData} columns={getModalColumns()} rowKey="id" pagination={false} />
-                ) : (
-                    <p>Không có dữ liệu</p>
-                )}
-            </Modal>
-
-            {/* Modal hiển thị danh sách thai nhi */}
-            <Modal
-                title="Danh sách hồ sơ thai nhi"
-                visible={fetalModalVisible}
-                onCancel={() => setFetalModalVisible(false)}
-                footer={null}
-                width={1200}
-            >
-                <Table dataSource={selectedFetalRecords} columns={fetalColumns} rowKey="id" pagination={false} />
-            </Modal>
-
-            {/* Modal tạo nhắc nhở */}
-            <ModalCreateReminder
-                visible={reminderModalVisible}
-                onCancel={() => setReminderModalVisible(false)}
-                onCreate={handleCreateReminder}
-                motherId={motherId}
-            />
-
-            {/* Bảng chính */}
-            <Table rowClassName={() => tableText()} columns={columns} dataSource={appointments} rowKey="id" />
+                {/* Modal tạo nhắc nhở */}
+                <ModalCreateReminder
+                    visible={reminderModalVisible}
+                    onCancel={() => setReminderModalVisible(false)}
+                    onCreate={handleCreateReminder}
+                    motherId={motherId}
+                />
+            </Card>
 
             <Outlet />
         </div>
     )
 }
 
-export default DoctorManageAppointments
+export default DoctorManageCheckinAppointments
 

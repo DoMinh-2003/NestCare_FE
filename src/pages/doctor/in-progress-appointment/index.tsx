@@ -1,48 +1,47 @@
+"use client"
 
-import { useEffect, useState } from "react"
+import type React from "react"
+
 import {
-	Button,
-	message,
-	Table,
-	Form,
-	Modal,
-	Select,
-	Tag,
-	Space,
-	Dropdown,
-	Menu,
-	Typography,
-	DatePicker,
-	Tabs,
-	Card,
-	Spin,
-	Badge,
-	DatePickerProps,
-} from "antd"
-import { Link, Outlet, useNavigate } from "react-router-dom"
-import userAppointmentService from "../../../services/useAppointmentService"
-import { formatDate } from "../../../utils/formatDate"
-import { AppointmentStatus, PregnancyStatus } from "../../../constants/status"
-import { tableText } from "../../../constants/function"
-import { formatMoney } from "../../../utils/formatMoney"
-import ModalCreateReminder from "../../../components/organisms/modal-create-reminder/ModalCreateReminder"
-import userReminderService from "../../../services/useReminders"
-import useServiceService from "../../../services/useServiceService"
-import ModalAddServices from "../../../components/organisms/modal-add-service-of-appointment"
-import {
-	DownOutlined,
-	FileTextOutlined,
+	BellOutlined,
 	CalendarOutlined,
 	ClockCircleOutlined,
+	FileTextOutlined,
 	HeartOutlined,
-	ReloadOutlined,
-	BellOutlined,
-	MedicineBoxOutlined,
-	HistoryOutlined,
 	PlusOutlined,
+	ReloadOutlined,
 } from "@ant-design/icons"
-import moment from "moment"
+import {
+	Badge,
+	Button,
+	Card,
+	DatePicker,
+	type DatePickerProps,
+	Form,
+	Input,
+	message,
+	Modal,
+	Select,
+	Space,
+	Spin,
+	Table,
+	Tabs,
+	Tag,
+	Typography,
+} from "antd"
 import dayjs from "dayjs"
+import moment from "moment"
+import { useEffect, useState } from "react"
+import { Link, Outlet, useNavigate } from "react-router-dom"
+import ModalAddServices from "../../../components/organisms/modal-add-service-of-appointment"
+import ModalCreateReminder from "../../../components/organisms/modal-create-reminder/ModalCreateReminder"
+import { tableText } from "../../../constants/function"
+import { AppointmentStatus, PregnancyStatus } from "../../../constants/status"
+import userAppointmentService from "../../../services/useAppointmentService"
+import userReminderService from "../../../services/useReminders"
+import useServiceService from "../../../services/useServiceService"
+import { formatDate } from "../../../utils/formatDate"
+import { formatMoney } from "../../../utils/formatMoney"
 
 const { Option } = Select
 const { Text, Title } = Typography
@@ -83,27 +82,25 @@ interface Appointment {
 }
 
 function DoctorManageCheckinAppointments() {
+	const [selectedDate, setSelectedDate] = useState(moment().format("YYYY-MM-DD"))
+	const [datePickerValue, setDatePickerValue] = useState<dayjs.Dayjs>(dayjs()) // Add state for DatePicker value
 	const [appointments, setAppointments] = useState<Appointment[]>([])
 	const [services, setServices] = useState<[]>([])
 	const [currentDoctor, setCurrentDoctor] = useState(null)
 	const [loading, setLoading] = useState(false)
 	const { getAppointmentsByDoctor, updateAppointmentStatus } = userAppointmentService()
-	const [selectedDate, setSelectedDate] = useState(dayjs(new Date()).format("YYYY-MM-DD"))
-	const [activeStatusTab, setActiveStatusTab] = useState<AppointmentStatus>(AppointmentStatus.IN_PROGRESS)
 	const [form] = Form.useForm()
 	const { getServices } = useServiceService()
 	const [modalVisible, setModalVisible] = useState(false)
 	const [modalData, setModalData] = useState<any[]>([])
 	const [modalTitle, setModalTitle] = useState("")
-	const { createReminderByDoctor, getReminderByDoctor } = userReminderService()
+	const { createReminderByDoctor } = userReminderService()
 	const [reminderModalVisible, setReminderModalVisible] = useState(false)
 	const [motherId, setMotherId] = useState<string | null>(null)
 	const [addServiceModalVisible, setAddServiceModalVisible] = useState(false)
-	const [selectedAppointmentId, setSelectedAppointmentId] = useState<string | null>(null)
 	const [fetalModalVisible, setFetalModalVisible] = useState(false)
-	const [selectedFetalRecords, setSelectedFetalRecords] = useState<FetalRecord[]>([])
-	const [reminder, setReminder] = useState([]);
-	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [search, setSearch] = useState("")
+	const [statusFilter, setStatusFilter] = useState<string>(AppointmentStatus.IN_PROGRESS) // Set default to IN_PROGRESS
 
 	const navigate = useNavigate()
 
@@ -112,7 +109,7 @@ function DoctorManageCheckinAppointments() {
 		if (!currentDoctor) return
 		setLoading(true)
 		try {
-			const response = await getAppointmentsByDoctor(currentDoctor.id, selectedDate, activeStatusTab)
+			const response = await getAppointmentsByDoctor(currentDoctor.id, selectedDate, search, statusFilter)
 			if (response) {
 				setAppointments(response.filter((item) => !item.isDeleted))
 			}
@@ -122,41 +119,11 @@ function DoctorManageCheckinAppointments() {
 			setLoading(false)
 		}
 	}
-
-	const fetchReminderByDoctor = async (motherId: string) => {
-		const response = await getReminderByDoctor(motherId);
-		console.log(response)
-		setIsModalOpen(true);
-		setReminder(response);
-	}
-
-	// Khi đổi trạng thái
-	const handleChangeStatus = async (record: Appointment, newStatus: AppointmentStatus) => {
-		try {
-			await updateAppointmentStatus(record.id, newStatus)
-			message.success("Cập nhật trạng thái thành công!")
-			getAppointmentFromDoctor() // gọi lại để refresh danh sách
-		} catch (error) {
-			message.error("Cập nhật trạng thái thất bại!")
-		}
-	}
-
-	const openAddServiceModal = (record: Appointment) => {
-		setSelectedAppointmentId(record.id) // Lưu id cuộc hẹn
-		setAddServiceModalVisible(true)
-	}
-
 	// Hiển thị chi tiết (Modal bảng con)
 	const showDetails = (title: string, details: any[]) => {
 		setModalTitle(title)
 		setModalData(details)
 		setModalVisible(true)
-	}
-
-	// Hiển thị danh sách thai nhi
-	const showFetalRecords = (fetalRecords: FetalRecord[]) => {
-		setSelectedFetalRecords(fetalRecords)
-		setFetalModalVisible(true)
 	}
 
 	// Tạo nhắc nhở
@@ -175,7 +142,7 @@ function DoctorManageCheckinAppointments() {
 	}
 
 	const navigateToFetalDetail = (fetalId: string) => {
-		navigate(`fetals/${fetalId}`)
+		navigate(`/fetals/${fetalId}`)
 	}
 
 	useEffect(() => {
@@ -199,11 +166,12 @@ function DoctorManageCheckinAppointments() {
 		}
 	}, [])
 
+	// Update effect to include search and statusFilter dependencies
 	useEffect(() => {
-		if (currentDoctor) {
+		if (currentDoctor && selectedDate) {
 			getAppointmentFromDoctor()
 		}
-	}, [currentDoctor, selectedDate, activeStatusTab])
+	}, [currentDoctor, selectedDate, search, statusFilter])
 
 	const getStatusTag = (status: AppointmentStatus) => {
 		switch (status) {
@@ -239,52 +207,13 @@ function DoctorManageCheckinAppointments() {
 		}
 	}
 
-	const reminderColumns = [
-		{
-			title: "Tiêu đề",
-			dataIndex: "title",
-			key: "title",
-		},
-		{
-			title: "Mô tả",
-			dataIndex: "description",
-			key: "description",
-		},
-		{
-			title: "Ngày bắt đầu",
-			dataIndex: "startDate",
-			key: "startDate",
-			render: (value: string) => formatDate(value)
-		},
-		{
-			title: "Ngày kết thúc",
-			dataIndex: "endDate",
-			key: "endDate",
-			render: (value: string) => formatDate(value)
-		},
-		{
-			title: "Thời gian nhắc",
-			dataIndex: "reminderTime",
-			key: "reminderTime",
-		},
-		{
-			title: "Bác sĩ",
-			dataIndex: ["doctor", "fullName"], // Lấy tên bác sĩ
-			key: "doctor",
-		},
-	];
-
 	// Cấu hình cột cho bảng chính
 	const columns = [
 		{
-			title: "Hồ Sơ Khám",
-			key: "id",
+			title: "Hồ Sơ khám",
+			key: "fetalRecords",
 			render: (record: Appointment) => {
-				return (
-					<Link to={`appointments/${record.id}`} className="font-medium">
-						Xem
-					</Link>
-				)
+				return <Link to={`appoinment/${record.id}`}>Xem</Link>
 			},
 		},
 		{
@@ -315,6 +244,14 @@ function DoctorManageCheckinAppointments() {
 				),
 		},
 		{
+			title: "Tên sản phụ",
+			key: "motherName",
+			render: (record: Appointment) => {
+				const motherName = record.fetalRecords?.[0]?.mother?.fullName || "N/A"
+				return <span className="font-medium">{motherName}</span>
+			},
+		},
+		{
 			title: "Trạng thái",
 			dataIndex: "status",
 			key: "status",
@@ -322,7 +259,7 @@ function DoctorManageCheckinAppointments() {
 		},
 		{
 			title: "Dịch vụ",
-			dataIndex: "appointmentServices",
+			dataIndex: ['serviceBilling', 'appointmentServices'],
 			key: "appointmentServices",
 			render: (services: any[], record: Appointment) => (
 				<Space>
@@ -334,46 +271,7 @@ function DoctorManageCheckinAppointments() {
 					>
 						Xem
 					</Button>
-					<Button
-						onClick={() => openAddServiceModal(record)}
-						type="primary"
-						ghost
-						icon={<PlusOutlined />}
-						className="border-green-400 text-green-500 hover:text-green-600 hover:border-green-500"
-					>
-						Thêm
-					</Button>
 				</Space>
-			),
-		},
-		{
-			title: "Hóa đơn thuốc",
-			dataIndex: "medicationBills",
-			key: "medicationBills",
-			render: (bills: any[]) => (
-				<Button
-					onClick={() => showDetails("Hóa đơn thuốc", bills)}
-					disabled={!bills?.length}
-					icon={<MedicineBoxOutlined />}
-					className="border-purple-400 text-purple-500 hover:text-purple-600 hover:border-purple-500"
-				>
-					Xem
-				</Button>
-			),
-		},
-		{
-			title: "Lịch sử khám",
-			dataIndex: "fullHistory",
-			key: "fullHistory",
-			render: (history: any[]) => (
-				<Button
-					onClick={() => showDetails("Lịch sử khám", history)}
-					disabled={!history?.length}
-					icon={<HistoryOutlined />}
-					className="border-orange-400 text-orange-500 hover:text-orange-600 hover:border-orange-500"
-				>
-					Xem
-				</Button>
 			),
 		},
 		{
@@ -382,7 +280,7 @@ function DoctorManageCheckinAppointments() {
 			render: (record: Appointment) => {
 				// Lấy motherId từ fetal record đầu tiên nếu có
 				const mId = record.fetalRecords?.[0]?.mother?.id
-				console.log(motherId)
+
 				return (
 					<Space>
 						<Button
@@ -401,30 +299,23 @@ function DoctorManageCheckinAppointments() {
 						>
 							Tạo nhắc nhở
 						</Button>
-						<Button
-							type="primary"
-							icon={<BellOutlined />}
-							onClick={() => {
-								if (mId) {
-									fetchReminderByDoctor(mId);
-								} else {
-									message.warning("Không tìm thấy thông tin mẹ để xem nhắc nhở");
-								}
-							}}
-							disabled={!mId}
-							className="bg-blue-500 hover:bg-blue-600"
-						>
-							Xem nhắc nhở
-						</Button>
 					</Space>
 				)
 			},
 		},
 	]
 
-	const handleRefresh = async () => {
-		const currentDate = new Date();
-		setSelectedDate(currentDate);
+	const handleRefresh = () => {
+		// Reset all filters and set date to today
+		setSearch("")
+		setStatusFilter(AppointmentStatus.IN_PROGRESS)
+
+		// Reset date to today
+		const today = dayjs()
+		setDatePickerValue(today)
+		setSelectedDate(today.format("YYYY-MM-DD"))
+
+		// Fetch appointments with reset filters
 		getAppointmentFromDoctor()
 	}
 
@@ -595,17 +486,25 @@ function DoctorManageCheckinAppointments() {
 			),
 		},
 	]
-	const handleDateChange = async (date: DatePickerProps['onChange']) => {
-		console.log('====================================');
-		console.log("=====date changed====", date);
-		console.log('====================================');
 
+	// Fixed date change handler
+	const handleDateChange = async (date: DatePickerProps["onChange"]) => {
 		if (date) {
-			const newDate = dayjs(date).format('YYYY-MM-DD');
-			setSelectedDate(newDate);
+			// Update both the DatePicker value and the selected date string
+			setDatePickerValue(date)
+			setSelectedDate(dayjs(date).format("YYYY-MM-DD"))
+		} else {
+			// If date is cleared, set to today
+			const today = dayjs()
+			setDatePickerValue(today)
+			setSelectedDate(today.format("YYYY-MM-DD"))
 		}
 	}
 
+	// Update search handler to properly set the search state
+	const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setSearch(e.target.value)
+	}
 
 	return (
 		<div className="p-6">
@@ -629,13 +528,9 @@ function DoctorManageCheckinAppointments() {
 				bodyStyle={{ padding: "24px" }}
 			>
 				<div className="flex items-center gap-4 mb-6">
-					<DatePicker
-						onChange={handleDateChange}
-						defaultValue={moment(selectedDate)}
-						format="DD/MM/YYYY"
-						style={{ width: 200 }}
-						placeholder="Chọn ngày"
-					/>
+					<DatePicker onChange={handleDateChange} value={datePickerValue} allowClear />
+
+					<Input onChange={handleSearch} placeholder="Tìm kiếm theo tên sản phụ" value={search} allowClear />
 
 					<Button
 						type="primary"
@@ -647,17 +542,11 @@ function DoctorManageCheckinAppointments() {
 					</Button>
 				</div>
 
-				<Tabs
-					activeKey={activeStatusTab}
-					onChange={(key) => setActiveStatusTab(key as AppointmentStatus)}
-					type="card"
-					className="mb-6"
-					tabBarStyle={{ marginBottom: "16px", fontWeight: "bold" }}
-				>
+				<Tabs type="card" className="mb-6" tabBarStyle={{ marginBottom: "16px", fontWeight: "bold" }}>
 					<TabPane
 						tab={
 							<span>
-								<Badge status="processing" color="cyan" />
+								<Badge status="processing" color="purple" />
 								Đang khám
 							</span>
 						}
@@ -683,14 +572,6 @@ function DoctorManageCheckinAppointments() {
 					/>
 				)}
 
-				{/* Modal thêm dịch vụ */}
-				<ModalAddServices
-					visible={addServiceModalVisible}
-					onCancel={() => setAddServiceModalVisible(false)}
-					appointmentId={selectedAppointmentId}
-					onSuccess={handleRefresh}
-				/>
-
 				{/* Modal hiển thị dữ liệu dạng bảng */}
 				<Modal
 					title={modalTitle}
@@ -713,7 +594,7 @@ function DoctorManageCheckinAppointments() {
 					)}
 				</Modal>
 
-				{/* Modal hiển thị danh sách thai nhi */}
+				{/* Modal hiển thị danh sách thai nhi
 				<Modal
 					title="Danh sách hồ sơ thai nhi"
 					visible={fetalModalVisible}
@@ -729,22 +610,7 @@ function DoctorManageCheckinAppointments() {
 						bordered
 						className="shadow-sm rounded-lg overflow-hidden"
 					/>
-
-				</Modal>
-				<Modal
-					title="Danh sách nhắc nhở"
-					open={isModalOpen}
-					onCancel={() => setIsModalOpen(false)}
-					footer={null} // Ẩn footer
-					width={1000}
-				>
-					<Table
-						dataSource={reminder}
-						columns={reminderColumns}
-						rowKey="id"
-						pagination={{ pageSize: 5 }}
-					/>
-				</Modal>
+				</Modal> */}
 
 				{/* Modal tạo nhắc nhở */}
 				<ModalCreateReminder
@@ -761,3 +627,4 @@ function DoctorManageCheckinAppointments() {
 }
 
 export default DoctorManageCheckinAppointments
+

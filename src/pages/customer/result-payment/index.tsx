@@ -102,6 +102,10 @@ const PaymentResult = () => {
 						} else if (appointmentId) { // doctor
 							console.log(appointmentId);
 							await updateBookingStatus(appointmentId, "IN_PROGRESS")
+							navigate(USER_ROUTES.BOOKING_RESULT, {
+								state: { appointmentId },
+								replace: true,
+							})
 						}
 						break
 					case "24": // Customer canceled
