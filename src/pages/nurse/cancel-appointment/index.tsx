@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Table, Input, Button, Modal, Form, message, Select } from 'antd';
+import { Table, Input, Button, Modal, Form, message, Select, DatePicker, DatePickerProps } from 'antd';
 import userAppointmentService from '../../../services/useAppointmentService';
 import userUserService from '../../../services/userUserService';
-import moment from 'moment';
-import { appointmentStatus, getStatusTag } from '../checkin-appointment';
+import { getStatusTag } from '../checkin-appointment';
 import useAppointmentService from '../../../services/useApoitment';
 import { AppointmentStatus } from '../../../constants/status';
+import dayjs from 'dayjs';
+import moment from 'moment';
 // types.ts
 
 export interface AppointmentData {
@@ -111,8 +112,9 @@ const CancelAppointment = () => {
     const [appoinments, setAppointments] = useState<AppointmentData[]>([])
     const [doctors, setDoctors] = useState<Doctor[]>([])
     const { getUsers } = userUserService()
-    const [statusFilter, setStatusFilter] = useState<string>('PENDING')
     const { updateAppointmentsByStatus } = useAppointmentService()
+    const [day, setDay] = useState<string>('')
+    const today = dayjs();
 
     useEffect(() => {
         getDoctors();
@@ -120,14 +122,19 @@ const CancelAppointment = () => {
 
     useEffect(() => {
         getAppointmentNeedToCancel();
-    }, [doctorSelected, statusFilter, searchText])
+    }, [doctorSelected, searchText, day])
 
-    const today = moment().format('YYYY-MM-DD');
+    useEffect(() => {
+        const today = moment().format('YYYY-MM-DD');
+        console.log(today)
+        setDay(today);
+    }, [])
 
     const getAppointmentNeedToCancel = async () => {
         if (doctorSelected) {
             console.log("doctorSelected: ", doctorSelected)
-            const response = await getAppointmentsByDoctorDate(doctorSelected, today, searchText, statusFilter)
+            const response = await getAppointmentsByDoctorDate(doctorSelected, day, searchText, "PENDING")
+            console.log("getAppointmentNeedToCancel: ", response)
             if (response) {
                 setAppointments(response)
             }
@@ -141,7 +148,7 @@ const CancelAppointment = () => {
     const getDoctors = async () => {
         const response = await getUsers()
         if (response) {
-            setDoctors(response.filter((item)=>item.role === 'doctor'))
+            setDoctors(response.filter((item: any) => item.role === 'doctor'))
         }
     }
 
@@ -182,7 +189,7 @@ const CancelAppointment = () => {
             title: 'Trạng Thái', // Đổi tên thành "Trạng Thái"
             dataIndex: 'status',
             key: 'status',
-            render:(status: AppointmentStatus)=> getStatusTag(status)
+            render: (status: AppointmentStatus) => getStatusTag(status)
         },
         {
             title: 'Ngày Hẹn', // Đổi tên thành "Ngày Hẹn"
@@ -192,22 +199,24 @@ const CancelAppointment = () => {
         ...(hasActiveAppointments ? [{
             title: 'Hành Động',
             key: 'action',
-            render: (text: any, record: any) => (
-              <Button danger onClick={() => handleCancelClick(record)}>
-                Hủy
-              </Button>
+            render: (record: any) => (
+                <Button danger onClick={() => handleCancelClick(record)}>
+                    Hủy
+                </Button>
             ),
-          }] : []),
+        }] : []),
     ];
 
     const handleChangeDoctor = (value: string) => {
         setDoctorSelected(value);
     };
 
-    const handleChange = (value: string) => {
-        setStatusFilter(value);
-    }
-
+    const onChange: DatePickerProps['onChange'] = (date, dateString) => {
+        console.log(date, dateString);
+        if (typeof dateString === 'string') {
+            setDay(dateString)
+        }
+    };
     return (
         <div>
             <div className='text-3xl font-bold text-center my-5'>Huỷ cuộc hẹn</div>
@@ -222,18 +231,9 @@ const CancelAppointment = () => {
                             ({ value: item.id, label: item.fullName })
                         )}
                 />
-
-                <Select
-                    placeholder="Chọn gói dịch vụ"
-                    onChange={handleChange}
-                    className='w-[150px] mb-2'
-                    defaultValue={"PENDING"}
-                    options={
-                        appointmentStatus.map((item) => (
-                            { value: item.value, label: item.label }
-                        ))
-                    }
-                />
+                <div>
+                    <DatePicker defaultValue={today} format="YYYY-MM-DD" onChange={onChange} />
+                </div>
 
                 <Input.Search
                     placeholder="Tìm kiếm bằng tên người mẹ"
@@ -262,9 +262,11 @@ const CancelAppointment = () => {
                         <Input.TextArea />
                     </Form.Item>
                     <Form.Item>
-                        <Button type="primary" htmlType="submit">
-                            Confirm Cancel
-                        </Button>
+                        <div className='float-right'>
+                            <Button type="primary" htmlType="submit">
+                                Confirm Cancel
+                            </Button>
+                        </div>
                     </Form.Item>
                 </Form>
             </Modal>
