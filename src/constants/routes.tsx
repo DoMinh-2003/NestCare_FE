@@ -56,6 +56,7 @@ export enum NURSE_ROUTES {
   USER = "users",
   ORDER = "orders",
   NURSE_APPOINTMENT = "appointments",
+  NURSE_UPDATE_MOTHER_RECORD = "update-mother-record",
   NURSE_CREATE_APPOINTMENT = "create-appointment",
   FETALS_DETAIL = "users/fetals/:id",
   NURSE_CANCEL_APPOINTMENT = "cancel-appointments",

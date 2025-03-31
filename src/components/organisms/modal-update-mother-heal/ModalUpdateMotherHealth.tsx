@@ -37,42 +37,43 @@ const ModalUpdateMotherHealth: React.FC<ModalUpdateMotherHealthProps> = ({ isVis
 
   return (
     <Modal
-      title="Update Mother's Health Information"
+      title="Cập nhật thông tin sức khoẻ của người mẹ"
       visible={isVisible}
       onCancel={onClose}
       footer={null}
       className="rounded-lg"
     >
-      <Title level={4}>Mother's Health Information</Title>
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <Form.Item
-          label="Mother Weight (kg)"
+          label="Cân nặng người mẹ (kg)"
           name="motherWeight"
-          rules={[{ required: true, message: 'Please input the mother weight!' }]}
+          rules={[{ required: true, message: 'Vui lòng nhập cân nặng của mẹ!' }]}
         >
           <InputNumber min={0} />
         </Form.Item>
 
         <Form.Item
-          label="Mother Blood Pressure"
+          label='Huyết áp mẹ'
           name="motherBloodPressure"
-          rules={[{ required: true, message: 'Please input the mother blood pressure!' }]}
+          rules={[{ required: true, message: 'Vui lòng nhập huyết áp của mẹ!' }]}
         >
           <Input placeholder="e.g., 120/80" />
         </Form.Item>
 
         <Form.Item
-          label="Mother Health Status"
+          label="Tình trạng sức khỏe của mẹ"
           name="motherHealthStatus"
-          rules={[{ required: true, message: 'Please input the mother health status!' }]}
+          rules={[{ required: true, message: 'Vui lòng nhập tình trạng sức khỏe của mẹ!' }]}
         >
           <Input />
         </Form.Item>
 
-        <Form.Item>
+        <Form.Item className=''>
+          <div className='float-right'>
           <Button type="primary" htmlType="submit">
             Update
           </Button>
+          </div>
         </Form.Item>
       </Form>
     </Modal>
