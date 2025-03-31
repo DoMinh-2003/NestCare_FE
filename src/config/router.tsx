@@ -64,6 +64,7 @@ import NotFoundPage from "../pages/404";
 import CancelAppointment from "../pages/nurse/cancel-appointment";
 import PaymentBooking from "../components/molecules/payment-layout";
 import ForgotPassword from "../pages/customer/forgot-password";
+import Dashboard from "../pages/doctor/dashboard";
 
 
 
@@ -426,10 +427,10 @@ export const router = createBrowserRouter([
         element: <AppoinmentDetail />,
       },
 
-      // {
-      //   path: ADMIN_ROUTES.OVERVIEW,
-      //   element: <ManageOverview />,
-      // },
+      {
+        path: 'dashboard',
+        element: <Dashboard />,
+      },
     ],
 
   },
