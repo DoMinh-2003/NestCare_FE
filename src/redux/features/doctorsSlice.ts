@@ -6,8 +6,8 @@ export const fetchDoctors = createAsyncThunk(
 	"doctor/fetchDoctors",
 	async (_, { rejectWithValue }) => {
 		try {
-			// const response = await api.get("/users/role/doctor");
-			// return response.data; // Trả về dữ liệu từ API (danh sách bác sĩ)
+			const response = await api.get("/users/role/doctor");
+			return response.data; // Trả về dữ liệu từ API (danh sách bác sĩ)
 		} catch (error) {
 			console.log("error fetch doctor", error);
 			return rejectWithValue(error.response?.data || "Failed to fetch doctors");
