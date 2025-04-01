@@ -43,6 +43,8 @@ import useServiceService from "../../../services/useServiceService"
 import { formatDate } from "../../../utils/formatDate"
 import { formatMoney } from "../../../utils/formatMoney"
 import ModalServiceDetails from "../../../components/molecules/modal-services-detail"
+import viVN from 'antd/es/date-picker/locale/vi_VN';
+
 
 const { Option } = Select
 const { Text, Title } = Typography
@@ -554,11 +556,10 @@ function DoctorManageCheckinAppointments() {
 			>
 				<div className="flex items-center gap-4 mb-6">
 					<DatePicker
-						value={datePickerValue}
-						format={(date, dateString) => formatDate(date.toDate())}
+						defaultValue={datePickerValue}
+						format="DD/MM/YYYY"
 						onChange={handleDateChange}
-						allowClear
-
+						locale={viVN}
 					/>
 
 					<Input onChange={handleSearch} placeholder="Tìm kiếm theo tên sản phụ" value={search} allowClear style={{ width: '300px' }} />

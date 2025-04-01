@@ -44,6 +44,7 @@ import { formatDate } from "../../../utils/formatDate"
 import { formatMoney } from "../../../utils/formatMoney"
 import { getStatusTag } from "../../nurse/checkin-appointment"
 import { EyeOutlined } from "@ant-design/icons";
+import viVN from 'antd/es/date-picker/locale/vi_VN';
 
 
 
@@ -555,6 +556,7 @@ function DoctorManageCheckinAppointments() {
         }
     }
 
+
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearch(e.target.value)
     }
@@ -628,10 +630,10 @@ function DoctorManageCheckinAppointments() {
             >
                 <div className="flex items-center gap-4 mb-6">
                     <DatePicker
-                        value={datePickerValue}
-                        format={(date, dateString) => formatDate(date.toDate())}
+                        defaultValue={datePickerValue}
+                        format="DD/MM/YYYY"
                         onChange={handleDateChange}
-                        allowClear
+                        locale={viVN}
                     />
                     <Input onChange={handleSearch} placeholder="Tìm kiếm theo tên sản phụ" value={search} allowClear style={{ width: '300px' }} />
                     <Button
