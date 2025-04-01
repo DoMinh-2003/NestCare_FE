@@ -12,6 +12,7 @@ type SearchProps = GetProps<typeof Input.Search>;
 const { Search } = Input;
 import ModalOrderDetail, { OrderDetail } from '../../../components/organisms/modal-order-detail/ModalOrderDetail';
 import { GetProps } from 'react-redux';
+import Loading from '../../../components/molecules/loading/Loading';
 const NurseManageOrders = () => {
     const [users, setUsers] = useState<UserData[]>([]);
     const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
@@ -23,6 +24,8 @@ const NurseManageOrders = () => {
     const [form] = Form.useForm()
     const [isModalOpenOrderDetail, setIsModalOpenOrderDetail] = useState(false);
     const [orderDetail, setOrderDetail] = useState<OrderDetail[]>([])
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [searchText, setSearchText] = useState<string>('')
 
     useEffect(() => {
         getUsersFromAdmin();
@@ -30,6 +33,7 @@ const NurseManageOrders = () => {
     }, []);
 
     const handleCreateOrder = async (data: { userId: string; packageId: string }) => {
+        setIsLoading(true)
         console.log("Order Created:", data);
         const response = await createOrder(data)
         if (response) {
@@ -37,6 +41,7 @@ const NurseManageOrders = () => {
             form.resetFields()
             window.location.href = response
         }
+        setIsLoading(false)
     };
 
     const getPackagesFromAdmin = async () => {
@@ -48,11 +53,13 @@ const NurseManageOrders = () => {
     };
 
     const getUsersFromAdmin = async () => {
+        setIsLoading(true)
         const response = await getUsersSearch("", "");
         console.log("response: ", response);
         if (response) {
             setUsers(response.users.filter((item: UserData) => item.role === "user" && !item.isDeleted));
         }
+        setIsLoading(false)
     };
 
     const showModalCraeteOrder = (record: UserData) => {
@@ -109,19 +116,24 @@ const NurseManageOrders = () => {
         },
     ];
 
-    const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
+    const onSearch: SearchProps['onSearch'] = async (value, _e) => {
+        setSearchText(value)
+        setIsLoading(true)
         const response = await getUsersSearch(value, "");
         console.log("response: ", response);
         if (response) {
             setUsers(response.users.filter((item: UserData) => item.role === "user" && !item.isDeleted));
         }
+        setIsLoading(false)
     }
 
     const getOrderDetail = async (id: string) => {
+        setIsLoading(true)
         const response = await getOrderByUserId(id)
         if (response) {
             setOrderDetail(response)
         }
+        setIsLoading(false)
     }
 
     const showModalOrderDetail = (record: UserData) => {
@@ -131,13 +143,23 @@ const NurseManageOrders = () => {
     const handleCancel = () => {
         setIsModalOpenOrderDetail(false);
     };
+
+    if (isLoading) {
+        return (
+            < Loading />
+        )
+    }
+
     return (
         <div>
             <div className='text-3xl font-semibold text-center my-3'>
                 Quản lý Orders
             </div>
             <div className='flex gap-2 mb-2'>
-                <Search placeholder="Tìm kiếm bằng tên" className='w-[200px]' onSearch={onSearch} enterButton />
+                <Search placeholder="Tìm kiếm bằng tên" className='w-[200px]'
+                    defaultValue={searchText}
+                    onSearch={onSearch} enterButton
+                />
             </div>
             <ModalOrderDetail
                 order={orderDetail}
