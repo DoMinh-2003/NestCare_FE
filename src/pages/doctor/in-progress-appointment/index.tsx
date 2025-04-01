@@ -528,7 +528,13 @@ function DoctorManageCheckinAppointments() {
 				bodyStyle={{ padding: "24px" }}
 			>
 				<div className="flex items-center gap-4 mb-6">
-					<DatePicker onChange={handleDateChange} value={datePickerValue} allowClear />
+					<DatePicker
+						value={datePickerValue}
+						format={(date, dateString) => formatDate(date.toDate())}
+						onChange={handleDateChange}
+						allowClear
+
+					/>
 
 					<Input onChange={handleSearch} placeholder="Tìm kiếm theo tên sản phụ" value={search} allowClear />
 
