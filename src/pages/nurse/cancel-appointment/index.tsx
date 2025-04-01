@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 import moment from 'moment';
 import { Doctor } from '../../../components/organisms/modal-appointment-detail/ModalAppointmentDetail';
 import { FetalRecord } from '../fetal-detail';
+import { formatDate } from '../../../utils/formatDate';
 const { Search } = Input;
 
 // types.ts
@@ -179,7 +180,9 @@ const CancelAppointment = () => {
     return (
         <div>
             <div className='text-3xl font-bold text-center my-5'>Huỷ cuộc hẹn</div>
-            <div className='flex gap-2'>
+            <div className='flex gap-2 mb-2'>
+                <Search placeholder="Tìm kiếm bằng tên mẹ" className='w-[250px]' onSearch={handleSearch} enterButton />
+
                 <Select
                     defaultValue="Chọn bác sĩ"
                     style={{ textAlign: 'left' }}
@@ -191,10 +194,13 @@ const CancelAppointment = () => {
                         )}
                 />
                 <div>
-                    <DatePicker defaultValue={today} format="YYYY-MM-DD" onChange={onChange} />
+                    <DatePicker
+                        defaultValue={today}
+                        format={(date, dateString) => formatDate(date.toDate())}
+                        onChange={onChange}
+                    />
                 </div>
 
-                <Search placeholder="Tìm kiếm bằng tên mẹ" className='w-[250px]' onSearch={handleSearch} enterButton />
             </div>
             <Table
                 dataSource={appoinments}
@@ -202,23 +208,23 @@ const CancelAppointment = () => {
                 rowKey="id"
             />
             <Modal
-                title="Cancel Appointment"
+                title="Hủy lịch hẹn"
                 visible={isModalVisible}
                 onCancel={() => setIsModalVisible(false)}
                 footer={null}
             >
                 <Form form={form} onFinish={handleCancel}>
                     <Form.Item
-                        label="Reason"
+                        label="Lý do"
                         name="reason"
-                        rules={[{ required: true, message: 'Please provide a reason for cancellation!' }]}
+                        rules={[{ required: true, message: 'Vui lòng cung cấp lý do hủy bỏ!' }]}
                     >
                         <Input.TextArea />
                     </Form.Item>
                     <Form.Item>
                         <div className='float-right'>
                             <Button type="primary" htmlType="submit">
-                                Confirm Cancel
+                                Xác nhận hủy
                             </Button>
                         </div>
                     </Form.Item>
