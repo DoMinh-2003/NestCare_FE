@@ -164,6 +164,7 @@ const AdminManageUsers: React.FC = () => {
             setUsers(response.users.filter((item: UserData) => item.role != "admin" && !item.isDeleted));
         }
     }
+    
     const handleChange = (value: string) => {
         setRoleToFilter(value);
     }
