@@ -44,6 +44,7 @@ import api from "../../../config/api"
 import ModalCreateReminder from "../../../components/organisms/modal-create-reminder/ModalCreateReminder"
 import useReminderService from "../../../services/useReminders"
 import ModalCreateAppointment, { CreateAppointment } from "../../../components/organisms/modal-create-appointment/ModalCreateAppointment"
+import useAppointmentService from "../../../services/useApoitment"
 
 const { Title, Text, Paragraph } = Typography
 const { TabPane } = Tabs
@@ -134,18 +135,52 @@ const DoctorFetalView: React.FC = () => {
 
 
     const { createReminderByDoctor } = useReminderService()
+    const { getAppointments } = useAppointmentService();
+
+    // useEffect(() => {
+    //     const fetchAppointments = async () => {
+    //         const response = await getAppointments(id);
+
+    //     }
+    // }, [])
 
     useEffect(() => {
-        const fetchFetalModel = async () => {
-            const response = await getFetalsByMotherId(fetalRecord?.mother.id)
-            console.log("Fetal model", response);
-
-            if (response) {
-                setFetals(response)
+        const fetchAppointmentAndFetals = async () => {
+            if (!id) {
+                setError("Không tìm thấy ID cuộc hẹn trong URL");
+                setLoading(false);
+                return;
             }
-        }
-        fetchFetalModel()
-    }, [fetalRecord])
+
+            try {
+                const response = await getAppointments(id);
+                const appointmentData = response;
+
+                const motherId = appointmentData.fetalRecords[0]?.mother.id;
+                if (!motherId) {
+                    setError("Không tìm thấy thông tin mẹ bầu");
+                    setLoading(false);
+                    return;
+                }
+
+                setFetalRecord({
+                    ...appointmentData.fetalRecords[0],
+                    mother: appointmentData.fetalRecords[0].mother,
+                });
+
+                const fetalsResponse = await getFetalsByMotherId(motherId);
+                setFetals(fetalsResponse);
+
+            } catch (err) {
+                console.error("Error fetching data:", err);
+                setError("Không thể tải dữ liệu");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchAppointmentAndFetals();
+    }, [id]);
 
     // Tạo nhắc nhở
     const handleCreateReminder = async (values: any) => {
@@ -188,33 +223,61 @@ const DoctorFetalView: React.FC = () => {
         fetchMedicine()
     }, [id])
 
-    const { getFetailAndMotherDetail, getFetalsByMotherId } = useFetalService()
+    const { getFetailAndMotherDetail, getFetalsByMotherId, getFetalsByMother } = useFetalService()
     const navigate = useNavigate()
 
     // Fetch fetal record data
-    useEffect(() => {
-        const fetchFetalRecord = async () => {
-            if (!id) {
-                setError("Không tìm thấy ID hồ sơ")
-                setLoading(false)
-                return
-            }
+    // useEffect(() => {
+    //     const fetchFetalRecord = async () => {
+    //         if (!id) {
+    //             setError("Không tìm thấy ID hồ sơ")
+    //             setLoading(false)
+    //             return
+    //         }
 
-            try {
-                const response = await getFetailAndMotherDetail(id)
-                console.log("Fetal record data:", response)
-                setFetalRecord(response)
-                setFetals(response.data)
-            } catch (err) {
-                console.error("Error fetching fetal record:", err)
-                setError("Không thể tải dữ liệu hồ sơ thai nhi")
-            } finally {
-                setLoading(false)
-            }
-        }
+    //         try {
+    //             const response = await getFetailAndMotherDetail(id)
+    //             console.log(id);
+    //             console.log("Fetal record data:", response)
+    //             setFetalRecord(response)
+    //             setFetals(response.data)
+    //         } catch (err) {
+    //             console.error("Error fetching fetal record:", err)
+    //             setError("Không thể tải dữ liệu hồ sơ thai nhi")
+    //         } finally {
+    //             setLoading(false)
+    //         }
+    //     }
 
-        fetchFetalRecord()
-    }, [id, getFetailAndMotherDetail])
+    //     fetchFetalRecord()
+    // }, [id, getFetailAndMotherDetail])
+    // useEffect(() => {
+    //     const fetchFetalRecord = async () => {
+    //         if (!id) {
+    //             setError("Không tìm thấy ID hồ sơ trong URL");
+    //             setLoading(false);
+    //             return;
+    //         }
+
+    //         try {
+    //             console.log("Fetching fetal record with id:", fetalRecord?.mother.id); // Log để kiểm tra giá trị id
+    //             const response = await getFetalsByMother();
+    //             console.log("Fetal record data:", response);
+    //             setFetalRecord(response);
+    //             // Giả sử response.data chứa danh sách fetals
+    //             if (response.data) {
+    //                 setFetals(response.data);
+    //             }
+    //         } catch (err) {
+    //             console.error("Error fetching fetal record:", err);
+    //             setError("Không thể tải dữ liệu hồ sơ thai nhi");
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     };
+
+    //     fetchFetalRecord();
+    // }, [id, getFetailAndMotherDetail]);
 
     // Handle form submission
     const handleSubmit = async (values: any) => {
@@ -322,14 +385,18 @@ const DoctorFetalView: React.FC = () => {
         )
     }
 
-    if (error || !fetalRecord) {
-        return <Alert message={error || "Không tìm thấy dữ liệu"} type="error" showIcon />
-    }
+    // if (error || !fetalRecord) {
+    //     return <Alert message={error || "Không tìm thấy dữ liệu"} type="error" showIcon />
+    // }
 
     // Find appointments that are CHECKED_IN or IN_PROGRESS
-    const activeAppointments = fetalRecord.appointments.filter(
+    const activeAppointments = fetalRecord?.appointments?.filter(
         (app) => app.status === AppointmentStatus.CHECKED_IN || app.status === AppointmentStatus.IN_PROGRESS,
-    )
+    ) || [];
+
+    if (!fetalRecord) {
+        return <Alert message="Không tìm thấy dữ liệu hồ sơ thai nhi" type="error" showIcon />;
+    }
 
     // const { getFetalsByMotherId } = useFetalService()
 
@@ -338,7 +405,7 @@ const DoctorFetalView: React.FC = () => {
     };
 
     const getFetalsByMotherIdFromNurse = async () => {
-        const response = await getFetalsByMotherId();
+        const response = await getFetalsByMotherId(fetalRecord?.mother.id);
         console.log("&&&&&&&&&&&&&&response mother=============fetals", response)
 
         setFetals(response);

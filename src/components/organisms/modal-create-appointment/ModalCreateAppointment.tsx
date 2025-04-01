@@ -66,10 +66,10 @@ const ModalCreateAppointment = ({ isVisible, onClose, createRespone, fetals }: {
             message.success('Tạo lịch hẹn thành công');
             onClose(); // Close the modal after submission
             form.resetFields()
-        }else if(response){
+        } else if (response) {
             createRespone(values);
             message.success('Tạo lịch hẹn thành công');
-            window.location.href =response
+            window.location.href = response
             onClose(); // Close the modal after submission
             form.resetFields()
         }
@@ -117,13 +117,13 @@ const ModalCreateAppointment = ({ isVisible, onClose, createRespone, fetals }: {
                 </Form.Item>
 
                 <Form.Item
-                    label="Chọn slot"
+                    label="Chọn khung giờ khám"
                     name="slotId"
                     rules={[{ required: true, message: 'Please select a slot!' }]}
                 >
                     <Select
                         onChange={handleChangeSelectedSlot}
-                        placeholder="Chọn slot"
+                        placeholder="Chọn khung giờ khám"
                         className='w-[150px]'
                         options={
                             slots?.map((item) => ({
@@ -174,10 +174,10 @@ const ModalCreateAppointment = ({ isVisible, onClose, createRespone, fetals }: {
                 <Form.Item>
                     <div className="flex justify-end">
                         <Button onClick={onClose} className="bg-red-500 text-white mr-2">
-                            Cancel
+                            Hủy
                         </Button>
                         <Button type="primary" htmlType="submit" >
-                            Create Appointment
+                            Tạo lịch hẹn
                         </Button>
                     </div>
                 </Form.Item>
