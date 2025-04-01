@@ -147,13 +147,11 @@ const AdminManageUsers: React.FC = () => {
         {
             title: 'Hành động',
             render: (record: UserData) => {
-                if (record.role === "doctor" || record.role === "nurse") {
-                    return <div className="flex gap-2 text-xl">
+                return <div className="flex gap-2 text-xl">
                         <EditOutlined onClick={() => showModal(record)} className="text-blue" />
                         <DeleteOutlined onClick={() => handleOpenModalDelete(record)} className="text-red-500" />
                     </div>
-                }
-                return null;
+               
             }
         },
     ];
