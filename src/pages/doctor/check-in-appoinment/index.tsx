@@ -225,7 +225,7 @@ function DoctorManageCheckinAppointments() {
 			title: "Hồ Sơ khám",
 			key: "fetalRecords",
 			render: (record: Appointment) => {
-				return <Link to={`appoinment/${record.id}`}>Xem</Link>
+				return <Link to={`appointments/${record.id}`}>Xem</Link>
 			},
 		},
 		{
