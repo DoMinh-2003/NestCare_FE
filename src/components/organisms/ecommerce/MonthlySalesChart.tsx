@@ -20,11 +20,11 @@ const MonthlySalesChart = ({ transactions }) => {
       const grouped = transactions.reduce((acc, item) => {
         let key;
         if (mode === "day") {
-          key = moment(item.createdAt).format("YYYY-MM-DD");
+          key = moment(item.createdAt).format("DD/MM/YYYY"); // Đổi thành dd/mm/yyyy
         } else if (mode === "week") {
-          key = moment(item.createdAt).startOf("isoWeek").format("YYYY-MM-DD");
+          key = moment(item.createdAt).startOf("isoWeek").format("DD/MM/YYYY");
         } else if (mode === "month") {
-          key = moment(item.createdAt).format("YYYY-MM");
+          key = moment(item.createdAt).format("MM/YYYY"); // Chỉ hiển thị tháng/năm
         }
         acc[key] = (acc[key] || 0) + parseFloat(item.amount);
         return acc;
@@ -35,6 +35,7 @@ const MonthlySalesChart = ({ transactions }) => {
         revenue: grouped[key],
       }));
     };
+
 
     setChartData(groupData(transactions, viewMode));
   }, [transactions, viewMode]);
@@ -57,7 +58,11 @@ const MonthlySalesChart = ({ transactions }) => {
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={chartData}>
           <XAxis dataKey="date" />
-          <YAxis />
+          <YAxis
+            tickFormatter={(value) => `${(value / 1_000_000).toFixed(0)} tr VND`}
+          />
+
+
           <Tooltip formatter={(value) => formatMoney(value)} />
           <Legend />
           <Bar dataKey="revenue" fill="#82ca9d" name="Doanh thu" />

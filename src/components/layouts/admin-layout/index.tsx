@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import type { MenuProps } from "antd";
-import { Layout, Menu, message, theme } from "antd";
+import { Button, Layout, Menu, message, theme } from "antd";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 const { Header, Content, Footer, Sider } = Layout;
 import { SlCalender } from "react-icons/sl";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
-import { Button } from "../../atoms/button/Button";
 import { LogoutOutlined } from "@ant-design/icons";
 import { logout } from "../../../redux/features/userSlice";
 import { FaChartPie } from "react-icons/fa";
@@ -69,10 +68,13 @@ const AdminLayout: React.FC = () => {
           mode="inline"
           items={items}
         />
-        <div className="w-full menu-sidebar flex justify-center">
+        <div
+          className="w-full menu-sidebar flex justify-center"
+          style={{ position: "relative", zIndex: 10 }}
+        >
           <Button
             onClick={handleLogout}
-            styleClass="h-[51px] w-[51px]  mb-12 text-white flex justify-center items-center bg-gradient-to-b from-[#504C51] to-[#323033]"
+            className="h-[51px] relative bottom-28 w-[51px] text-white flex justify-center items-center bg-gradient-to-b from-[#504C51] to-[#323033]"
           >
             <LogoutOutlined className="text-[18px] stroke-white stroke-[10px]" />
           </Button>
@@ -98,7 +100,7 @@ const AdminLayout: React.FC = () => {
           </div>
         </Content>
         <Footer style={{ textAlign: "center" }}>
-          NestCare ©{new Date().getFullYear()} Created by Minh
+          NestCare ©{new Date().getFullYear()}
         </Footer>
       </Layout>
     </Layout>

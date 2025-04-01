@@ -11,6 +11,7 @@ import useOrderService from "../../../services/useOrderService";
 import { useEffect, useState } from "react";
 import { UserData } from "../../../components/organisms/modal-create-update-user/ModalCreateUpdateUser";
 import useTransaction from "../../../services/useTransaction";
+import { Typography } from "antd";
 
 
 
@@ -64,6 +65,8 @@ export interface Transaction {
   userPackage: any | null;
   serviceBilling: any | null;
 }
+const { Title, Text } = Typography;
+
 export default function Overview() {
   const [users, setUsers] = useState<UserData[]>([]);
   const [ordersByStatus, setOrdersByStatus] = useState<Order[]>([]);
@@ -119,28 +122,34 @@ export default function Overview() {
   }, []);
   return (
     <>
+      <Title level={3}>📊 Thống kê hệ thống</Title>
       <PageMeta
         title="React.js Ecommerce Dashboard | TailAdmin - React.js Admin Dashboard Template"
         description="This is React.js Ecommerce Dashboard page for TailAdmin - React.js Tailwind CSS Admin Dashboard Template"
       />
       <div className="grid grid-cols-12 gap-4 md:gap-6">
-        <div className="col-span-12 space-y-6 xl:col-span-7">
+        {/* EcommerceMetrics trên 1 hàng riêng */}
+        <div className="col-span-12">
           <EcommerceMetrics users={users} orders={ordersByStatus} transactions={transactions} totalRevenue={totalRevenue} />
+        </div>
+
+        {/* MonthlySalesChart trên 1 hàng riêng */}
+        <div className="col-span-12">
           <MonthlySalesChart transactions={transactions} />
         </div>
 
-        <div className="col-span-12 xl:col-span-5">
-          <MonthlyTarget />
-        </div>
-
+        {/* StatisticsChart */}
         <div className="col-span-12">
           <StatisticsChart orders={orders} />
         </div>
 
+        {/* RecentOrders */}
         <div className="col-span-12">
           <RecentOrders transactions={transactions} />
         </div>
       </div>
+
+
     </>
   );
 }
