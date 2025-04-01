@@ -36,6 +36,7 @@ import {
 import { motion } from "framer-motion"
 import userAppointmentService from "../../../services/useAppointmentService"
 import useMedicineService from "../../../services/useMedicineService"
+import { useNavigate } from "react-router"
 
 
 // Types
@@ -246,6 +247,7 @@ function AppointmentDetail() {
 			const response = await completedAppointmentByDoctor(id, payload);
 			if (response) {
 				message.success("Lưu tất cả thông tin khám thành công")
+				window.location.href = "/doctor/appointments";
 				setCheckupModalVisible(false)
 				setPendingFetalCheckups([])
 				setMedications([])
