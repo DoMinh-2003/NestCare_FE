@@ -1,9 +1,9 @@
 import { useParams } from 'react-router-dom';
 import useFetalService from '../../../services/useFetalService';
 import { useEffect, useState } from 'react';
-import { Table, Button, Popconfirm, message, Form } from 'antd';
+import { Table, Button, Popconfirm, message, Form, GetProps, Input } from 'antd';
 import { EditOutlined, DeleteOutlined, PlusOutlined } from '@ant-design/icons';
-import ModalCreateUpdateFetal from '../../../components/organisms/modal-create-update-fetal/ModalCreateUpdateFetal';
+import ModalCreateUpdateFetal, { getStatusFetalRecordVietnamese } from '../../../components/organisms/modal-create-update-fetal/ModalCreateUpdateFetal';
 import { tableText } from '../../../constants/function';
 import ModalCreateAppointment, { CreateAppointment } from '../../../components/organisms/modal-create-appointment/ModalCreateAppointment';
 import ModalCheckUpRecord, { CheckupRecord } from '../../../components/organisms/modal-checkup-records/ModalCheckUpRecord';
@@ -14,7 +14,8 @@ import ModalGetReminders, { Reminder } from '../../../components/organisms/modal
 import useReminderService from '../../../services/useReminders';
 import ModalCreateReminder from '../../../components/organisms/modal-create-reminder/ModalCreateReminder';
 import Loading from '../../../components/molecules/loading/Loading';
-
+type SearchProps = GetProps<typeof Input.Search>;
+const { Search } = Input;
 export interface FetalData {
     id?: string
     name: string;
@@ -104,7 +105,10 @@ const FetalDetail = () => {
     const getFetalsByMotherIdFromNurse = async () => {
         setIsLoading(true)
         const response = await getFetalsByMotherId(id);
-        setFetals(response);
+        const sortedFetals = response.sort((a: FetalRecord, b: FetalRecord) => {
+            return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+        setFetals(sortedFetals);
         setIsLoading(false)
     };
 
@@ -135,7 +139,7 @@ const FetalDetail = () => {
             setIsModalOpen(false); // Close the modal
             setCurrentFetal(null)
         } else {
-            setIsLoading(true)
+            // setIsLoading(true)
             const response = await createFetal(valuesSubmit)
             if (response) {
                 message.success("Tạo hồ sơ thai nhi thành công")
@@ -186,19 +190,20 @@ const FetalDetail = () => {
             )
         },
         {
-            title: 'Note',
+            title: 'Ghi chú',
             dataIndex: 'note',
             key: 'note',
         },
         {
-            title: 'Health Status',
+            title: 'Tình trạng sức khỏe',
             dataIndex: 'healthStatus',
             key: 'healthStatus',
         },
         {
-            title: 'Status',
+            title: 'Trạng thái',
             dataIndex: 'status',
             key: 'status',
+            render:(status: string)=>getStatusFetalRecordVietnamese(status)
         },
         {
             title: 'Action',
@@ -256,6 +261,18 @@ const FetalDetail = () => {
         }
     }
 
+
+    const onSearch: SearchProps['onSearch'] = async (value, _e) => {
+        setSearchText(value)
+        setIsLoading(true)
+        const response = await getFetalsByMotherId(id);
+        const sortedFetals = response.sort((a: FetalRecord, b: FetalRecord) => {
+            return new Date(b.createdAt) - new Date(a.createdAt);
+        });
+        const filterByName = sortedFetals.filter((item: FetalRecord)=> item.name.toLocaleLowerCase().includes(value.toLocaleLowerCase()))
+        setFetals(filterByName);
+        setIsLoading(false)
+    }
     if (isLoading) {
         return (
             < Loading />
@@ -326,6 +343,11 @@ const FetalDetail = () => {
             >
                 Xem nhắc nhở
             </Button>
+            <Search
+                placeholder="Tìm kiếm bằng tên" className='w-[250px] ml-2'
+                onSearch={onSearch} enterButton
+                defaultValue={searchText}
+            />
             <Table
                 components={{
                     header: {

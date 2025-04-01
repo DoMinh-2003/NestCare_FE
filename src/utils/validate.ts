@@ -28,3 +28,18 @@ export const validateUsername = (_: any, value: string) => {
     }
     return Promise.resolve();
 };
+
+// validators.ts
+export const validateBloodPressure = async (value: string) => {
+    if (!value) {
+        return Promise.reject('Vui lòng nhập huyết áp của người mẹ!');
+    }
+
+    // Kiểm tra định dạng huyết áp (ví dụ: 120/80)
+    const regex = /^\d{1,3}\/\d{1,3}$/;
+    if (!regex.test(value)) {
+        return Promise.reject('Huyết áp không hợp lệ! Vui lòng nhập theo định dạng: 120/80');
+    }
+
+    return Promise.resolve();
+};
