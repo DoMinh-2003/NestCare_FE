@@ -1,21 +1,25 @@
 import { useEffect, useState } from "react";
-import { Button, Form, Input, message, Table, Tag } from "antd";
+import { Button, Form, GetProps, Input, message, Table, Tag } from "antd";
 import usePackageService, { Package, PackageService } from "../../../services/usePackageService";
 import ModalServiceOfPackage from "../../../components/organisms/modal-services-of-package/ModalServiceOfPackage";
 import ModalCreateUpdatePackage, { PackageCreateUpdate } from "../../../components/organisms/modal-create-update-package/ModalCreateUpdatePackage";
-import { DeleteOutlined, EditOutlined, SearchOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { formatMoney } from "../../../utils/formatMoney";
+import ModalDelete from "../../../components/organisms/modal-delete";
+type SearchProps = GetProps<typeof Input.Search>;
+const { Search } = Input;
 
 const ManagePackage = () => {
     const [packages, setPackages] = useState<Package[]>([]);
-    const { getPackages, createPackage, updatePackage } = usePackageService();
+    const { getPackages, createPackage, updatePackage, deletePackages } = usePackageService();
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [searchText, setSearchText] = useState<string>("");
     const [servicesOfPackage, setServicesOfPackage] = useState<PackageService[]>([]);
     const [isModalOpenCreateUpdate, setIsModalOpenCreateUpdate] = useState(false);
-    const [editingPackage, setEditingPackage] = useState<Package | null>(null);
+    const [editingPackage, setEditingPackage] = useState<PackageCreateUpdate>();
     const [modalWidth, setModalWidth] = useState<number | string>(800);
     const [form] = Form.useForm();
+    const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false); //Modal delete
+    // const [currentPackage, setCurrentPackage] = useState<PackageCreateUpdate | null>(null);
 
     useEffect(() => {
         getPackagesFromAdmin();
@@ -51,40 +55,40 @@ const ManagePackage = () => {
     const getPackagesFromAdmin = async () => {
         const response = await getPackages();
         console.log("response: ", response);
-        if (response && response) {
-            setPackages(response);
+        if (response) {
+            const sortedPackages = response.sort((a: Package, b: Package) => {
+                return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+            });
+            setPackages(sortedPackages);
         }
     };
 
     const handleSubmit = async (data: PackageCreateUpdate) => {
         console.log("Submitted Package:", data);
-        if (!data.id) {
+        setIsModalOpenCreateUpdate(false);
+        if (!editingPackage) {
             const response = await createPackage(data);
             if (response && response.data) {
                 message.success("Tạo gói thành công");
                 getPackagesFromAdmin();
             }
         } else {
-            const response = await updatePackage(data);
+            const response = await updatePackage(data, editingPackage?.id+'');
             if (response && response.data) {
                 message.success("Cập nhật gói thành công");
                 getPackagesFromAdmin();
             }
         }
-        setIsModalOpenCreateUpdate(false);
     };
 
-    const handleOpenModalCreateUpdate = (packageCreateUpdate?: Package) => {
+    const handleOpenModalCreateUpdate = (packageCreateUpdate?: PackageCreateUpdate) => {
         if (packageCreateUpdate) {
+            console.log("packageCreateUpdate: ", packageCreateUpdate)
             setEditingPackage(packageCreateUpdate);
-        } else {
-            setEditingPackage(null);
+        } else{
+            setEditingPackage(null)
         }
         setIsModalOpenCreateUpdate(true);
-    };
-
-    const handleSearch = (value: string) => {
-        setSearchText(value);
     };
 
     const columns = [
@@ -149,37 +153,69 @@ const ManagePackage = () => {
         },
         {
             title: 'Hành động',
-            render: (record: Package) => (
+            render: (record: PackageCreateUpdate) => (
                 <div className="flex gap-2">
                     <EditOutlined onClick={() => handleOpenModalCreateUpdate(record)} className="text-blue" />
-                    {/* <DeleteOutlined onClick={() => handleOpenModalDelete(record)} className="text-red-500" /> */}
+                    <DeleteOutlined onClick={() => handleOpenModalDelete(record)} className="text-red-500" />
                 </div>
             )
         },
     ];
 
+    const handleOpenModalDelete = (record: PackageCreateUpdate) => {
+        setEditingPackage(record);
+        setIsModalDeleteOpen(true);
+    };
+
     const handleCancelModalOpenCreateUpdate = () => {
         setIsModalOpenCreateUpdate(false)
-        form.resetFields()
     }
+
+    const onSearch: SearchProps['onSearch'] = async (value, _e) => {
+        const response = await getPackages();
+        console.log("response: ", response);
+        if (response) {
+            const sortedPackages = response.sort((a: Package, b: Package) => {
+                return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+            });
+            const filterByName = sortedPackages.filter((item: Package) => item.name.toLocaleLowerCase().includes(value.toLocaleLowerCase()))
+            setPackages(filterByName)
+        }
+    }
+
+    const handleOkModalDelete = async () => {
+        if (!editingPackage) return;
+        await deletePackages(editingPackage.id + '');
+        message.success(`Xóa  "${editingPackage?.name}" thành công`);
+        setEditingPackage(null);
+        setIsModalDeleteOpen(false);
+        getPackagesFromAdmin()
+    };
+
+    const handleCancelModalDelete = () => {
+        setIsModalDeleteOpen(false);
+    };
 
     return (
         <div>
             <h1 className="text-3xl font-extrabold text-center mb-5">
                 Quản lí gói dịch vụ
             </h1>
+
+            <ModalDelete
+                handleCancelModalDelete={handleCancelModalDelete}
+                handleOkModalDelete={handleOkModalDelete}
+                name={editingPackage?.name || ""}
+                isModalOpenDelete={isModalDeleteOpen}
+            />
+
             <div className="mb-4 flex items-center justify-between">
-                <Input
-                    placeholder="Tìm theo tên dịch vụ"
-                    value={searchText}
-                    onChange={(e) => handleSearch(e.target.value)}
-                    style={{ width: 200, marginRight: 8 }}
-                    suffix={<SearchOutlined />}
-                />
+                <Search placeholder="Tìm kiếm bằng tên hoặc email" className='w-[250px]' onSearch={onSearch} enterButton />
                 <Button type="primary" onClick={() => handleOpenModalCreateUpdate()}>
                     Thêm gói dịch vụ
                 </Button>
             </div>
+
             <ModalCreateUpdatePackage
                 form={form}
                 visible={isModalOpenCreateUpdate}

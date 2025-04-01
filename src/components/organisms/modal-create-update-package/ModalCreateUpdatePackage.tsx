@@ -22,7 +22,7 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
     visible: boolean;
     onCancel: () => void;
     onSubmit: (values: PackageCreateUpdate) => void;
-    initialValues?: PackageCreateUpdate | null;
+    initialValues: PackageCreateUpdate;
     width?: number | string;
     form: any
 }) => {
@@ -34,25 +34,31 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
     const [slots, setSlots] = useState<{ [key: string]: number }>({}); // Lưu số lượng slot cho từng dịch vụ
 
     useEffect(() => {
+        console.log("initialValues: ", initialValues)
         getServicesFromCustomer();
         if (initialValues) {
-            console.log("initialValues: ", initialValues);
+            // Tính toán oldDiscount ngay tại đây
             form.setFieldsValue({
+                price: formatMoney(initialValues.price),
+                discount: discount || 0,
                 name: initialValues.name,
                 description: initialValues.description,
                 durationValue: initialValues.durationValue,
                 durationType: initialValues.durationType,
-                packageService: initialValues.packageServices.map(service => service.service.id), // Lấy ID dịch vụ
+                packageService: initialValues.packageServices.map(service => service?.service?.id), // Lấy ID dịch vụ
             });
-            const serviceIds = initialValues.packageServices.map(service => service.service.id);
+
+            const serviceIds = initialValues.packageServices.map(service => service?.service?.id);
             setSelectedServices(serviceIds);
             const initialSlots = {};
             initialValues.packageServices.forEach(service => {
-                initialSlots[service.service.id] = service.slot; // Lưu số slot cho từng dịch vụ
+                initialSlots[service?.service?.id] = service.slot; // Lưu số slot cho từng dịch vụ
             });
+            console.log("initialSlots: ", initialSlots)
             setSlots(initialSlots);
         } else {
             form.resetFields();
+            setSelectedServices([])
         }
     }, [initialValues, form]);
 
@@ -68,20 +74,37 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
 
     const handleOk = async () => {
         try {
-           if(!initialValues){
-            const values = await form.validateFields();
-            const formattedValues = {
-                ...values,
-                price: totalPrice,
-                packageService: selectedServices.map(serviceId => ({
-                    serviceId,
-                    slot: slots[serviceId], // Lấy số slot từ trường nhập
-                })),
-            };
-            setDiscount(0);
-            form.resetFields();
-            onSubmit(formattedValues);
-           }
+            if (!initialValues) {
+                const values = await form.validateFields();
+                const formattedValues = {
+                    ...values,
+                    price: totalPrice,
+                    packageService: selectedServices.map(serviceId => ({
+                        serviceId,
+                        slot: slots[serviceId], // Lấy số slot từ trường nhập
+                    })),
+                };
+                setDiscount(0);
+           
+                form.resetFields();
+                setTotalPrice(0)
+                onSubmit(formattedValues);
+
+            } else {
+                const values = await form.validateFields();
+                const formattedValues = {
+                    ...values,
+                    price: totalPrice,
+                    packageService: selectedServices.map(serviceId => ({
+                        serviceId,
+                        slot: slots[serviceId], // Lấy số slot từ trường nhập
+                    })),
+                };
+                setDiscount(0);
+                form.resetFields();
+                setTotalPrice(0)
+                onSubmit(formattedValues);
+            }
         } catch (error) {
             console.error("Validation failed:", error);
         }
@@ -124,6 +147,7 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
     };
 
     const handleSetDiscount = (e: React.ChangeEvent<HTMLInputElement>) => {
+        console.log("handleSetDiscount: ", e.target.value)
         const discountValue = Number(e.target.value);
         setDiscount(discountValue);
         calculateTotalPrice(); // Tính toán lại tổng giá khi giảm giá thay đổi
@@ -145,7 +169,7 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
                 </Button>,
             ]}
         >
-            <Form form={form} layout="vertical">
+            <Form form={form} layout="vertical" >
                 <Form.Item
                     name="name"
                     label="Tên gói"
@@ -200,16 +224,19 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
                 </Form.Item>
 
                 {/* Hiển thị trường nhập slot cho mỗi dịch vụ đã chọn */}
-                {selectedServices.map(serviceId => (
-                    <Form.Item key={serviceId} label={`Số slot cho ${services.find(s => s.id === serviceId)?.name}`}>
-                        <InputNumber
-                            min={1}
-                            value={slots[serviceId] || 1}
-                            onChange={(value) => handleSlotChangeService(serviceId, value)}
-                            placeholder="Nhập số slot"
-                        />
-                    </Form.Item>
-                ))}
+                {selectedServices?.map(serviceId => {
+                    const service = services.find(s => s?.id === serviceId);
+                    return (
+                        <Form.Item key={serviceId} label={`Số slot cho ${service ? service.name : 'Dịch vụ không tồn tại'}`}>
+                            <InputNumber
+                                min={1}
+                                value={slots[serviceId] || 1}
+                                onChange={(value) => handleSlotChangeService(serviceId, value)}
+                                placeholder="Nhập số slot"
+                            />
+                        </Form.Item>
+                    );
+                })}
 
                 <Form.Item
                     name="discount"
@@ -217,11 +244,12 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
                     rules={[
                         {
                             validator: (_, value) => {
-                                if (!value) {
+                                console.log("value: ", value)
+                                if (!value && value != 0) {
                                     return Promise.reject(new Error('Vui lòng nhập phần trăm giảm giá!'));
                                 }
                                 const numValue = Number(value);
-                                if (numValue < 1 || numValue > 100) {
+                                if (numValue < 0 || numValue > 100) {
                                     return Promise.reject(new Error('Giảm giá phải nằm trong khoảng từ 1 đến 100!'));
                                 }
                                 return Promise.resolve();
@@ -235,8 +263,18 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
                         placeholder="Nhập phần trăm giảm giá"
                         style={{ width: '100%' }}
                     />
-                </Form.Item>
 
+
+                </Form.Item>
+                {
+                    initialValues && <Form.Item
+                        name="price"
+                        label="Giá cũ"
+
+                    >
+                        <Input disabled />
+                    </Form.Item>
+                }
                 <div>
                     <strong>Tổng giá: {formatMoney(totalPrice)}</strong>
                 </div>

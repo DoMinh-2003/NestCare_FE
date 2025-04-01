@@ -11,6 +11,11 @@ import moment from 'moment';
 import dayjs from 'dayjs';
 import { getStatusTag } from '../checkin-appointment';
 import { Slot } from '../../../model/Slot';
+import viVN from 'antd/es/date-picker/locale/vi_VN';
+
+
+
+
 type SearchProps = GetProps<typeof Input.Search>;
 const { Search } = Input;
 interface FetalRecord {
@@ -170,12 +175,11 @@ const NurseUpdateMotherRecord = () => {
     }
 
     const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-        console.log(date, dateString);
-        if (typeof dateString === 'string') {
-            setDay(dateString)
+        if (date) {
+            const formattedDate = date.format('YYYY-MM-DD');
+            setDay(formattedDate);
         }
     };
-
     return (
         <div>
             <div className='text-3xl font-bold text-center my-5'>Cập nhật sức khoẻ người mẹ</div>
@@ -186,8 +190,9 @@ const NurseUpdateMotherRecord = () => {
                 <div>
                     <DatePicker
                         defaultValue={today}
-                        format={(date, dateString) => formatDate(date.toDate())}
+                        format="DD/MM/YYYY"
                         onChange={onChange}
+                        locale={viVN}
                     />
                 </div>
             </div>

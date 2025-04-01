@@ -6,6 +6,8 @@ import useApiService from "../hooks/useApi";
 import { message } from "antd";
 import { navigateByRole } from '../utils/index';
 import { loginRedux } from "../redux/features/userSlice";
+import { signInWithPopup } from "firebase/auth";
+import { auth, ggProvider } from "../config/firebase";
 
 const useAuthService = () => {
   const { callApi, loading, setIsLoading } = useApiService();
@@ -56,22 +58,23 @@ const useAuthService = () => {
     [callApi, dispatch, router]
   );
 
-  //   const loginGoogle = useCallback(async () => {
-  //     try {
-  //       const result = await signInWithPopup(auth, ggProvider);
-  //       const token = await result.user?.getIdToken();
-  //       if (token) {
-  //         const res = await callApi("post", "/login-google", { token });
-  //         localStorage.setItem("token", res?.data?.token);
-  //         router.push("/");
-  //         dispatch(loginRedux(res?.data));
-  //       }
-  //     } catch (e: any) {
-  //       console.error("Error during Google sign-in or API request:", e);
-  //     }
-  //   }, [callApi, dispatch, router]);
+  const loginGoogle = useCallback(async () => {
+    try {
+      const result = await signInWithPopup(auth, ggProvider);
+      const token = await result.user?.getIdToken();
+      if (token) {
+        const res = await callApi("post", "/auth/login-google", { token });
+        localStorage.setItem("token", res.token);
+        localStorage.setItem("USER", JSON.stringify(res));
+        navigateByRole(res?.role, router);
+        dispatch(loginRedux(res));
+      }
+    } catch (e: any) {
+      console.error("Error during Google sign-in or API request:", e);
+    }
+  }, [callApi, dispatch, router]);
 
-  return { register, login, loading, setIsLoading };
+  return { register, login, loginGoogle, loading, setIsLoading };
 };
 
 export default useAuthService;

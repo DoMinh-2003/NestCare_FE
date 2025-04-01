@@ -40,6 +40,8 @@ import useReminderService from "../../../services/useReminders"
 import useServiceService from "../../../services/useServiceService"
 import { formatDate } from "../../../utils/formatDate"
 import { formatMoney } from "../../../utils/formatMoney"
+import viVN from 'antd/es/date-picker/locale/vi_VN';
+
 
 const { Option } = Select
 const { Text, Title } = Typography
@@ -221,13 +223,13 @@ function DoctorManageCheckinAppointments() {
 
 	// Cấu hình cột cho bảng chính
 	const columns = [
-		{
-			title: "Hồ Sơ khám",
-			key: "fetalRecords",
-			render: (record: Appointment) => {
-				return <Link to={`appointments/${record.id}`}>Xem</Link>
-			},
-		},
+		// {
+		// 	title: "Hồ Sơ khám",
+		// 	key: "fetalRecords",
+		// 	render: (record: Appointment) => {
+		// 		return <Link to={`appointments/${record.id}`}>Xem</Link>
+		// 	},
+		// },
 		{
 			title: "Ngày hẹn",
 			dataIndex: "appointmentDate",
@@ -295,35 +297,35 @@ function DoctorManageCheckinAppointments() {
 				</Space>
 			),
 		},
-		{
-			title: "Hành động",
-			key: "actions",
-			render: (record: Appointment) => {
-				// Lấy motherId từ fetal record đầu tiên nếu có
-				const mId = record.fetalRecords?.[0]?.mother?.id
+		// {
+		// 	title: "Hành động",
+		// 	key: "actions",
+		// 	render: (record: Appointment) => {
+		// 		// Lấy motherId từ fetal record đầu tiên nếu có
+		// 		const mId = record.fetalRecords?.[0]?.mother?.id
 
-				return (
-					<Space>
-						<Button
-							type="primary"
-							icon={<BellOutlined />}
-							onClick={() => {
-								if (mId) {
-									setMotherId(mId)
-									setReminderModalVisible(true)
-								} else {
-									message.warning("Không tìm thấy thông tin mẹ để tạo nhắc nhở")
-								}
-							}}
-							disabled={!mId}
-							className="bg-blue-500 hover:bg-blue-600"
-						>
-							Tạo nhắc nhở
-						</Button>
-					</Space>
-				)
-			},
-		},
+		// 		return (
+		// 			<Space>
+		// 				<Button
+		// 					type="primary"
+		// 					icon={<BellOutlined />}
+		// 					onClick={() => {
+		// 						if (mId) {
+		// 							setMotherId(mId)
+		// 							setReminderModalVisible(true)
+		// 						} else {
+		// 							message.warning("Không tìm thấy thông tin mẹ để tạo nhắc nhở")
+		// 						}
+		// 					}}
+		// 					disabled={!mId}
+		// 					className="bg-blue-500 hover:bg-blue-600"
+		// 				>
+		// 					Tạo nhắc nhở
+		// 				</Button>
+		// 			</Space>
+		// 		)
+		// 	},
+		// },
 	]
 
 	const handleRefresh = () => {
@@ -555,11 +557,10 @@ function DoctorManageCheckinAppointments() {
 			>
 				<div className="flex items-center gap-4 mb-6">
 					<DatePicker
-						value={datePickerValue}
-						format={(date, dateString) => formatDate(date.toDate())}
+						defaultValue={datePickerValue}
+						format="DD/MM/YYYY"
 						onChange={handleDateChange}
-						allowClear
-
+						locale={viVN}
 					/>
 
 					<Input onChange={handleSearch} placeholder="Tìm kiếm theo tên sản phụ" value={search} allowClear style={{ width: '300px' }} />

@@ -11,6 +11,8 @@ import { Doctor } from '../../../components/organisms/modal-appointment-detail/M
 import { FetalRecord } from '../fetal-detail';
 import { formatDate } from '../../../utils/formatDate';
 const { Search } = Input;
+import viVN from 'antd/es/date-picker/locale/vi_VN';
+
 
 // types.ts
 
@@ -172,9 +174,9 @@ const CancelAppointment = () => {
     };
 
     const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-        console.log(date, dateString);
-        if (typeof dateString === 'string') {
-            setDay(dateString)
+        if (date) {
+            const formattedDate = date.format('YYYY-MM-DD');
+            setDay(formattedDate);
         }
     };
     return (
@@ -196,8 +198,9 @@ const CancelAppointment = () => {
                 <div>
                     <DatePicker
                         defaultValue={today}
-                        format={(date, dateString) => formatDate(date.toDate())}
+                        format="DD/MM/YYYY"
                         onChange={onChange}
+                        locale={viVN}
                     />
                 </div>
 

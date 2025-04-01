@@ -79,9 +79,9 @@ const usePackageService = () => {
     );
 
     const updatePackage = useCallback(
-        async (values: any) => {
+        async (values: any, id: string) => {
             try {
-                const response = await callApi("put", `packages/${values.id}`, {
+                const response = await callApi("put", `packages/${id}`, {
                     // description: values.description,
                     // price: values.price,
                     // name: values.name
@@ -95,10 +95,12 @@ const usePackageService = () => {
         [callApi, router]
     );
 
-    const deleteServices = useCallback(
+    const deletePackages = useCallback(
         async (id: string) => {
             try {
-                const response = await callApi("delete", `services/${id}`);
+                const response = await callApi("put", `packages/${id}/toggle-delete`,{
+                    "isDeleted": true
+                  });
                 return response;
             } catch (e: any) {
                 message.error(e?.response?.data);
@@ -107,7 +109,7 @@ const usePackageService = () => {
         [callApi, router]
     );
 
-    return { getPackages, deleteServices, createPackage, getPackageById, updatePackage, loading, setIsLoading };
+    return { getPackages, deletePackages, createPackage, getPackageById, updatePackage, loading, setIsLoading };
 };
 
 export default usePackageService;

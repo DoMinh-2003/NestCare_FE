@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Modal, Form, Input, Upload, message, Image, Select } from 'antd';
 import { getUserDataFromLocalStorage, uploadToCloudinary } from '../../../constants/function';
 import { PlusOutlined } from '@ant-design/icons';
+import { validateFullName, validatePassword, validatePhoneNumber } from '../../../utils/validate';
 export interface UserData {
   username: string;
   password?: string; // Không yêu cầu khi cập nhật
@@ -120,21 +121,35 @@ const ModalCreateUpdateUser: React.FC<UserModalProps> = ({ visible, onCreate, on
         <Form.Item
           name="username"
           label="Tên người dùng"
-          rules={[{ required: true, message: 'Vui lòng nhập tên người dùng!' }]}
+          rules={[{ required: true, message: 'Vui lòng nhập tên người dùng!' },
+          {
+            validator: validateFullName, // Sử dụng hàm xác thực
+          },
+          ]}
         >
           <Input />
         </Form.Item>
         <Form.Item
           name="email"
           label="Email"
-          rules={[{ required: true, message: 'Vui lòng nhập email!' }]}
+          rules={[{ required: true, message: 'Vui lòng nhập email!' },
+          {
+            type: 'email',
+            message: 'Email đầu vào phải là dạng: example@gmail.com',
+          }
+          ]}
         >
           <Input type='email' />
         </Form.Item>
         <Form.Item
           name="fullName"
           label="Họ và tên"
-          rules={[{ required: true, message: 'Vui lòng nhập họ và tên!' }]}
+          rules={[
+            { required: true, message: 'Vui lòng nhập họ và tên!' },
+            {
+              validator: validateFullName,
+            },
+          ]}
         >
           <Input />
         </Form.Item>
@@ -142,7 +157,11 @@ const ModalCreateUpdateUser: React.FC<UserModalProps> = ({ visible, onCreate, on
           !user && <Form.Item
             name="password"
             label="Mật khẩu"
-            rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' }]}
+            rules={[{ required: true, message: 'Vui lòng nhập mật khẩu!' },
+            {
+              validator: validatePassword,
+            },
+            ]}
           >
             <Input />
           </Form.Item>
@@ -150,7 +169,11 @@ const ModalCreateUpdateUser: React.FC<UserModalProps> = ({ visible, onCreate, on
         <Form.Item
           name="phone"
           label="Số điện thoại"
-          rules={[{ required: true, message: 'Vui lòng nhập số điện thoại!' }]}
+          rules={[{ required: true, message: 'Vui lòng nhập số điện thoại!' },
+          {
+            validator: validatePhoneNumber, // Sử dụng hàm xác thực
+          },
+          ]}
         >
           <Input />
         </Form.Item>

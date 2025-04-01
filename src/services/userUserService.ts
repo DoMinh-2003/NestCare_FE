@@ -1,3 +1,4 @@
+import { BlogFormValues } from './../components/organisms/modal-create-update-blog/index';
 import { useDispatch } from "react-redux";
 import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
@@ -78,9 +79,8 @@ const userUserService = () => {
 
   const updateUser = useCallback(
     async (values: any) => {
-      console.log("id: ", values.id)
       try {
-        const response = await callApi("put", `users/${values.id}`, {
+        const response = await callApi("put", `users`, {
           ...values
         });
         console.log("createUser: ", response)
@@ -128,7 +128,18 @@ const userUserService = () => {
     }, [callApi],
   )
 
-  return { getUserById, getAvailableDoctor, getUsers, getUserByRole, loading, updateUser, deleteUser, createUser, setIsLoading, getUsersSearch };
+  const changePassword = useCallback(
+    async (values) => {
+      try {
+        const response = await callApi("put", `users/change-password`, values);
+        return response;
+      } catch (e: any) {
+        message.error(e?.response?.data || "GetUsers failed");
+      }
+    }, [callApi],
+  )
+
+  return { getUserById, getAvailableDoctor, getUsers, getUserByRole, loading, updateUser, deleteUser, createUser, setIsLoading, getUsersSearch, changePassword };
 };
 
 export default userUserService;
