@@ -28,7 +28,7 @@ api.interceptors.response.use(
     if (error.response) {
       const { data, status } = error.response;
 
-      if (status === 401 && data.message === "Token is expired") {
+      if (status === 401) {
         if (!isTokenExpired) {
           isTokenExpired = true;
           message.error("Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.");

@@ -23,7 +23,20 @@ const useTransaction = () => {
 		[callApi],
 	)
 
-	return { getTransaction, loading }
+	const getTransactions = useCallback(
+		async () => {
+			try {
+				const response = await callApi("get", `transactions/admin/all`)
+				return response
+			} catch (e: any) {
+				console.error("Error fetching transactions:", e)
+				return { data: [] }
+			}
+		},
+		[callApi],
+	)
+
+	return { getTransaction, loading, getTransactions }
 }
 
 export default useTransaction

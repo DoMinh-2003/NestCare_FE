@@ -47,7 +47,7 @@ const AdminLayout: React.FC = () => {
     dispatch(logout());
     navigate("/");
 
-    message.success("Đăng xuất");
+    message.success("Đăng xuất thành công");
   };
 
   return (

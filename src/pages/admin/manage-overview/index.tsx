@@ -10,7 +10,10 @@ import useOrderService from "../../../services/useOrderService";
 
 import { useEffect, useState } from "react";
 import { UserData } from "../../../components/organisms/modal-create-update-user/ModalCreateUpdateUser";
-import { or } from "firebase/firestore";
+import useTransaction from "../../../services/useTransaction";
+
+
+
 // Order.ts
 export interface Package {
   id: string; // Unique identifier for the package
@@ -47,42 +50,73 @@ export interface Order {
   package: Package; // Package associated with the order
   user: User; // User associated with the order
 }
+
+export interface Transaction {
+  id: string;
+  type: string;
+  status: string;
+  amount: string;
+  description: string;
+  paymentGatewayReference: string | null;
+  createdAt: string;
+  user: User;
+  appointment: any | null;
+  userPackage: any | null;
+  serviceBilling: any | null;
+}
 export default function Overview() {
   const [users, setUsers] = useState<UserData[]>([]);
   const [ordersByStatus, setOrdersByStatus] = useState<Order[]>([]);
   const { getUsersSearch } = userUserService();
   const { getOrderStatus } = useOrderService()
-  const {getOrders} = useOrderService();
+  const { getOrders } = useOrderService();
   const [orders, setOrders] = useState<Order[]>([])
+
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [totalRevenue, setTotalRevenue] = useState(0);
+  const { getTransactions } = useTransaction();
   useEffect(() => {
-    getUsersFromAdmin();
-    getOrderStatusByAdmin()
+    const fetchData = async () => {
+      try {
+        const [usersResponse, ordersResponse, transactionsResponse] = await Promise.all([
+          getUsersSearch("", ""),
+          getOrderStatus("PAID"),
+          getTransactions(),
+        ]);
+
+        // Lọc người dùng không phải admin và chưa bị xóa
+        const filteredUsers = usersResponse.users.filter(
+          (item) => item.role !== "admin" && !item.isDeleted
+        );
+        setUsers(filteredUsers);
+
+        // Cập nhật ordersByStatus
+        setOrdersByStatus(ordersResponse);
+
+        // Cập nhật transactions và tính tổng doanh thu
+        setTransactions(transactionsResponse);
+        const revenue = transactionsResponse.reduce(
+          (sum, transaction) => sum + parseFloat(transaction.amount),
+          0
+        );
+        setTotalRevenue(revenue);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
   }, []);
 
-  const getUsersFromAdmin = async () => {
-    const response = await getUsersSearch("", "");
-    console.log("response: ", response);
-    if (response) {
-      setUsers(response.users.filter((item: UserData) => item.role != "admin" && !item.isDeleted));
-    }
-  };
-  const getOrderStatusByAdmin = async () => {
-    const response = await getOrderStatus('PAID')
-    if (response) {
-      setOrdersByStatus(response)
-    }
-  }
-
-  useEffect(()=>{
-    getOrdersFromAdmin()
-  }, [])
-
-  const getOrdersFromAdmin = async()=>{
-    const response = await getOrders('')
-    if(response){
-      setOrders(response.items)
-    }
-  }
+  useEffect(() => {
+    const getOrdersFromAdmin = async () => {
+      const response = await getOrders("");
+      if (response) {
+        setOrders(response.items);
+      }
+    };
+    getOrdersFromAdmin();
+  }, []);
   return (
     <>
       <PageMeta
@@ -91,9 +125,8 @@ export default function Overview() {
       />
       <div className="grid grid-cols-12 gap-4 md:gap-6">
         <div className="col-span-12 space-y-6 xl:col-span-7">
-          <EcommerceMetrics users={users} orders={ordersByStatus}/>
-
-          <MonthlySalesChart orders={ordersByStatus}/>
+          <EcommerceMetrics users={users} orders={ordersByStatus} transactions={transactions} totalRevenue={totalRevenue} />
+          <MonthlySalesChart transactions={transactions} />
         </div>
 
         <div className="col-span-12 xl:col-span-5">
@@ -101,15 +134,11 @@ export default function Overview() {
         </div>
 
         <div className="col-span-12">
-          <StatisticsChart orders={orders}/>
+          <StatisticsChart orders={orders} />
         </div>
-{/* 
-        <div className="col-span-12 xl:col-span-5">
-          <DemographicCard />
-        </div> */}
 
-        <div className="col-span-12 ">
-          <RecentOrders/>
+        <div className="col-span-12">
+          <RecentOrders transactions={transactions} />
         </div>
       </div>
     </>
