@@ -42,6 +42,7 @@ import useReminderService from "../../../services/useReminders"
 import useServiceService from "../../../services/useServiceService"
 import { formatDate } from "../../../utils/formatDate"
 import { formatMoney } from "../../../utils/formatMoney"
+import ModalServiceDetails from "../../../components/molecules/modal-services-detail"
 
 const { Option } = Select
 const { Text, Title } = Typography
@@ -88,7 +89,7 @@ function DoctorManageCheckinAppointments() {
 	const [services, setServices] = useState<[]>([])
 	const [currentDoctor, setCurrentDoctor] = useState(null)
 	const [loading, setLoading] = useState(false)
-	const { getAppointmentsByDoctor, updateAppointmentStatus } = userAppointmentService()
+	const { getAppointmentsByDoctor, updateAppointmentStatus, getAppointmentCheckupPreview } = userAppointmentService()
 	const [form] = Form.useForm()
 	const { getServices } = useServiceService()
 	const [modalVisible, setModalVisible] = useState(false)
@@ -120,10 +121,26 @@ function DoctorManageCheckinAppointments() {
 		}
 	}
 	// Hiển thị chi tiết (Modal bảng con)
-	const showDetails = (title: string, details: any[]) => {
-		setModalTitle(title)
-		setModalData(details)
-		setModalVisible(true)
+	const showDetails = async (title: string, details: Appointment[], services: any[]) => {
+		console.log('====================================');
+		console.log("details", details);
+		console.log('====================================');
+		console.log("Payload", services);
+
+		try {
+			const response = await getAppointmentCheckupPreview(details.id, services)
+			console.log('====================================');
+			console.log("RESPONSE", response);
+			console.log('====================================');
+			setModalData(response)
+			setModalTitle(title)
+			setModalVisible(true)
+			// setModalData(details)
+		} catch (error) {
+			console.log('====================================');
+			console.log(error.message);
+			console.log('====================================');
+		}
 	}
 
 	// Tạo nhắc nhở
@@ -264,7 +281,7 @@ function DoctorManageCheckinAppointments() {
 			render: (services: any[], record: Appointment) => (
 				<Space>
 					<Button
-						onClick={() => showDetails("Dịch vụ khám", services)}
+						onClick={() => showDetails("Dịch vụ khám", record, services)}
 						disabled={!services?.length}
 						icon={<FileTextOutlined />}
 						className="border-blue-400 text-blue-500 hover:text-blue-600 hover:border-blue-500"
@@ -326,15 +343,23 @@ function DoctorManageCheckinAppointments() {
 				return [
 					{
 						title: "Tên dịch vụ",
-						dataIndex: "notes",
-						key: "notes",
-						render: (text) => <span className="font-medium">{text}</span>,
+						dataIndex: "name",
+						key: "name",
+						render: (text: string) => <span className="font-medium">{text}</span>,
 					},
 					{
 						title: "Giá",
 						dataIndex: "price",
 						key: "price",
-						render: (value: number) => <span className="font-medium text-green-600">{formatMoney(value)}</span>,
+						render: (value: number) => <span className="font-medium text-green-600">{value.toLocaleString()} VND</span>,
+					},
+					{
+						title: "Thuộc gói dịch vụ",
+						dataIndex: "isInPackage",
+						key: "isInPackage",
+						render: (value: boolean) => (
+							<span className={value ? "text-blue-600" : "text-red-600"}>{value ? "Có" : "Không"}</span>
+						),
 					},
 				]
 			case "Hóa đơn thuốc":
@@ -530,7 +555,7 @@ function DoctorManageCheckinAppointments() {
 				<div className="flex items-center gap-4 mb-6">
 					<DatePicker onChange={handleDateChange} value={datePickerValue} allowClear />
 
-					<Input onChange={handleSearch} placeholder="Tìm kiếm theo tên sản phụ" value={search} allowClear />
+					<Input onChange={handleSearch} placeholder="Tìm kiếm theo tên sản phụ" value={search} allowClear style={{ width: '300px' }} />
 
 					<Button
 						type="primary"
@@ -572,7 +597,7 @@ function DoctorManageCheckinAppointments() {
 					/>
 				)}
 
-				{/* Modal hiển thị dữ liệu dạng bảng */}
+				{/* Modal hiển thị dữ liệu dạng bảng
 				<Modal
 					title={modalTitle}
 					visible={modalVisible}
@@ -581,18 +606,21 @@ function DoctorManageCheckinAppointments() {
 					width={1400}
 				>
 					{modalData?.length ? (
-						<Table
-							dataSource={modalData}
-							columns={getModalColumns()}
-							rowKey="id"
-							pagination={false}
-							bordered
-							className="shadow-sm rounded-lg overflow-hidden"
-						/>
+						<ServiceDetails data={modalData} />
 					) : (
 						<p>Không có dữ liệu</p>
 					)}
-				</Modal>
+				</Modal> */}
+
+
+				{/* Modal hiển thị dữ liệu dịch vụ */}
+				<ModalServiceDetails
+					visible={modalVisible}
+					title={modalTitle}
+					data={modalData}
+					loading={loading}
+					onCancel={() => setModalVisible(false)}
+				/>
 
 				{/* Modal hiển thị danh sách thai nhi
 				<Modal

@@ -5,6 +5,7 @@ import { getUserDataFromLocalStorage } from '../../../constants/function';
 import { FetalRecordSubmit } from '../../../model/Fetal';
 import useFetalService from '../../../services/useFetalService';
 import { calculateExpectedDeliveryDate } from '../../../utils/formatDate';
+import dayjs from 'dayjs';
 
 const { Option } = Select;
 
@@ -23,12 +24,14 @@ function FetalCreation({ open, onClose }: FetalCreationProps) {
 	const onFinish = async (values: FetalRecordSubmit) => {
 		const formattedValues = {
 			...values,
-			dateOfPregnancyStart: moment(values.dateOfPregnancyStart).format('YYYY-MM-DD'),
-			expectedDeliveryDate: moment(values.expectedDeliveryDate).format('YYYY-MM-DD'),
+			dateOfPregnancyStart: dayjs(values.dateOfPregnancyStart).format('YYYY-MM-DD'),
+			expectedDeliveryDate: dayjs(values.expectedDeliveryDate).format('YYYY-MM-DD'),
 			motherId: user.id,
 		};
 		console.log('Submitted values:', formattedValues);
-
+		console.log('====================================');
+		console.log('Formatted values:', formattedValues);
+		console.log('====================================');
 		setLoading(true);
 		try {
 			const response = await createFetal(formattedValues);
@@ -44,12 +47,17 @@ function FetalCreation({ open, onClose }: FetalCreationProps) {
 		}
 	};
 
+
 	// Handle dateOfPregnancyStart change to auto-calculate expectedDeliveryDate
 	const handlePregnancyStartChange = (date: moment.Moment | null) => {
 		if (date) {
-			const calculatedDate = calculateExpectedDeliveryDate(date.format('YYYY-MM-DD'));
+			const formattedStartDate = date.format('YYYY-MM-DD');
+			const calculatedDate = calculateExpectedDeliveryDate(formattedStartDate);
+			console.log("formattedStartDate: ", formattedStartDate);
+
 			form.setFieldsValue({
-				expectedDeliveryDate: moment(calculatedDate),
+				dateOfPregnancyStart: date, // Set selected date
+				expectedDeliveryDate: moment(calculatedDate), // Auto-calculate expected delivery date
 			});
 		} else {
 			form.setFieldsValue({
@@ -140,7 +148,7 @@ function FetalCreation({ open, onClose }: FetalCreationProps) {
 						<Button onClick={onClose} size="large">
 							Hủy
 						</Button>
-						<Button type="primary" htmlType="submit" loading={loading} size="large">
+						<Button onClick={() => onFinish} type="primary" htmlType="submit" loading={loading} size="large">
 							Gửi
 						</Button>
 					</div>

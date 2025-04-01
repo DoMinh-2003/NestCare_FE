@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 
 import {
@@ -558,7 +556,7 @@ function DoctorManageCheckinAppointments() {
 				<div className="flex items-center gap-4 mb-6">
 					<DatePicker onChange={handleDateChange} value={datePickerValue} allowClear />
 
-					<Input onChange={handleSearch} placeholder="Tìm kiếm theo tên sản phụ" value={search} allowClear />
+					<Input onChange={handleSearch} placeholder="Tìm kiếm theo tên sản phụ" value={search} allowClear style={{ width: '300px' }} />
 
 					<Button
 						type="primary"

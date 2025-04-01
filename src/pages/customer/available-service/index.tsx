@@ -1,40 +1,37 @@
-import { useState, useEffect } from "react"
-import {
-	Card,
-	Typography,
-	Row,
-	Col,
-	Badge,
-	Tag,
-	Button,
-	Empty,
-	Input,
-	Select,
-	Tooltip,
-	Skeleton,
-	Modal,
-	Divider,
-	Progress,
-	message,
-	Avatar,
-	Tabs,
-} from "antd"
 import {
 	CalendarOutlined,
-	SearchOutlined,
-	InfoCircleOutlined,
-	SortAscendingOutlined,
-	RightOutlined,
-	HeartOutlined,
-	MedicineBoxOutlined,
-	StarOutlined,
 	GiftOutlined,
+	HeartOutlined,
+	InfoCircleOutlined,
+	MedicineBoxOutlined,
+	RightOutlined,
+	SearchOutlined,
+	StarOutlined
 } from "@ant-design/icons"
+import {
+	Avatar,
+	Badge,
+	Button,
+	Card,
+	Col,
+	Divider,
+	Empty,
+	Input,
+	Modal,
+	Row,
+	Select,
+	Skeleton,
+	Tabs,
+	Tag,
+	Typography,
+	message
+} from "antd"
 import { motion } from "framer-motion"
-import { getUserDataFromLocalStorage } from "../../../constants/function"
-import { formatMoney } from "../../../utils/formatMoney"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import api from "../../../config/api"
+import { getUserDataFromLocalStorage } from "../../../constants/function"
+import { formatMoney } from "../../../utils/formatMoney"
 
 const { Title, Text, Paragraph } = Typography
 const { Option } = Select
@@ -638,7 +635,7 @@ function AvailableService() {
 							<Text strong>Lưu ý:</Text>
 							<ul style={{ marginTop: "8px", paddingLeft: "20px" }}>
 								<li>Vui lòng đặt lịch trước ít nhất 24 giờ để đảm bảo dịch vụ được chuẩn bị tốt nhất</li>
-								<li>Bạn có thể hủy lịch trước 12 giờ mà không bị trừ lượt sử dụng</li>
+								<li>Bạn có thể hủy lịch trước 24 giờ mà không bị trừ lượt sử dụng</li>
 								<li>Mỗi lần đặt lịch sẽ sử dụng 1 lượt dịch vụ</li>
 							</ul>
 						</Card>
@@ -708,7 +705,7 @@ function AvailableService() {
 								<Text strong>Lưu ý quan trọng:</Text>
 								<ul style={{ marginTop: "8px", paddingLeft: "20px" }}>
 									<li>Mỗi lần đặt lịch sẽ sử dụng 1 lượt dịch vụ</li>
-									<li>Bạn có thể hủy lịch trước 12 giờ mà không bị trừ lượt</li>
+									<li>Bạn có thể hủy lịch trước 24 giờ mà không bị trừ lượt</li>
 									<li>Vui lòng đến đúng giờ để được phục vụ tốt nhất</li>
 								</ul>
 							</div>

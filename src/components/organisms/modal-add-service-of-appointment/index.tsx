@@ -53,7 +53,6 @@ const ModalAddServices: React.FC<ModalAddServicesProps> = ({
     const handleOk = async () => {
         try {
             const values = await form.validateFields();
-            console.log("Form values:", values);
 
             // Transform selected services and notes into the desired format
             const serviceList = selectedServices.map((serviceId) => ({
@@ -61,18 +60,21 @@ const ModalAddServices: React.FC<ModalAddServicesProps> = ({
                 notes: values.notes?.[serviceId] || "", // Get note for each service ID
             }));
 
-            console.log("Service list to submit:", serviceList);
-
             // values.servicesSelected là mảng ID dịch vụ
             if (!appointmentId) return;
             const response = await addServicesToAppointment(appointmentId, serviceList);
             if (response) {
-                window.location.href = response
-                onCancel();  // Đóng modal
-                onSuccess(); // Gọi callback refresh danh sách
+                if (!response.id) {
+                    window.location.href = response
+                } else {
+                    message.success("Cập nhật dịch vụ thành công!");
+                }
             }
         } catch (error) {
             console.error(error);
+        } finally {
+            onCancel();  // Đóng modal
+            onSuccess(); // Gọi callback refresh danh sách
         }
     };
 
