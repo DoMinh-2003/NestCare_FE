@@ -55,6 +55,7 @@ const ModalCreateUpdateFetal: React.FC<ModalCreateUpdateFetalProps> = ({ fetal, 
             dateOfPregnancyStart: moment(values.dateOfPregnancyStart?.$d).format('YYYY/MM/DD'),
             expectedDeliveryDate: moment(values.expectedDeliveryDate?.$d).format('YYYY/MM/DD'),
             actualDeliveryDate: moment(values.actualDeliveryDate?.$d).format('YYYY/MM/DD'),
+            status: values.value ? values.value : values.status
             // id: fetal ? fetal.id : undefined, // Assign an ID if updating
             // isDeleted: 0, // Adjust based on your logic
             // createdAt: fetal ? fetal.createdAt : new Date().toISOString(),
@@ -157,7 +158,7 @@ const ModalCreateUpdateFetal: React.FC<ModalCreateUpdateFetalProps> = ({ fetal, 
                 }
                 <Form.Item>
                     <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
-                        {fetal ? "Cập nhật" : "Tạo nên"}
+                        {fetal ? "Cập nhật" : "Tạo"}
                     </Button>
                 </Form.Item>
             </Form>

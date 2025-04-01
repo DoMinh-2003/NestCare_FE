@@ -124,19 +124,23 @@ const FetalDetail = () => {
             motherId: id
         }
         if (currentFetal) {
+            setIsLoading(true)
             const response = await updateFetal(values, currentFetal.id + "")
             if (response) {
                 console.log("res: ", response)
                 setIsModalOpen(false); // Close the modal
+                setIsLoading(false)
             }
             message.success("Chỉnh sửa hồ sơ thai nhi thành công")
             setIsModalOpen(false); // Close the modal
             setCurrentFetal(null)
         } else {
+            setIsLoading(true)
             const response = await createFetal(valuesSubmit)
             if (response) {
                 message.success("Tạo hồ sơ thai nhi thành công")
                 setIsModalOpen(false); // Close the modal
+                setIsLoading(false)
             }
         }
         form.resetFields()
