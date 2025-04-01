@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react"
 import {
 	Tabs,
@@ -21,12 +20,25 @@ import {
 	message,
 	Alert,
 } from "antd"
-import { Calendar, Clock, User, FileText, AlertCircle, CheckCircle, XCircle, Activity, Heart, CalendarIcon, RefreshCw } from 'lucide-react'
+import {
+	Calendar,
+	Clock,
+	User,
+	FileText,
+	AlertCircle,
+	CheckCircle,
+	XCircle,
+	Activity,
+	Heart,
+	CalendarIcon,
+	RefreshCw,
+} from "lucide-react"
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
 import "dayjs/locale/vi"
 import { getUserDataFromLocalStorage } from "../../../constants/function"
 import api from "../../../config/api"
+import ServiceBillingDetails from "../../organisms/service-billing-detail"
 
 dayjs.extend(relativeTime)
 dayjs.locale("vi")
@@ -127,8 +139,8 @@ function AppointmentDashboard() {
 			// Gọi API để hủy cuộc hẹn
 			await api.put(`/appointments/${appointmentToCancel.id}/CANCELED/`, {
 				params: {
-					reason: values.reason
-				}
+					reason: values.reason,
+				},
 			})
 			message.success("Hủy cuộc hẹn thành công")
 			setCancelModalVisible(false)
@@ -152,26 +164,25 @@ function AppointmentDashboard() {
 
 	// Mở modal hủy cuộc hẹn
 	const handleOpenCancelModal = (record) => {
-		const currentTime = Date.now(); // Current time in milliseconds
+		const currentTime = Date.now() // Current time in milliseconds
 
 		// Combine the appointmentDate and slot.startTime into a single Date object
-		const appointmentDateTime = new Date(`${record.appointmentDate}T${record.slot.startTime}`).getTime(); // Convert to milliseconds
-		const hours24InMillis = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+		const appointmentDateTime = new Date(`${record.appointmentDate}T${record.slot.startTime}`).getTime() // Convert to milliseconds
+		const hours24InMillis = 24 * 60 * 60 * 1000 // 24 hours in milliseconds
 
 		// Check if the appointment is less than 24 hours away
 		if (appointmentDateTime - currentTime < hours24InMillis) {
-			console.log('====================================');
-			console.log('Cuộc hẹn đã trong vòng 24 giờ, không thể hủy');
-			console.log('====================================');
+			console.log("====================================")
+			console.log("Cuộc hẹn đã trong vòng 24 giờ, không thể hủy")
+			console.log("====================================")
 			setErrorCancel("Cuộc hẹn đã trong vòng 24 giờ, không thể hủy")
 		}
 
-		console.log("handleOpenCancelModal", record);
+		console.log("handleOpenCancelModal", record)
 
-		setAppointmentToCancel(record);
-		setCancelModalVisible(true);
-	};
-
+		setAppointmentToCancel(record)
+		setCancelModalVisible(true)
+	}
 
 	// Fetch fetal records and their appointments
 	const fetchFetalRecords = async () => {
@@ -376,7 +387,7 @@ function AppointmentDashboard() {
 	const renderAppointmentDetail = () => {
 		if (!selectedAppointment) return null
 
-		const { appointmentDate, status, doctor, slot, fetalRecords, history, id } = selectedAppointment
+		const { appointmentDate, status, doctor, slot, fetalRecords, history, id, serviceBilling, medicationBills } = selectedAppointment
 		const statusConfigValue = statusConfig[status] || { color: "default", text: status, icon: null }
 
 		// Lọc ra chỉ thai nhi được chọn
@@ -393,8 +404,6 @@ function AppointmentDashboard() {
 							{statusConfigValue.text}
 						</Tag>
 					</div>
-
-					{/* Thêm nút hủy cuộc hẹn trong drawer nếu trạng thái phù hợp */}
 
 					{canCancelAppointment(status) && errorCancel && (
 						<Button
@@ -515,6 +524,22 @@ function AppointmentDashboard() {
 								}}
 							/>
 						</div>
+					</>
+				)}
+
+				<Divider orientation="left">Dịch vụ</Divider>
+				{serviceBilling && (
+					<>
+						<ServiceBillingDetails serviceBilling={serviceBilling} />
+					</>
+				)}
+
+				<Divider orientation="left">Đơn thuốc</Divider>
+				{medicationBills && (
+					<>
+						<div>{medicationBills.totalAmount}</div>
+						<div>{medicationBills.discountAmount}</div>
+						<div>{medicationBills.finalAmount}</div>
 					</>
 				)}
 
@@ -719,7 +744,7 @@ function AppointmentDashboard() {
 				placement="right"
 				onClose={() => setDrawerVisible(false)}
 				open={drawerVisible}
-				width={500}
+				width={800}
 			>
 				{renderAppointmentDetail()}
 			</Drawer>
@@ -737,7 +762,7 @@ function AppointmentDashboard() {
 					setCancelModalVisible(false)
 					form.resetFields()
 					setAppointmentToCancel(null)
-					setErrorCancel('')
+					setErrorCancel("")
 				}}
 				footer={[
 					<Button
@@ -754,13 +779,7 @@ function AppointmentDashboard() {
 
 					// Only show "Xác nhận hủy lịch" if errorCancel is an empty string
 					!errorCancel && (
-						<Button
-							key="submit"
-							type="primary"
-							danger
-							loading={cancelLoading}
-							onClick={() => form.submit()}
-						>
+						<Button key="submit" type="primary" danger loading={cancelLoading} onClick={() => form.submit()}>
 							Xác nhận hủy lịch
 						</Button>
 					),
@@ -771,42 +790,43 @@ function AppointmentDashboard() {
 
 					{appointmentToCancel && (
 						<div className="mt-2 p-3 bg-gray-50 rounded-md">
-							<p><strong>Ngày khám:</strong> {formatDate(appointmentToCancel.appointmentDate)}</p>
+							<p>
+								<strong>Ngày khám:</strong> {formatDate(appointmentToCancel.appointmentDate)}
+							</p>
 							{appointmentToCancel.slot && (
-								<p><strong>Giờ khám:</strong> {formatTime(appointmentToCancel.slot.startTime)} - {formatTime(appointmentToCancel.slot.endTime)}</p>
+								<p>
+									<strong>Giờ khám:</strong> {formatTime(appointmentToCancel.slot.startTime)} -{" "}
+									{formatTime(appointmentToCancel.slot.endTime)}
+								</p>
 							)}
 							{appointmentToCancel.doctor && (
-								<p><strong>Bác sĩ:</strong> {appointmentToCancel.doctor.fullName}</p>
+								<p>
+									<strong>Bác sĩ:</strong> {appointmentToCancel.doctor.fullName}
+								</p>
 							)}
 						</div>
 					)}
 				</div>
-				{!errorCancel ?
-					(<Form
-						form={form}
-						layout="vertical"
-						onFinish={cancelAppointment}
-					>
+				{!errorCancel ? (
+					<Form form={form} layout="vertical" onFinish={cancelAppointment}>
 						<Form.Item
 							name="reason"
 							label="Lý do hủy lịch"
-							rules={[{ required: true, message: 'Vui lòng nhập lý do hủy lịch khám!' }]}
+							rules={[{ required: true, message: "Vui lòng nhập lý do hủy lịch khám!" }]}
 						>
-							<TextArea
-								rows={4}
-								placeholder="Vui lòng nhập lý do hủy lịch khám..."
-								maxLength={200}
-								showCount
-							/>
+							<TextArea rows={4} placeholder="Vui lòng nhập lý do hủy lịch khám..." maxLength={200} showCount />
 						</Form.Item>
-					</Form>) : (
-						<p> <Alert message={errorCancel} type="error" /></p>
-					)
-				}
+					</Form>
+				) : (
+					<p>
+						{" "}
+						<Alert message={errorCancel} type="error" />
+					</p>
+				)}
 			</Modal>
-
-		</div >
+		</div>
 	)
 }
 
 export default AppointmentDashboard
+

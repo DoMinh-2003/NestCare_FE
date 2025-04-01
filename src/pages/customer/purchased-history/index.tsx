@@ -1,9 +1,15 @@
-"use client"
 
-import { Table, Tag } from "antd"
 import { useEffect, useState } from "react"
+import { Table, Tag, Card, Spin, Empty, DatePicker, Typography, Button } from "antd"
+import { CalendarOutlined, ReloadOutlined } from "@ant-design/icons"
 import { formatMoney } from "../../../utils/formatMoney"
 import { formatDate } from "../../../utils/formatDate"
+import useTransaction from "../../../services/useTransaction"
+import { getUserDataFromLocalStorage } from "../../../constants/function"
+
+const { Title, Text } = Typography
+const { RangePicker } = DatePicker
+
 // Define the Transaction interface based on your data structure
 interface User {
 	id: string
@@ -22,6 +28,21 @@ interface UserPackage {
 	updatedAt: string
 }
 
+interface Appointment {
+	id: string
+	appointmentDate: string
+	status: string
+	createdAt: string
+	slot: {
+		id: string
+		startTime: string
+		endTime: string
+		isActive: boolean
+		createdAt: string
+		updatedAt: string
+	}
+}
+
 interface Transaction {
 	id: string
 	type: string
@@ -30,59 +51,71 @@ interface Transaction {
 	description: string
 	createdAt: string
 	user: User
-	userPackage: UserPackage
+	userPackage: UserPackage | null
+	appointment: Appointment | null
+	serviceBilling: any | null
 }
 
 function TransactionHistory() {
+	// State for transactions and UI
 	const [transactions, setTransactions] = useState<Transaction[]>([])
+	const [filteredTransactions, setFilteredTransactions] = useState<Transaction[]>([])
+	const [loading, setLoading] = useState(false)
+	const [dateRange, setDateRange] = useState<[string, string] | null>(null)
 
+	// Get the transaction service
+	const { getTransaction, loading: transactionLoading } = useTransaction()
+
+	// Fetch transactions
+	const fetchTransactions = async () => {
+		setLoading(true)
+		try {
+			const userData = getUserDataFromLocalStorage()
+			if (userData) {
+				const response = await getTransaction(userData.id)
+				if (response) {
+					setTransactions(response)
+					applyDateFilter(response)
+				}
+			}
+		} catch (error) {
+			console.error("Error fetching transactions:", error)
+		} finally {
+			setLoading(false)
+		}
+	}
+
+	// Apply date filter to transactions
+	const applyDateFilter = (data: Transaction[] = transactions) => {
+		if (!dateRange || !dateRange[0] || !dateRange[1]) {
+			setFilteredTransactions(data)
+			return
+		}
+
+		const startDate = new Date(dateRange[0])
+		const endDate = new Date(dateRange[1])
+		endDate.setHours(23, 59, 59, 999) // End of day
+
+		const filtered = data.filter((item) => {
+			const itemDate = new Date(item.createdAt)
+			return itemDate >= startDate && itemDate <= endDate
+		})
+
+		setFilteredTransactions(filtered)
+	}
+
+	// Handle reset filters
+	const handleReset = () => {
+		setDateRange(null)
+		setFilteredTransactions(transactions)
+	}
+
+	// Load transactions on component mount
 	useEffect(() => {
-		// For demonstration, we'll use the sample data you provided
-		// In a real app, you would fetch this from your API
-		const sampleData = [
-			{
-				id: "a06c7bac-f0b0-4605-8eb2-677c7683ffee",
-				type: "PURCHASE_PACKAGE",
-				status: "SUCCESS",
-				amount: "264000.00",
-				description: "Mua gói dịch vụ: Premium Baby 3",
-				paymentGatewayReference: null,
-				createdAt: "2025-03-31T03:46:05.146Z",
-				user: {
-					id: "9fda19be-c8c8-46f5-ae79-2649d7d0069c",
-					username: "mother",
-					email: "thanhtung3523@gmail.com",
-					fullName: "mother",
-					image: null,
-					phone: "0962868417",
-					role: "user",
-					isDeleted: false,
-				},
-				appointment: null,
-				userPackage: {
-					id: "8c24b614-aeed-43d3-910e-b9bc259af1c5",
-					status: "PAID",
-					isActive: true,
-					isDeleted: false,
-					createdAt: "2025-03-31T03:44:57.316Z",
-					updatedAt: "2025-03-31T03:46:06.000Z",
-				},
-			},
-		]
-
-		setTransactions(sampleData as Transaction[])
-
-		// In a real implementation, you would fetch data like this:
-		// const fetchTransactions = async () => {
-		//   const userData = getUserDataFromLocalStorage();
-		//   if (userData) {
-		//     const response = await getTransaction(userData.id);
-		//     setTransactions(response);
-		//   }
-		// };
-		// fetchTransactions();
+		fetchTransactions()
 	}, [])
 
+	// Status mapping for display
 	const statusMap: { [key: string]: string } = {
 		PENDING: "Chờ xử lý",
 		PAID: "Hoàn thành",
@@ -90,50 +123,74 @@ function TransactionHistory() {
 		CANCELED: "Đã hủy",
 	}
 
+	// Transaction type mapping
+	const typeMap: { [key: string]: string } = {
+		PURCHASE_PACKAGE: "Mua gói dịch vụ",
+		DEPOSIT: "Đặt cọc lịch hẹn",
+		PAYMENT: "Thanh toán dịch vụ",
+	}
+
+	// Get status tag color
+	const getStatusColor = (status: string) => {
+		switch (status) {
+			case "PENDING":
+				return "orange"
+			case "PAID":
+			case "SUCCESS":
+				return "green"
+			case "CANCELED":
+				return "red"
+			default:
+				return "gray"
+		}
+	}
+
+	// Table columns
 	const columns = [
 		{
 			title: "Loại giao dịch",
 			dataIndex: "type",
 			key: "type",
-			render: (type: string) => (type === "PURCHASE_PACKAGE" ? "Mua gói dịch vụ" : type),
+			render: (type: string) => typeMap[type] || type,
 		},
 		{
 			title: "Số tiền (VND)",
 			dataIndex: "amount",
 			key: "amount",
-			render: (amount: string) => formatMoney(Number(amount)),
-		},
-		{
-			title: "Mô tả",
-			dataIndex: "description",
-			key: "description",
+			render: (amount: string) => <span className="font-medium text-green-600">{formatMoney(Number(amount))}</span>,
 		},
 		{
 			title: "Ngày giao dịch",
 			dataIndex: "createdAt",
 			key: "date",
-			render: (date: string) => formatDate(date),
+			render: (date: string) => (
+				<span className="font-medium">
+					<CalendarOutlined className="mr-2 text-blue-500" />
+					{formatDate(date)}
+				</span>
+			),
 			sorter: (a: Transaction, b: Transaction) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+			defaultSortOrder: "descend",
 		},
 		{
 			title: "Trạng thái",
 			dataIndex: "status",
 			key: "status",
-			filters: [
-				{ text: "Thành công", value: "SUCCESS" },
-				{ text: "Chờ xử lý", value: "PENDING" },
-				{ text: "Hoàn thành", value: "PAID" },
-				{ text: "Đã hủy", value: "CANCELED" },
-			],
-			onFilter: (value: string | number | boolean, record: Transaction) => record.status === value,
-			render: (status: string) => {
+			render: (status: string) => <Tag color={getStatusColor(status)}>{statusMap[status] || "Không xác định"}</Tag>,
+		},
+		{
+			title: "Trạng thái gói",
+			dataIndex: ["userPackage", "status"],
+			key: "packageStatus",
+			render: (status: string, record: Transaction) => {
+				if (!record.userPackage) return <span className="text-gray-400">Không áp dụng</span>
+
 				let color = ""
 				switch (status) {
 					case "PENDING":
 						color = "orange"
 						break
 					case "PAID":
-					case "SUCCESS":
 						color = "green"
 						break
 					case "CANCELED":
@@ -146,34 +203,66 @@ function TransactionHistory() {
 			},
 		},
 		{
-			title: "Trạng thái gói",
-			dataIndex: ["userPackage", "status"],
-			key: "packageStatus",
-			render: (status: string) => {
-				let color = ""
-				switch (status) {
-					case "PENDING":
-						color = "orange"
-						break
-					case "PAID":
-						color = "green"
-						break
-					case "CANCELED":
-						color = "red"
-						break
-					default:
-						color = "gray"
-				}
-				return <Tag color={color}>{statusMap[status] || "Không xác định"}</Tag>
-			},
+			title: "Mô tả",
+			dataIndex: "description",
+			key: "description",
+			ellipsis: true,
+			width: 300,
 		},
 	]
 
 	return (
-		<div className="max-w-full mx-20 mt-8 min-h-fit">
-			<h2 className="text-3xl font-semibold mb-6 font-sans">Lịch sử giao dịch</h2>
+		<div className="max-w-full mx-auto px-6 py-8">
+			<Card title={<Title level={3}>Lịch sử giao dịch</Title>} className="shadow-md rounded-lg">
+				{/* Simple date filter */}
+				<div className="mb-6 flex flex-wrap items-center gap-4">
+					<RangePicker
+						onChange={(dates) => {
+							if (dates) {
+								const range: [string, string] = [
+									dates[0]?.format("YYYY-MM-DD") || "",
+									dates[1]?.format("YYYY-MM-DD") || "",
+								]
+								setDateRange(range)
+								applyDateFilter(transactions)
+							} else {
+								setDateRange(null)
+								setFilteredTransactions(transactions)
+							}
+						}}
+						value={
+							dateRange
+								? [
+									dateRange[0] ? DatePicker.dayjs(dateRange[0]) : null,
+									dateRange[1] ? DatePicker.dayjs(dateRange[1]) : null,
+								]
+								: null
+						}
+					/>
 
-			<Table dataSource={transactions} columns={columns} rowKey="id" />
+					<Button onClick={fetchTransactions} icon={<ReloadOutlined />} loading={loading}>
+						Làm mới
+					</Button>
+				</div>
+
+				{/* Table */}
+				{loading || transactionLoading ? (
+					<div className="flex justify-center items-center p-12">
+						<Spin size="large" tip="Đang tải dữ liệu..." />
+					</div>
+				) : filteredTransactions.length > 0 ? (
+					<Table
+						dataSource={filteredTransactions}
+						columns={columns}
+						rowKey="id"
+						pagination={{ pageSize: 10 }}
+						className="shadow-sm rounded-lg overflow-hidden"
+						bordered
+					/>
+				) : (
+					<Empty description="Không có dữ liệu giao dịch" />
+				)}
+			</Card>
 		</div>
 	)
 }

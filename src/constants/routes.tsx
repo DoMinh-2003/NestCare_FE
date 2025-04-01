@@ -36,7 +36,8 @@ export enum USER_ROUTES {
   MY_SERVICES = '/my-services',
   ALL_FETAIL = "/all-fetal",
   BOOKING_RESULT = "/booking-result",
-  FORGOT_PASSWORD = "/auth/forgot-password"
+  FORGOT_PASSWORD = "/auth/forgot-password",
+  SERVICES_PURCHASEED = "/your-services-packages"
 }
 
 export enum DOCTOR_ROUTES {

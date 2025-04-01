@@ -66,6 +66,7 @@ import PaymentBooking from "../components/molecules/payment-layout";
 import ForgotPassword from "../pages/customer/forgot-password";
 import Dashboard from "../pages/doctor/dashboard";
 import NurseUpdateMotherRecord from "../pages/nurse/update-mother-record";
+import ServicePurchasedHistory from "../pages/customer/service-purchased-history";
 
 
 
@@ -213,6 +214,12 @@ export const router = createBrowserRouter([
         path: USER_ROUTES.PURCHASED_HISTORY,
         element: <ProtectedRouteByRole allowedRoles={["user"]}>
           <PurchasedHistory />
+        </ProtectedRouteByRole>,
+      },
+      {
+        path: USER_ROUTES.SERVICES_PURCHASEED,
+        element: <ProtectedRouteByRole allowedRoles={["user"]}>
+          <ServicePurchasedHistory />
         </ProtectedRouteByRole>,
       },
       {
