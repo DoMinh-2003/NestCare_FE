@@ -144,9 +144,23 @@ const userAppointmentService = () => {
         [dispatch, callApi]
     )
 
+    const completedAppointmentByDoctor = useCallback(
+        async (appointmentId: string, payload) => {
+            try {
+                const response = await callApi("put", `appointments/completed/${appointmentId}`, payload);
+                return response;
+            } catch (error) {
+                console.error(error || "getAppointmentsByDoctorDate failed");
+            }
+        },
+        [dispatch, callApi]
+    )
+
+
     return {
         getAppointmentsByDate, updateMotherHeal, getAppointmentDetail, getAppointmentsByDoctor, setIsLoading,
-        updateAppointmentStatus, addServicesToAppointment, createAppointment, getAppointmentsByDoctorDate, getAppointmentCheckupPreview
+        updateAppointmentStatus, addServicesToAppointment, createAppointment, getAppointmentsByDoctorDate, getAppointmentCheckupPreview,
+        completedAppointmentByDoctor
     };
 };
 
