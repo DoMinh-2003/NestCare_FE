@@ -259,8 +259,21 @@ function AppointmentDashboard() {
 	}
 
 	// Kiểm tra xem cuộc hẹn có thể hủy không
-	const canCancelAppointment = (status) => {
-		return status === "AWAITING_DEPOSIT" || status === "PENDING"
+	const canCancelAppointment = (status, slot, appointmentDate) => {
+		const currentTime = Date.now() // Current time in milliseconds
+
+		// Combine the appointmentDate and slot.startTime into a single Date object
+		const appointmentDateTime = new Date(`${appointmentDate}T${slot?.startTime}`).getTime() // Convert to milliseconds
+		const hours24InMillis = 24 * 60 * 60 * 1000 // 24 hours in milliseconds
+
+		// Check if the appointment is less than 24 hours away
+		if (appointmentDateTime - currentTime < hours24InMillis) {
+			console.log("====================================")
+			console.log("Cuộc hẹn đã trong vòng 24 giờ, không thể hủy")
+			console.log("====================================")
+			return false; // Hide the button
+		}
+		return status === "PENDING"
 	}
 
 	// Table columns for appointments
@@ -295,7 +308,7 @@ function AppointmentDashboard() {
 			render: (slot) => (
 				<div className="flex items-center">
 					<Clock size={16} className="mr-2 text-blue-500" />
-					<span>{slot ? `${formatTime(slot.startTime)} - ${formatTime(slot.endTime)}` : "Chưa có"}</span>
+					<span>{slot ? `${formatTime(slot?.startTime)} - ${formatTime(slot?.endTime)}` : "Chưa có"}</span>
 				</div>
 			),
 		},
@@ -342,7 +355,7 @@ function AppointmentDashboard() {
 					</Button>
 
 					{/* Chỉ hiển thị nút hủy cho các cuộc hẹn có trạng thái AWAITING_DEPOSIT hoặc PENDING */}
-					{canCancelAppointment(record.status) && (
+					{canCancelAppointment(record.status, record.slot, record.appointmentDate) && (
 						<Button
 							type="default"
 							danger
