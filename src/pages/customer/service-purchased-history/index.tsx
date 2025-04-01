@@ -79,32 +79,19 @@ function ServicePurchasedHistory() {
 	const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("DESC")
 
 	// Get the order service and user
-	const { getOrdersOfUser, loading } = useOrderService()
+	const { getOrdersOfUser, getOrderByUserId, loading } = useOrderService()
 	const user = getUserDataFromLocalStorage()
 
 	// Function to fetch orders
-	const fetchOrders = async (page = 1) => {
+	const fetchOrders = async () => {
 		if (!user) return
 
 		try {
-			const response = await getOrdersOfUser({
-				status,
-				packageName,
-				search,
-				page,
-				limit: meta.itemsPerPage,
-				sortBy: sortField,
-				sortOrder,
-				// Add date range if selected
-				...(dateRange && {
-					startDate: dateRange[0],
-					endDate: dateRange[1],
-				}),
-			})
+			const response = await getOrderByUserId(user.id)
 
 			if (response) {
-				setOrders(response.items)
-				setMeta(response.meta)
+				setOrders(response)
+				// setMeta(response)
 			}
 		} catch (error) {
 			console.error("Error fetching orders:", error)
@@ -188,7 +175,7 @@ function ServicePurchasedHistory() {
 			key: "duration",
 			render: (record: Order) => (
 				<span>
-					{record.package.durationValue} {record.package.durationType === "day" ? "ngày" : "tháng"}
+					{record.package.durationValue} {record.package.durationType === "day" ? "ngày" : record.package.durationType === "week" ? "tuần" : "tháng"}
 				</span>
 			),
 		},
@@ -267,9 +254,9 @@ function ServicePurchasedHistory() {
 						allowClear
 						style={{ width: "100%" }}
 					>
-						{/* You can populate this dynamically from your data */}
+						{/* You can populate this dynamically from your data
 						<Option value="Premium Baby 3">Premium Baby 3</Option>
-						<Option value="Super Premium">Super Premium</Option>
+						<Option value="Super Premium">Super Premium</Option> */}
 					</Select>
 
 					<RangePicker
@@ -317,7 +304,7 @@ function ServicePurchasedHistory() {
 								pageSize={meta.itemsPerPage}
 								onChange={handlePageChange}
 								showSizeChanger={false}
-								showTotal={(total) => `Tổng cộng ${total} đơn hàng`}
+								showTotal={(total) => `Tổng cộng ${orders.length} đơn hàng`}
 							/>
 						</div>
 					</>
