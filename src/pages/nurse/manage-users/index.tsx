@@ -102,14 +102,23 @@ const NurseManageUsers: React.FC = () => {
     };
 
     const getUsersFromAdmin = async () => {
- 
+
         const response = await getUsersSearch("", "");;
         console.log("response: ", response);
         if (response) {
+            // Filter users to include only those with the role of "user" and not deleted
+            const filteredUsers = response.users.filter((item: UserData) => item.role === "user" && !item.isDeleted);
             
-            setUsers(response.users.filter((item: UserData) => item.role === "user" && !item.isDeleted));
+            // Sort the filtered users alphabetically by fullName
+            const sortedUsers = filteredUsers.sort((a: UserData, b: UserData) => {
+                if (a.fullName < b.fullName) return -1; // a comes before b
+                if (a.fullName > b.fullName) return 1;  // a comes after b
+                return 0; // a and b are equal
+            });
+    
+            // Update the state with the sorted users
+            setUsers(sortedUsers);
         }
-   
     };
 
     const handleOpenModalDelete = (record: UserData) => {
@@ -187,10 +196,19 @@ const NurseManageUsers: React.FC = () => {
     };
 
     const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
-        const response = await getUsersSearch(value, "");
+        const response = await getUsersSearch(value, '');
         console.log("response: ", response);
         if (response) {
-            setUsers(response.users.filter((item: UserData) => item.role === "user" && !item.isDeleted));
+            const filteredUsers = response.users.filter((item: UserData) => item.role !== "admin" && !item.isDeleted);
+
+            // Sort the filtered users alphabetically by name
+            const sortedUsers = filteredUsers.sort((a: UserData, b: UserData) => {
+                if (a.fullName < b.fullName) return -1; // a comes before b
+                if (a.fullName > b.fullName) return 1;  // a comes after b
+                return 0; // a and b are equal
+            });
+
+            setUsers(sortedUsers);
         }
     }
 
@@ -214,7 +232,7 @@ const NurseManageUsers: React.FC = () => {
                 form={form} // Pass the form reference to the modal
             />
             <div className='flex justify-between px-2'>
-                <Search placeholder="Tìm kiếm bằng tên" className='w-[200px]' onSearch={onSearch} enterButton />
+                <Search placeholder="Tìm kiếm bằng tên, email, số điện thoại" className='w-[350px]' onSearch={onSearch} enterButton />
                 <Button onClick={() => showModal()} type="primary" style={{ marginBottom: 16 }}>
                     Thêm người dùng
                 </Button>
