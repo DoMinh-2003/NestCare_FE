@@ -72,7 +72,7 @@ const ModalAppointmentDetail = ({ isVisible, onClose, appointmentData }: { isVis
       footer={null}
       className="rounded-lg"
     >
-      <Text strong>Ngày đặt lich: </Text>
+      <Text strong>Ngày đặt lịch: </Text>
       <Text>{appointmentData?.appointmentDate}</Text>
       <br />
       <Text strong>Trạng thái: </Text>
@@ -92,7 +92,7 @@ const ModalAppointmentDetail = ({ isVisible, onClose, appointmentData }: { isVis
                 <>
                   <Text>Ghi chú: {record.note}</Text>
                   <br />
-                  <Text>Ngày bắt đầu mang thai: {record.dateOfPregnancyStart}</Text>
+                  <Text>Ngày cuối cùng của kì kinh cuối: {record.dateOfPregnancyStart}</Text>
                   <br />
                   <Text>Ngày dự sinh: {record.expectedDeliveryDate}</Text>
                   <br />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Form, Input, InputNumber, Button } from 'antd';
+import { Modal, Form, Input, InputNumber, Button, DatePicker } from 'antd';
 
 export interface HealthRecord {
 	motherWeight: number;
@@ -137,6 +137,15 @@ const HealthRecordModal = ({
 					rules={[{ max: 200, message: "Cảnh báo không được vượt quá 200 ký tự!" }]}
 				>
 					<Input placeholder="Ví dụ: Không có dấu hiệu bất thường" />
+				</Form.Item>
+
+				{/* Ngày tạo */}
+				<Form.Item
+					label="Ngày tạo"
+					name="createAt"
+					required
+				>
+					<DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày tạo" />
 				</Form.Item>
 
 				{/* Nút điều khiển */}

@@ -137,11 +137,7 @@ function AppointmentDashboard() {
 		setCancelLoading(true)
 		try {
 			// Gọi API để hủy cuộc hẹn
-			await api.put(`/appointments/${appointmentToCancel.id}/CANCELED/`, {
-				params: {
-					reason: values.reason,
-				},
-			})
+			await api.put(`/appointments/${appointmentToCancel.id}/CANCELED/?reason=${values.reason}`)
 			message.success("Hủy cuộc hẹn thành công")
 			setCancelModalVisible(false)
 			form.resetFields()
