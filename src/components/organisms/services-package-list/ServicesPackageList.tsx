@@ -8,7 +8,7 @@ const ServicesPackageList = () => {
     const [servicePackages, setServicePackages] = useState<Package[]>([]);
     const [filteredPackages, setFilteredPackages] = useState<Package[]>([]);
     const { getPackages } = usePackageService();
-    const { getOrderByUserId } = useOrderService();
+    const { getOrderByUserId, getOrdersOfUser } = useOrderService();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -27,6 +27,7 @@ const ServicesPackageList = () => {
                 const [packages, orders] = await Promise.all([
                     getPackages(),
                     getOrderByUserId(userId),
+                    // getOrdersOfUser()
                 ]);
 
                 setServicePackages(packages);
