@@ -122,9 +122,6 @@ const ModalCreateUpdateUser: React.FC<UserModalProps> = ({ visible, onCreate, on
           name="username"
           label="Tên người dùng"
           rules={[{ required: true, message: 'Vui lòng nhập tên người dùng!' },
-          {
-            validator: validateFullName, // Sử dụng hàm xác thực
-          },
           ]}
         >
           <Input />
