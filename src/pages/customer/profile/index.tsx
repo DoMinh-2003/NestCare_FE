@@ -9,7 +9,10 @@ const Profile = () => {
     const [user, setUser] = useState<any>(null);
     const [phone, setPhone] = useState("");
     const [fullName, setFullName] = useState("");
-    const { updateUser } = userUserService();
+    const { updateUser, changePassword } = userUserService();
+    const [currentPassword, setCurrentPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
 
     useEffect(() => {
         const storedUser = localStorage.getItem("USER");
@@ -58,6 +61,35 @@ const Profile = () => {
         }
     };
 
+    const handleChangePassword = async () => {
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            message.error("Vui lòng nhập đầy đủ thông tin!");
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            message.error("Xác nhận mật khẩu không trùng khớp!");
+            return;
+        }
+
+        try {
+            const response = await changePassword({
+                currentPassword,
+                newPassword
+            });
+
+            if (response) {
+                message.success("Đổi mật khẩu thành công!");
+                setCurrentPassword("");
+                setNewPassword("");
+                setConfirmPassword("");
+            }
+        } catch (error) {
+            console.error("Lỗi khi đổi mật khẩu:", error);
+        }
+    };
+
+
 
 
     if (!user) return <div>Đang tải...</div>;
@@ -102,22 +134,32 @@ const Profile = () => {
                     <Input.Password
                         prefix={<LockOutlined />}
                         placeholder="Nhập mật khẩu hiện tại"
+                        value={currentPassword}
+                        onChange={(e) => setCurrentPassword(e.target.value)}
                         style={{ marginBottom: 16 }}
                     />
+
                     <Text strong>Mật khẩu mới:</Text>
                     <Input.Password
                         prefix={<LockOutlined />}
                         placeholder="Nhập mật khẩu mới"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
                         style={{ marginBottom: 16 }}
                     />
+
                     <Text strong>Xác nhận mật khẩu mới:</Text>
                     <Input.Password
                         prefix={<LockOutlined />}
                         placeholder="Nhập lại mật khẩu mới"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
                         style={{ marginBottom: 16 }}
                     />
-                    <Button type="primary">Đổi mật khẩu</Button>
+
+                    <Button type="primary" onClick={handleChangePassword}>Đổi mật khẩu</Button>
                 </Tabs.TabPane>
+
             </Tabs>
         </div>
     );
