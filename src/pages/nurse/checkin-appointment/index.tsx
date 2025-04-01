@@ -40,7 +40,7 @@ const NurseCheckIn: React.FC = () => {
     const { getAppointmentsByDate } = userAppointmentService();
     const [day, setDay] = useState<string>('')
     const today = dayjs();
-    
+
     useEffect(() => {
         getAppointmentsByStatusFromNurse();
     }, [day])
@@ -93,7 +93,7 @@ const NurseCheckIn: React.FC = () => {
             )
         },
         {
-            title: 'Slot',
+            title: 'Giờ khám',
             dataIndex: 'slot',
             key: 'slot',
             render: (slot: Slot) => (
@@ -119,8 +119,8 @@ const NurseCheckIn: React.FC = () => {
             title: 'Hành động',
             key: 'action',
             render: (record: Appointment) => (<div className='flex gap-2'>
-                    <Button type="primary" onClick={() => handleAccept(record.id)}>Chấp nhận</Button>
-                </div>
+                <Button type="primary" onClick={() => handleAccept(record.id)}>Chấp nhận</Button>
+            </div>
             ),
         },
     ];
@@ -157,7 +157,11 @@ const NurseCheckIn: React.FC = () => {
                     <Search placeholder="Tìm kiếm bằng tên mẹ" className='w-[250px]' onSearch={onSearch} enterButton />
                 </div>
                 <div>
-                    <DatePicker defaultValue={today} format="YYYY-MM-DD" onChange={onChange} />
+                    <DatePicker
+                        defaultValue={today}
+                        format={(date, dateString) => formatDate(date.toDate())}
+                        onChange={onChange}
+                    />
                 </div>
             </div>
             <Table dataSource={appointments} columns={columns} rowKey="id" />
