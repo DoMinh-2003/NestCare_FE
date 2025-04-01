@@ -98,50 +98,48 @@ const PaymentResult = () => {
 						else if (orderId) {
 							console.log("Processing successful order payment")
 							await updateOrderStatus(orderId, "PAID")
+							message.success("Thanh toán thành công")
 							navigate(USER_ROUTES.PAYMENT_SUCCESS, {
 								state: { orderId },
 								replace: true,
 							})
-							message.success("Thanh toán thành công")
 						} else if (appointmentId) { // doctor
 							console.log(appointmentId);
 							await updateBookingStatus(appointmentId, AppointmentStatus.IN_PROGRESS)
+							message.success("Thanh toán thành công")
 							navigate(USER_ROUTES.BOOKING_RESULT, {
 								state: { appointmentId },
 								replace: true,
 							})
-							message.success("Đã thêm dịch vụ")
 							message.info("Chuyển sang khám")
 						}
 						break
 					case "24": // Customer canceled
-						console.log("Payment canceled by customer")
 						// Handle booking payment cancellation
 						if (bookingId) {
 							await updateBookingStatus(bookingId, "DEPOSIT_FAILED")
+							message.warning("Đã hủy thanh toán")
 							navigate(USER_ROUTES.PAYMENT_CANCEL, {
 								state: { bookingId, errorCode: responseCode },
 								replace: true,
 							})
-							message.warning("Đã hủy thanh toán")
 						}
 						// Handle order payment cancellation
 						else if (orderId) {
 							await updateOrderStatus(orderId, "CANCELED")
+							message.warning("Đã hủy thanh toán")
 							navigate(USER_ROUTES.PAYMENT_CANCEL, {
 								state: { orderId, errorCode: responseCode },
 								replace: true,
 							})
-							message.warning("Đã hủy thanh toán")
 						}
-
 						else if (appointmentId) {
 							await updateBookingStatus(appointmentId, "PAYMENT_FAILED")
+							message.warning("Đã hủy thanh toán")
 							navigate(USER_ROUTES.PAYMENT_CANCEL, {
 								state: { appointmentId, errorCode: responseCode },
 								replace: true,
 							})
-							message.warning("Đã hủy thanh toán")
 						}
 						break
 

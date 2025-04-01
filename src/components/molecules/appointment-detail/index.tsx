@@ -191,7 +191,7 @@ const AppointmentDetail: React.FC<AppointmentDetailProps> = ({ appointment, onSt
 								size="small"
 							>
 								<Descriptions column={{ xs: 1, sm: 2 }} size="small">
-									<Descriptions.Item label="Ngày bắt đầu thai kỳ">
+									<Descriptions.Item label="Ngày cuối cùng của kì kinh">
 										{formatDate(fetal.dateOfPregnancyStart)}
 									</Descriptions.Item>
 									<Descriptions.Item label="Ngày dự sinh">{formatDate(fetal.expectedDeliveryDate)}</Descriptions.Item>

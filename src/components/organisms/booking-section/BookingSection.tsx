@@ -1,5 +1,3 @@
-import Title from "../../atoms/text/Title";
-import BookingForm from "../../molecules/booking-form/BookingForm";
 
 const BookingSection = () => {
   return (

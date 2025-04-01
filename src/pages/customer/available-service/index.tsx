@@ -484,37 +484,6 @@ function AvailableService() {
 								<Option value="unavailable">Đã hết lượt</Option>
 							</Select>
 						</Col>
-						<Col xs={24} md={8}>
-							<div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", flexWrap: "wrap" }}>
-								{/* <Tooltip title="Sắp xếp theo tên">
-									<Button
-										icon={<SortAscendingOutlined />}
-										onClick={() => toggleSort("name")}
-										type={sortBy === "name" ? "primary" : "default"}
-									>
-										Tên {sortBy === "name" && (sortOrder === "asc" ? "↑" : "↓")}
-									</Button>
-								</Tooltip>
-								<Tooltip title="Sắp xếp theo giá">
-									<Button
-										icon={<SortAscendingOutlined />}
-										onClick={() => toggleSort("price")}
-										type={sortBy === "price" ? "primary" : "default"}
-									>
-										Giá {sortBy === "price" && (sortOrder === "asc" ? "↑" : "↓")}
-									</Button>
-								</Tooltip>
-								<Tooltip title="Sắp xếp theo số lượt còn lại">
-									<Button
-										icon={<SortAscendingOutlined />}
-										onClick={() => toggleSort("slots")}
-										type={sortBy === "slots" ? "primary" : "default"}
-									>
-										Lượt {sortBy === "slots" && (sortOrder === "asc" ? "↑" : "↓")}
-									</Button>
-								</Tooltip> */}
-							</div>
-						</Col>
 					</Row>
 				</Card>
 			</motion.div>
@@ -617,18 +586,6 @@ function AvailableService() {
 								</Tag>
 							</Paragraph>
 							<Paragraph style={{ fontSize: "14px", color: "#595959" }}>{selectedPackage.description}</Paragraph>
-						</div>
-
-						<div style={{ marginBottom: "16px" }}>
-							<Text strong>Số lượt còn lại: {selectedService.slot}</Text>
-							<div style={{ marginTop: "8px" }}>
-								{/* <Progress
-									// percent={(selectedService.slot / 5) * 100}
-									// format={() => `${selectedService.slot}/5`}
-									status={selectedService.slot > 0 ? "active" : "exception"}
-									strokeColor={{ from: "#108ee9", to: "#87d068" }}
-								/> */}
-							</div>
 						</div>
 
 						<Card style={{ backgroundColor: "#f9f9f9", borderRadius: "8px" }}>

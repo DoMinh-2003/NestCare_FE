@@ -1,46 +1,52 @@
 import { Image } from 'antd';
 import { CircleX, CreditCard } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import paymentCancelImg from '../../../../../public/images/cancel.png';
-import useOrderService from '../../../../services/useOrderService';
 import { getUserDataFromLocalStorage } from '../../../../constants/function';
+import { DOCTOR_ROUTES, NURSE_ROUTES, USER_ROUTES } from '../../../../constants/routes';
 
 
 const PaymentCancel = () => {
 	const [link, setLink] = useState('/')
-
-	const { orderId } = useParams();
-
-	const { userUpdateOrder } = useOrderService();
-
-	const updateStatus = async (orderId: string, status: "PENDING" | "PAID" | "CANCELED") => {
-		try {
-			await userUpdateOrder(orderId, status);
-		} catch (err) {
-			console.error('Error updating order status:', err);
-		}
-	}
-
-	useEffect(() => {
-		if (orderId) {
-			updateStatus(orderId, 'CANCELED');
-		}
-	}, [orderId])
-
 	const user = getUserDataFromLocalStorage()
 
+	// Get orderId from URL params or navigation state
+	const { orderId: paramOrderId } = useParams();
+	const location = useLocation();
+	const orderId = paramOrderId || location.state?.orderId;
+	const bookingId = location.state?.bookingId
+	const appointmentId = location.state?.appointmentId
+
 	useEffect(() => {
-		if (user) {
-			if (user.role === 'user') {
-				setLink('/')
-			} else if (user.role === 'doctor') {
-				setLink('/doctor')
-			} else if (user.role === 'nurse') {
-				setLink('/nurse')
+		console.log("Order status updated", orderId);
+
+		if (orderId) {
+			if (user?.role === "user") {
+				setLink('/my-services');
+			} else if (user?.role === 'nurse') {
+				setLink('/nurse');
+			} else if (user?.role === 'doctor') {
+				setLink('/doctor');
+			}
+		} else if (bookingId) {
+			if (user?.role === "user") {
+				setLink(USER_ROUTES.APPOINTMENT_HISTORY);
+			} else if (user?.role === 'nurse') {
+				setLink(NURSE_ROUTES.NURSE_APPOINTMENT);
+			} else if (user?.role === 'doctor') {
+				setLink(DOCTOR_ROUTES.APPOINTMENT);
+			}
+		} else if (appointmentId) {
+			if (user?.role === "user") {
+				setLink(USER_ROUTES.APPOINTMENT_HISTORY);
+			} else if (user?.role === 'nurse') {
+				setLink(NURSE_ROUTES.NURSE_APPOINTMENT);
+			} else if (user?.role === 'doctor') {
+				setLink(DOCTOR_ROUTES.CHECK_IN_APPOINTMENT);
 			}
 		}
-	}, [user])
+	}, [orderId, user, bookingId, appointmentId]);
 
 
 	return (
