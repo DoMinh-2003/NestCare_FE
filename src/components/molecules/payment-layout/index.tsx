@@ -1,69 +1,48 @@
 
-import { Image, Spin } from 'antd';
-import { Calendar, Heart, Home } from "lucide-react";
+import { Image } from 'antd';
+import { Calendar, Heart } from "lucide-react";
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import paymentSuccessImg from '../../../../public/images/paySuccess.png'
-import paymentCancelImg from '../../../../public/images/cancel.png'
-import paymentFailureImg from '../../../../public/images/failure.png'
-import axios from 'axios';
-import api from '../../../config/api';
-import { toast } from 'react-toastify';
+import { Link, useParams, useLocation } from 'react-router-dom';
+import paymentSuccessImg from '../../../../public/images/paySuccess.png';
 import { getUserDataFromLocalStorage } from '../../../constants/function';
+import { DOCTOR_ROUTES, NURSE_ROUTES, USER_ROUTES } from '../../../constants/routes';
 
 interface PaymentBookingProps {
 	bookingId: string;
 	status: string;
 }
 
-
+// Payment booking result
 const PaymentBooking = () => {
+	// appointmentId bookingId
 
 	const { bookingId } = useParams();
-	const [appoimentUpate, setAppoimentUpdate] = useState(false);
+	const { orderId: paramOrderId } = useParams();
 	const [link, setLink] = useState('');
 	const user = getUserDataFromLocalStorage()
+	const location = useLocation();
+	const orderId = paramOrderId || location.state?.orderId;
+	const appointmentId = location.state?.appointmentId
 
 	useEffect(() => {
 		if (user) {
 			switch (user.role) {
 				case 'user':
-					setLink('/appointment-history')
+					setLink(USER_ROUTES.APPOINTMENT_HISTORY)
 					break;
 				case 'nurse':
-					setLink('/nurse/appointments')
+					setLink(NURSE_ROUTES.NURSE_APPOINTMENT)
 					break;
 				case 'doctor':
-					setLink('/doctor/appointments')
+					setLink(DOCTOR_ROUTES.IN_PROGRESS_APPOINTMENT)
 					break;
 				default:
-					setLink('/appointment-history')
+					setLink(USER_ROUTES.APPOINTMENT_HISTORY)
 					break;
 			}
 		}
-	}, [])
+	}, [bookingId, user, appointmentId])
 
-	const updateStatus = async (bookingId: string, status: string) => {
-		try {
-			const response = await api.put('/appoitments/' + bookingId + '/' + status);
-			console.log(response);
-			if (response) {
-				setAppoimentUpdate(true)
-			}
-		} catch (err) {
-			console.error('Error updating order status:', err);
-		}
-	}
-
-	useEffect(() => {
-		if (bookingId) {
-			updateStatus(bookingId, 'PENDING');
-		}
-	}, [bookingId])
-
-	if (!appoimentUpate) {
-		<Spin />
-	}
 
 	return (
 		<div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-blue-50 to-pink-50 p-4">
@@ -77,9 +56,6 @@ const PaymentBooking = () => {
 
 				<div className="mt-2 text-center">
 					<h1 className="text-2xl font-bold text-teal-600 md:text-3xl">Đăng Ký Thành Công!</h1>
-					<p className="mt-2 text-center text-lg font-medium text-gray-700">
-						Chúc mừng bạn đã đăng ký dịch vụ của hệ thống
-					</p>
 				</div>
 
 				<div className="mt-2 w-full max-w-md rounded-xl bg-blue-50 p-4">
@@ -99,7 +75,7 @@ const PaymentBooking = () => {
 						<button className="w-full rounded-full bg-teal-500 px-8 py-3 text-base font-medium text-white shadow-md transition duration-300 hover:bg-teal-600 active:bg-teal-700 sm:w-auto">
 							<div className="flex items-center justify-center gap-2">
 								<Heart className="h-4 w-4" />
-								<span>Xem lịch khám</span>
+								<span>Trở về</span>
 							</div>
 						</button>
 					</Link>

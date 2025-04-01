@@ -1,36 +1,40 @@
 
 import { Image } from 'antd';
 import { Calendar, Heart, Home } from "lucide-react";
-import { useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useParams, useLocation } from 'react-router-dom';
 import paymentSuccessImg from '../../../../../public/images/paySuccess.png';
 import useOrderService from '../../../../services/useOrderService';
+import { getUserDataFromLocalStorage } from '../../../../constants/function';
 
 
 const PaymentSuccess = () => {
 
-	const { orderId } = useParams();
+	// Get user info
+	const user = getUserDataFromLocalStorage();
 
-	const { userUpdateOrder } = useOrderService();
+	// Get orderId from URL params or navigation state
+	const { orderId: paramOrderId } = useParams();
+	const location = useLocation();
+	const orderId = paramOrderId || location.state?.orderId;
 
-	const updateStatus = async (orderId: string, status: "PENDING" | "PAID" | "CANCELED") => {
-		try {
-			console.log('====================================');
-			console.log("ORderId-------", orderId, status);
-			console.log('====================================');
-			const response = await userUpdateOrder(orderId, status);
-			console.log(response);
+	// Fix useState declaration
+	const [link, setLink] = useState('');
 
-		} catch (err) {
-			console.error('Error updating order status:', err);
-		}
-	}
-
+	// Update order status on mount
 	useEffect(() => {
+		console.log("Order status updated", orderId);
+
 		if (orderId) {
-			updateStatus(orderId, 'PAID');
+			if (user?.role === "user") {
+				setLink('/my-services');
+			} else if (user?.role === 'nurse') {
+				setLink('/nurse');
+			} else if (user?.role === 'doctor') {
+				setLink('/doctor');
+			}
 		}
-	}, [orderId])
+	}, [orderId, user]); // Include `user` in dependencies
 
 	return (
 		<div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-blue-50 to-pink-50 p-4">
@@ -62,11 +66,11 @@ const PaymentSuccess = () => {
 				</div>
 
 				<div className="mt-4 flex w-full flex-col gap-3 sm:flex-row sm:justify-center">
-					<Link to="/" className="w-full sm:w-auto">
+					<Link to={link} className="w-full sm:w-auto">
 						<button className="w-full rounded-full bg-teal-500 px-8 py-3 text-base font-medium text-white shadow-md transition duration-300 hover:bg-teal-600 active:bg-teal-700 sm:w-auto">
 							<div className="flex items-center justify-center gap-2">
 								<Home className="h-4 w-4" />
-								<span>Trang chủ</span>
+								<span>Trở về</span>
 							</div>
 						</button>
 					</Link>

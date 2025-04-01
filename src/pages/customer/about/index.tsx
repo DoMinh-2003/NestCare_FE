@@ -9,12 +9,12 @@ const About = () => {
   return (
     <div className="mx-5">
       <div className="container mx-auto">
-            <AboutUs/>
-            <CoreValue/>
-            <FrequentlyAskedQuestions/>
-            <Specialties/>
-            <Services/>
-            <LearnMoreAboutNestCare/>
+        <AboutUs />
+        <CoreValue />
+        {/* <FrequentlyAskedQuestions /> */}
+        {/* <Specialties /> */}
+        {/* <Services /> */}
+        <LearnMoreAboutNestCare />
       </div>
     </div>
   )

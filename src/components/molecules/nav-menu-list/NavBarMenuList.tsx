@@ -3,13 +3,13 @@ import PopoverNavList from "../popover-nav-list/PopoverNavList";
 
 const menuItems = [
   { label: "Giới thiệu", hasDropdown: false, link: "/about" },
-  { label: "Chuyên khoa", hasDropdown: true, link: "/specialty" },
-  { label: "Dịch vụ", hasDropdown: true, link: "/services" },
+  // { label: "Chuyên khoa", hasDropdown: true, link: "/specialty" },
+  { label: "Dịch vụ", hasDropdown: false, link: "/services" },
   { label: "Bác sĩ", hasDropdown: false, link: "/doctors" },
-  { label: "Tin tức", hasDropdown: false, link: "/news" },
+  { label: "Bài viết", hasDropdown: false, link: "/blog" },
   { label: "Hướng dẫn", hasDropdown: true, link: "" },
-  { label: "Kiến thức", hasDropdown: true, link: "/knowledge" },
-  { label: "Tuyển dụng", hasDropdown: false, link: "/recruitment" },
+  // { label: "Kiến thức", hasDropdown: false, link: "/knowledge" },
+  // { label: "Tuyển dụng", hasDropdown: false, link: "/recruitment" },
   { label: "Liên hệ", hasDropdown: false, link: "/contact" },
 ];
 
@@ -20,7 +20,7 @@ const NavbarMenuList = () => {
       {menuItems.map((item, index) => (
         <>
           {
-            item.label === "Tin tức" || item.label === "Chuyên khoa" || item.label === "Dịch vụ" || item.label === "Hướng dẫn" || item.label === "Kiến thức"
+            item.label === "Tin tức" || item.label === "Chuyên khoa" || item.label === "Hướng dẫn"
               ?
               <PopoverNavList title={item.label} link={item.link} />
               :

@@ -9,7 +9,7 @@ const Directors = ({ isShowTitle }: DirectorsProps) => {
 
   return (
     <div>
-      {isShowTitle === true &&
+      {/* {isShowTitle === true &&
         <div className='font-semibold text-xl my-2 '>
           Ban giám đốc y khoa
         </div>
@@ -46,7 +46,7 @@ const Directors = ({ isShowTitle }: DirectorsProps) => {
             ))}
         </div>
 
-      </div>
+      </div> */}
     </div>
   )
 }

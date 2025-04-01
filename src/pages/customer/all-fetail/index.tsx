@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Tag, Space, Input, Modal } from 'antd';
+import { Table, Button, Tag, Space, Input, Modal, message, Popconfirm } from 'antd';
 import useFetalService from '../../../services/useFetalService';
 import { formatDate } from '../../../utils/formatDate';
 import FetalCreation from '../create-fetals';
@@ -24,6 +24,7 @@ export enum AppointmentStatus {
     COMPLETED = 'COMPLETED',
     CANCELED = 'CANCELED',
     FAIL = 'FAIL',
+    NO_SHOW = 'NO_SHOW',
 }
 
 const statusColors: Record<PregnancyStatus, string> = {
@@ -62,6 +63,7 @@ const appointmentStatusLabels: Record<AppointmentStatus, string> = {
     [AppointmentStatus.COMPLETED]: 'Đã hoàn tất',
     [AppointmentStatus.CANCELED]: 'Đã hủy',
     [AppointmentStatus.FAIL]: 'Thất bại',
+    [AppointmentStatus.NO_SHOW]: 'Vắng mặt',
 };
 
 const AllFetail = () => {
@@ -76,6 +78,7 @@ const AllFetail = () => {
     const [selectedAppointments, setSelectedAppointments] = useState<any[]>([]);
     const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false);
     const [selectedFetal, setSelectedFetal] = useState<any | null>(null);
+    const { createFetalCheckupRecord, deleteFetal } = useFetalService()
 
     const fetchFetalsByMother = async () => {
         const response = await getFetalsByMother();
@@ -121,12 +124,29 @@ const AllFetail = () => {
         setIsDetailModalOpen(true);
     };
 
-    const handleHealthSubmit = (values: any) => {
+    const handleHealthSubmit = async (values: any) => {
         if (selectedFetalId) {
+            console.log('====================================');
+            console.log("Values được gửi", values);
+            console.log('====================================');
             const submittedData = { ...values, fetalId: selectedFetalId };
             console.log("Dữ liệu sức khỏe được gửi:", submittedData);
+
+            try {
+                const response = await createFetalCheckupRecord(values, selectedFetalId);
+                console.log("Response:", response);
+                message.success("Gửi dữ liệu sức khỏe thành công!");
+                await getFetalsByMother()
+                setIsHealthModalOpen(false)
+            } catch (error) {
+                console.error("Error submitting health data:", error);
+                message.error("Không thể gửi dữ liệu sức khỏe");
+            } finally {
+                setIsHealthModalOpen(false);
+            }
+        } else {
+            message.warning("Không có thai nhi được chọn!");
         }
-        setIsHealthModalOpen(false);
     };
 
     const appointmentColumns = [
@@ -227,10 +247,24 @@ const AllFetail = () => {
                     <Button type="link" onClick={() => showHealthModal(record.id)}>
                         Thêm thông tin sức khỏe
                     </Button>
+                    <Popconfirm title="Xóa hồ sơ của thai này" onConfirm={() => handleDelete(record.id)}>
+                        <Button type="link" danger>Xóa</Button>
+                    </Popconfirm>
                 </Space>
             ),
         },
     ];
+
+    const handleDelete = async (id: string) => {
+        try {
+            await deleteFetal(id);
+            message.success("Xóa hồ sơ thai nhi thành công!");
+            await fetchFetalsByMother();
+        } catch (error) {
+            console.error("Error deleting fetal:", error);
+            message.error("Không thể xóa");
+        }
+    }
 
     return (
         <div className="p-4">

@@ -1,7 +1,7 @@
 
 import ContactCard from '../contact-card/ContactCard'
 import {
-    ScheduleOutlined,
+  ScheduleOutlined,
 } from '@ant-design/icons';
 
 const WorkingTime = () => {
@@ -9,7 +9,7 @@ const WorkingTime = () => {
     <div>
       <ContactCard
         title='Thời gian làm việc'
-        content={["Cấp cứu 24/24", "Thứ 2 – CN: 6:00 - 16:00", "Ngoài giờ: 16:00 - 20:00"]}
+        content={["Cấp cứu 24/24", "Thứ 2 – CN: 7:00 - 21:00", "Ngoài giờ: 22:00 - 1:00"]}
         icon={<ScheduleOutlined />}
       />
     </div>

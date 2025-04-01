@@ -17,19 +17,19 @@ const InformationForCustomer = () => {
           <CheckOutlined className="text-pink-700 " />  Quy trình khám bệnh NestCare
         </button>
         <button className="w-64 text-left mt-10 bg-white text-lg text-black px-4 py-4 border-b-2 border-b-gray-100 border-transparent rounded-lg transition-all duration-300 hover:border-red-500 hover:border-2">
-          <CheckOutlined className="text-pink-700 " />  Quy trình khám bệnh NestCare
+          <CheckOutlined className="text-pink-700 " />  Quy trình nhập viện & xuất viện
         </button>
         <button className="w-64 text-left mt-10 bg-white text-lg text-black px-4 py-4 border-b-2 border-b-gray-100 border-transparent rounded-lg transition-all duration-300 hover:border-red-500 hover:border-2">
-          <CheckOutlined className="text-pink-700 " />  Quy trình khám bệnh NestCare
+          <CheckOutlined className="text-pink-700 " />  Quyền và nghĩa vụ của bệnh nhân
         </button>
         <button className="w-64 text-left mt-10 bg-white text-lg text-black px-4 py-4 border-b-2 border-b-gray-100 border-transparent rounded-lg transition-all duration-300 hover:border-red-500 hover:border-2">
-          <CheckOutlined className="text-pink-700 " />  Quy trình khám bệnh NestCare
+          <CheckOutlined className="text-pink-700 " />  Chính sách bảo mật Nestcare
         </button>
         <button className="w-64 text-left mt-10 bg-white text-lg text-black px-4 py-4 border-b-2 border-b-gray-100 border-transparent rounded-lg transition-all duration-300 hover:border-red-500 hover:border-2">
-          <CheckOutlined className="text-pink-700 " />  Quy trình khám bệnh NestCare
+          <CheckOutlined className="text-pink-700 " />  Thời gian hoạt động và thăm bệnh
         </button>
         <button className="w-64 text-left mt-10 bg-white text-lg text-black px-4 py-4 border-b-2 border-b-gray-100 border-transparent rounded-lg transition-all duration-300 hover:border-red-500 hover:border-2">
-          <CheckOutlined className="text-pink-700 " />  Quy trình khám bệnh NestCare
+          <CheckOutlined className="text-pink-700 " />  Hướng dẫn thanh toán viện phí
         </button>
       </div>
     </div>

@@ -12,7 +12,7 @@ const Deans = ({ isShowTitle }: DeansProps) => {
     const DoctorsFilters = doctors.filter(doctor => doctor.position.includes("Trưởng Khoa") || doctor.position.includes("Phó Khoa"))
     return (
         <div className='mt-14'>
-            {isShowTitle === true &&
+            {/* {isShowTitle === true &&
                 <div className='font-semibold text-xl my-2'>
                     Trưởng, phó khoa/phòng
                 </div>
@@ -45,7 +45,7 @@ const Deans = ({ isShowTitle }: DeansProps) => {
                         </SwiperSlide>
                     ))}
                 </Swiper>
-            </div>
+            </div> */}
         </div>
     )
 }

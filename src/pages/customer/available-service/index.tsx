@@ -1,3 +1,4 @@
+
 import {
 	CalendarOutlined,
 	GiftOutlined,
@@ -6,7 +7,7 @@ import {
 	MedicineBoxOutlined,
 	RightOutlined,
 	SearchOutlined,
-	StarOutlined
+	StarOutlined,
 } from "@ant-design/icons"
 import {
 	Avatar,
@@ -21,13 +22,14 @@ import {
 	Row,
 	Select,
 	Skeleton,
+	Statistic,
 	Tabs,
 	Tag,
 	Typography,
-	message
+	message,
 } from "antd"
 import { motion } from "framer-motion"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo } from "react"
 import { useNavigate } from "react-router-dom"
 import api from "../../../config/api"
 import { getUserDataFromLocalStorage } from "../../../constants/function"
@@ -35,7 +37,6 @@ import { formatMoney } from "../../../utils/formatMoney"
 
 const { Title, Text, Paragraph } = Typography
 const { Option } = Select
-const { TabPane } = Tabs
 
 interface Service {
 	id: string
@@ -87,11 +88,21 @@ function AvailableService() {
 	const [detailModalVisible, setDetailModalVisible] = useState(false)
 	const [bookingModalVisible, setBookingModalVisible] = useState(false)
 	const [hoveredCard, setHoveredCard] = useState<string | null>(null)
-	const [activeTab, setActiveTab] = useState<string>("all")
-	const [filterByPackage, setFilterByPackage] = useState<string | null>(null)
+	const [activeTab, setActiveTab] = useState<string>("")
 
 	const user = getUserDataFromLocalStorage()
 	const navigate = useNavigate()
+
+	// Group packages by unique package ID to avoid duplicates
+	const uniquePackages = useMemo(() => {
+		const packageMap = new Map<string, Package>()
+		packages.forEach((pkg) => {
+			if (!packageMap.has(pkg.package.id)) {
+				packageMap.set(pkg.package.id, pkg.package)
+			}
+		})
+		return Array.from(packageMap.values())
+	}, [packages])
 
 	useEffect(() => {
 		fetchServices()
@@ -99,7 +110,7 @@ function AvailableService() {
 
 	useEffect(() => {
 		applyFiltersAndSort()
-	}, [allServices, searchText, sortBy, sortOrder, filterBySlots, activeTab, filterByPackage])
+	}, [allServices, searchText, sortBy, sortOrder, filterBySlots, activeTab])
 
 	const fetchServices = async () => {
 		try {
@@ -112,7 +123,7 @@ function AvailableService() {
 			}
 
 			// In a real app, you would call your API
-			const response = await api.get<PackageWithServices[]>(`/users/available-services/${userId}`);
+			const response = await api.get<PackageWithServices[]>(`/users/available-services/${userId}`)
 
 			setPackages(response.data)
 
@@ -129,7 +140,7 @@ function AvailableService() {
 			setFilteredServices(allServicesFromPackages)
 		} catch (error) {
 			console.error("Error fetching services:", error)
-			// message.error("Không thể tải dữ liệu dịch vụ")
+			message.error("Không thể tải dữ liệu dịch vụ")
 		} finally {
 			setLoading(false)
 		}
@@ -177,15 +188,6 @@ function AvailableService() {
 		setSearchText(value)
 	}
 
-	const toggleSort = (field: "name" | "price" | "slots") => {
-		if (sortBy === field) {
-			setSortOrder(sortOrder === "asc" ? "desc" : "asc")
-		} else {
-			setSortBy(field)
-			setSortOrder("asc")
-		}
-	}
-
 	const showServiceDetail = (service: PackageService) => {
 		setSelectedService(service)
 		// Find the package that contains this service
@@ -231,6 +233,20 @@ function AvailableService() {
 		if (name.includes("1")) return "#52c41a"
 		if (name.includes("2")) return "#fa8c16"
 		return "#722ed1"
+	}
+
+	const getPackageColor = (packageId: string) => {
+		// Generate a consistent color based on package ID
+		const colors = ["#1890ff", "#52c41a", "#722ed1", "#fa8c16", "#eb2f96", "#faad14"]
+		const hash = packageId.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0)
+		return colors[hash % colors.length]
+	}
+
+	const getPackageIcon = (packageName: string) => {
+		const name = packageName.toLowerCase()
+		if (name.includes("premium")) return <StarOutlined />
+		if (name.includes("super")) return <GiftOutlined />
+		return <GiftOutlined />
 	}
 
 	const renderSkeletons = () => {
@@ -378,13 +394,6 @@ function AvailableService() {
 
 									<div>
 										<Text type="secondary">Số lượt còn lại: {packageService.slot}</Text>
-										{/* <Progress
-											// percent={(packageService.slot / 5) * 100}
-											// format={() => `${packageService.slot}/5`}
-											status={packageService.slot > 0 ? "active" : "exception"}
-											size="small"
-											strokeColor={{ from: "#108ee9", to: "#87d068" }}
-										/> */}
 									</div>
 								</div>
 
@@ -418,6 +427,15 @@ function AvailableService() {
 		)
 	}
 
+	// Calculate package statistics
+	const getPackageStats = (packageId: string) => {
+		const packageServices = allServices.filter((service) => service.packageId === packageId)
+		const totalServices = packageServices.length
+		const availableServices = packageServices.filter((service) => service.slot > 0).length
+		const totalSlots = packageServices.reduce((sum, service) => sum + service.slot, 0)
+
+		return { totalServices, availableServices, totalSlots }
+	}
 
 	return (
 		<div className="available-services-container" style={{ padding: "24px" }}>
@@ -437,15 +455,73 @@ function AvailableService() {
 				type="card"
 				className="mb-4"
 				tabBarStyle={{ marginBottom: "16px" }}
+				tabBarGutter={8}
 			>
-				<TabPane
+				{/* <Tabs.TabPane
 					tab={
 						<span>
 							<StarOutlined /> Tất cả dịch vụ
 						</span>
 					}
 					key="all"
-				/>
+				/> */}
+
+				{uniquePackages.map((pkg) => {
+					const stats = getPackageStats(pkg.id)
+					return (
+						<Tabs.TabPane
+							tab={
+								<span>
+									{getPackageIcon(pkg.name)} {pkg.name}
+									<Badge
+										count={stats.availableServices}
+										style={{
+											marginLeft: 8,
+											backgroundColor: stats.availableServices > 0 ? "#52c41a" : "#f5222d",
+										}}
+									/>
+								</span>
+							}
+							key={pkg.id}
+						>
+							<div className="package-info" style={{ marginBottom: 16 }}>
+								<Card
+									style={{
+										borderLeft: `4px solid ${getPackageColor(pkg.id)}`,
+										borderRadius: 8,
+										boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+									}}
+								>
+									<Row gutter={16} align="middle">
+										<Col xs={24} md={16}>
+											<Title level={4} style={{ marginBottom: 8 }}>
+												{pkg.name}
+											</Title>
+											<Paragraph>{pkg.description || "Không có mô tả"}</Paragraph>
+											<div>
+												<Tag color="blue">
+													Thời hạn: {pkg.durationValue} {pkg.durationType}
+												</Tag>
+												<Tag color="green">Giá gói: {formatMoney(Number(pkg.price))}</Tag>
+											</div>
+										</Col>
+										<Col xs={24} md={8}>
+											<Card style={{ backgroundColor: "#f9f9f9", borderRadius: 8 }}>
+												<Statistic title="Tổng dịch vụ" value={stats.totalServices} />
+												<Statistic
+													title="Dịch vụ còn lượt"
+													value={stats.availableServices}
+													valueStyle={{ color: stats.availableServices > 0 ? "#52c41a" : "#f5222d" }}
+												/>
+												<Statistic title="Tổng lượt còn lại" value={stats.totalSlots} />
+											</Card>
+										</Col>
+									</Row>
+								</Card>
+							</div>
+						</Tabs.TabPane>
+					)
+				})}
 			</Tabs>
 
 			<motion.div
@@ -485,35 +561,20 @@ function AvailableService() {
 							</Select>
 						</Col>
 						<Col xs={24} md={8}>
-							<div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", flexWrap: "wrap" }}>
-								{/* <Tooltip title="Sắp xếp theo tên">
-									<Button
-										icon={<SortAscendingOutlined />}
-										onClick={() => toggleSort("name")}
-										type={sortBy === "name" ? "primary" : "default"}
-									>
-										Tên {sortBy === "name" && (sortOrder === "asc" ? "↑" : "↓")}
-									</Button>
-								</Tooltip>
-								<Tooltip title="Sắp xếp theo giá">
-									<Button
-										icon={<SortAscendingOutlined />}
-										onClick={() => toggleSort("price")}
-										type={sortBy === "price" ? "primary" : "default"}
-									>
-										Giá {sortBy === "price" && (sortOrder === "asc" ? "↑" : "↓")}
-									</Button>
-								</Tooltip>
-								<Tooltip title="Sắp xếp theo số lượt còn lại">
-									<Button
-										icon={<SortAscendingOutlined />}
-										onClick={() => toggleSort("slots")}
-										type={sortBy === "slots" ? "primary" : "default"}
-									>
-										Lượt {sortBy === "slots" && (sortOrder === "asc" ? "↑" : "↓")}
-									</Button>
-								</Tooltip> */}
-							</div>
+							<Select
+								style={{ width: "100%", borderRadius: "8px" }}
+								placeholder="Sắp xếp theo"
+								value={sortBy}
+								onChange={(value) => {
+									setSortBy(value)
+									// Reset sort order when changing sort field
+									setSortOrder("asc")
+								}}
+							>
+								<Option value="name">Tên dịch vụ</Option>
+								<Option value="price">Giá dịch vụ</Option>
+								<Option value="slots">Số lượt còn lại</Option>
+							</Select>
 						</Col>
 					</Row>
 				</Card>
@@ -617,18 +678,6 @@ function AvailableService() {
 								</Tag>
 							</Paragraph>
 							<Paragraph style={{ fontSize: "14px", color: "#595959" }}>{selectedPackage.description}</Paragraph>
-						</div>
-
-						<div style={{ marginBottom: "16px" }}>
-							<Text strong>Số lượt còn lại: {selectedService.slot}</Text>
-							<div style={{ marginTop: "8px" }}>
-								{/* <Progress
-									// percent={(selectedService.slot / 5) * 100}
-									// format={() => `${selectedService.slot}/5`}
-									status={selectedService.slot > 0 ? "active" : "exception"}
-									strokeColor={{ from: "#108ee9", to: "#87d068" }}
-								/> */}
-							</div>
 						</div>
 
 						<Card style={{ backgroundColor: "#f9f9f9", borderRadius: "8px" }}>
