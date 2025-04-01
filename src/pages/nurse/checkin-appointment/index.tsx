@@ -9,6 +9,8 @@ import userAppointmentService from '../../../services/useAppointmentService';
 import moment from 'moment';
 import dayjs from 'dayjs';
 import { Slot } from '../../../model/Slot';
+import viVN from 'antd/es/date-picker/locale/vi_VN';
+
 
 type SearchProps = GetProps<typeof Input.Search>;
 const { Search } = Input;
@@ -65,13 +67,14 @@ const NurseCheckIn: React.FC = () => {
         Modal.confirm({
             title: 'Xác nhận',
             content: 'Bạn có chắc chắn muốn chấp nhận cuộc hẹn này?',
+            okText: 'Đồng ý',  // Đổi "OK" thành "Đồng ý"
+            cancelText: 'Hủy',  // Đổi "Cancel" thành "Hủy"
             onOk: async () => {
-                const response = await updateAppointmentsByStatus("CHECKED_IN", appointmentId)
+                const response = await updateAppointmentsByStatus("CHECKED_IN", appointmentId);
                 if (response) {
                     message.success('Cuộc hẹn đã được chấp nhận!');
-                    getAppointmentsByStatusFromNurse()
+                    getAppointmentsByStatusFromNurse();
                 }
-                // Cập nhật trạng thái trong state nếu cần
             },
         });
     };
@@ -143,11 +146,12 @@ const NurseCheckIn: React.FC = () => {
     }
 
     const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-        console.log(date, dateString);
-        if (typeof dateString === 'string') {
-            setDay(dateString)
+        if (date) {
+            const formattedDate = date.format('YYYY-MM-DD');
+            setDay(formattedDate);
         }
     };
+
 
     return (
         <div>
@@ -157,10 +161,12 @@ const NurseCheckIn: React.FC = () => {
                     <Search placeholder="Tìm kiếm bằng tên mẹ" className='w-[250px]' onSearch={onSearch} enterButton />
                 </div>
                 <div>
+
                     <DatePicker
                         defaultValue={today}
-                        format={(date, dateString) => formatDate(date.toDate())}
+                        format="DD/MM/YYYY" // Hiển thị theo định dạng dd/MM/yyyy
                         onChange={onChange}
+                        locale={viVN} // Đặt ngôn ngữ là tiếng Việt
                     />
                 </div>
             </div>
