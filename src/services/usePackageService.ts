@@ -79,9 +79,9 @@ const usePackageService = () => {
     );
 
     const updatePackage = useCallback(
-        async (values: any) => {
+        async (values: any, id: string) => {
             try {
-                const response = await callApi("put", `packages/${values.id}`, {
+                const response = await callApi("put", `packages/${id}`, {
                     // description: values.description,
                     // price: values.price,
                     // name: values.name

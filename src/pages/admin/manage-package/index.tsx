@@ -15,11 +15,11 @@ const ManagePackage = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [servicesOfPackage, setServicesOfPackage] = useState<PackageService[]>([]);
     const [isModalOpenCreateUpdate, setIsModalOpenCreateUpdate] = useState(false);
-    const [editingPackage, setEditingPackage] = useState<PackageCreateUpdate | null>(null);
+    const [editingPackage, setEditingPackage] = useState<PackageCreateUpdate>();
     const [modalWidth, setModalWidth] = useState<number | string>(800);
     const [form] = Form.useForm();
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false); //Modal delete
-    const [currentPackage, setCurrentPackage] = useState<PackageCreateUpdate | null>(null);
+    // const [currentPackage, setCurrentPackage] = useState<PackageCreateUpdate | null>(null);
 
     useEffect(() => {
         getPackagesFromAdmin();
@@ -65,27 +65,28 @@ const ManagePackage = () => {
 
     const handleSubmit = async (data: PackageCreateUpdate) => {
         console.log("Submitted Package:", data);
-        if (!data.id) {
+        setIsModalOpenCreateUpdate(false);
+        if (!editingPackage) {
             const response = await createPackage(data);
             if (response && response.data) {
                 message.success("Tạo gói thành công");
                 getPackagesFromAdmin();
             }
         } else {
-            const response = await updatePackage(data);
+            const response = await updatePackage(data, editingPackage?.id+'');
             if (response && response.data) {
                 message.success("Cập nhật gói thành công");
                 getPackagesFromAdmin();
             }
         }
-        setIsModalOpenCreateUpdate(false);
     };
 
     const handleOpenModalCreateUpdate = (packageCreateUpdate?: PackageCreateUpdate) => {
         if (packageCreateUpdate) {
+            console.log("packageCreateUpdate: ", packageCreateUpdate)
             setEditingPackage(packageCreateUpdate);
-        } else {
-            setEditingPackage(null);
+        } else{
+            setEditingPackage(null)
         }
         setIsModalOpenCreateUpdate(true);
     };
@@ -162,13 +163,12 @@ const ManagePackage = () => {
     ];
 
     const handleOpenModalDelete = (record: PackageCreateUpdate) => {
-        setCurrentPackage(record);
+        setEditingPackage(record);
         setIsModalDeleteOpen(true);
     };
 
     const handleCancelModalOpenCreateUpdate = () => {
         setIsModalOpenCreateUpdate(false)
-        form.resetFields()
     }
 
     const onSearch: SearchProps['onSearch'] = async (value, _e) => {
@@ -184,10 +184,10 @@ const ManagePackage = () => {
     }
 
     const handleOkModalDelete = async () => {
-        if (!currentPackage) return;
-        await deletePackages(currentPackage.id + '');
-        message.success(`Xóa  "${currentPackage?.name}" thành công`);
-        setCurrentPackage(null);
+        if (!editingPackage) return;
+        await deletePackages(editingPackage.id + '');
+        message.success(`Xóa  "${editingPackage?.name}" thành công`);
+        setEditingPackage(null);
         setIsModalDeleteOpen(false);
         getPackagesFromAdmin()
     };
@@ -205,7 +205,7 @@ const ManagePackage = () => {
             <ModalDelete
                 handleCancelModalDelete={handleCancelModalDelete}
                 handleOkModalDelete={handleOkModalDelete}
-                name={currentPackage?.name || ""}
+                name={editingPackage?.name || ""}
                 isModalOpenDelete={isModalDeleteOpen}
             />
 
@@ -221,7 +221,7 @@ const ManagePackage = () => {
                 visible={isModalOpenCreateUpdate}
                 onCancel={handleCancelModalOpenCreateUpdate}
                 onSubmit={handleSubmit}
-                initialValues={editingPackage || null}
+                initialValues={editingPackage}
                 width={modalWidth}
             />
             <ModalServiceOfPackage
