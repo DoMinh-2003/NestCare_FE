@@ -120,7 +120,7 @@ const NurseUpdateMotherRecord = () => {
             )
         },
         {
-            title: 'Slot',
+            title: 'Giờ khám',
             dataIndex: 'slot',
             key: 'slot',
             render: (slot: Slot) => (
@@ -148,54 +148,58 @@ const NurseUpdateMotherRecord = () => {
             render: (record: Appointment) => (
                 <div className='flex gap-2'>
                     {
-                     record?.fetalRecords[0]?.checkupRecords[record?.fetalRecords[0]?.checkupRecords?.length - 1]?.fetalHeartbeat === null ?   <Button className='bg-blue hover:bg-blue text-white' type="default" onClick={() => showModal(record.id)}>Cập nhật thông tin sức khoẻ</Button>
-                       : <Button danger onClick={() => handleReject(record.id)} style={{ marginLeft: 8 }}>Từ chối</Button>
+                        record?.fetalRecords[0]?.checkupRecords[record?.fetalRecords[0]?.checkupRecords?.length - 1]?.fetalHeartbeat === null ? <Button className='bg-blue hover:bg-blue text-white' type="default" onClick={() => showModal(record.id)}>Cập nhật thông tin sức khoẻ</Button>
+                            : <Button danger onClick={() => handleReject(record.id)} style={{ marginLeft: 8 }}>Từ chối</Button>
                     }
                 </div >
             ),
         },
     ];
 
-const handleSubmit = (response: any) => {
-    if (response) {
-        getAppointmentsByStatusFromNurse();
+    const handleSubmit = (response: any) => {
+        if (response) {
+            getAppointmentsByStatusFromNurse();
+        }
     }
-}
 
-const onSearch: SearchProps['onSearch'] = async (value, _e) => {
-    console.log(day, value, "CHECKED_IN")
-    const response = await getAppointmentsByDate(day, value, "CHECKED_IN")
-    console.log("response: ", response);
-    setAppointments(response);
-}
-
-const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-    console.log(date, dateString);
-    if (typeof dateString === 'string') {
-        setDay(dateString)
+    const onSearch: SearchProps['onSearch'] = async (value, _e) => {
+        console.log(day, value, "CHECKED_IN")
+        const response = await getAppointmentsByDate(day, value, "CHECKED_IN")
+        console.log("response: ", response);
+        setAppointments(response);
     }
-};
 
-return (
-    <div>
-        <div className='text-3xl font-bold text-center my-5'>Cập nhật sức khoẻ người mẹ</div>
-        <div className='flex gap-2'>
-            <div className='flex gap-2 mb-2'>
-                <Search placeholder="Tìm kiếm bằng tên mẹ" className='w-[250px]' onSearch={onSearch} enterButton />
+    const onChange: DatePickerProps['onChange'] = (date, dateString) => {
+        console.log(date, dateString);
+        if (typeof dateString === 'string') {
+            setDay(dateString)
+        }
+    };
+
+    return (
+        <div>
+            <div className='text-3xl font-bold text-center my-5'>Cập nhật sức khoẻ người mẹ</div>
+            <div className='flex gap-2'>
+                <div className='flex gap-2 mb-2'>
+                    <Search placeholder="Tìm kiếm bằng tên mẹ" className='w-[250px]' onSearch={onSearch} enterButton />
+                </div>
+                <div>
+                    <DatePicker
+                        defaultValue={today}
+                        format={(date, dateString) => formatDate(date.toDate())}
+                        onChange={onChange}
+                    />
+                </div>
             </div>
-            <div>
-                <DatePicker defaultValue={today} format="YYYY-MM-DD" onChange={onChange} />
-            </div>
+            <ModalUpdateMotherHealth
+                id={appointmentId}
+                onSumit={handleSubmit}
+                isVisible={isModalVisible}
+                onClose={handleClose}
+            />
+            <Table dataSource={appointments} columns={columns} rowKey="id" />
         </div>
-        <ModalUpdateMotherHealth
-            id={appointmentId}
-            onSumit={handleSubmit}
-            isVisible={isModalVisible}
-            onClose={handleClose}
-        />
-        <Table dataSource={appointments} columns={columns} rowKey="id" />
-    </div>
-);
+    );
 };
 
 export default NurseUpdateMotherRecord;

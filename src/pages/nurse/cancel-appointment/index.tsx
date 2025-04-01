@@ -7,6 +7,10 @@ import useAppointmentService from '../../../services/useApoitment';
 import { AppointmentStatus } from '../../../constants/status';
 import dayjs from 'dayjs';
 import moment from 'moment';
+import { Doctor } from '../../../components/organisms/modal-appointment-detail/ModalAppointmentDetail';
+import { FetalRecord } from '../fetal-detail';
+const { Search } = Input;
+
 // types.ts
 
 export interface AppointmentData {
@@ -21,57 +25,12 @@ export interface AppointmentData {
     history: AppointmentHistory[]; // Lịch sử thay đổi trạng thái cuộc hẹn
 }
 
-export interface FetalRecord {
-    id: string;
-    name: string; // Tên thai nhi
-    note: string; // Ghi chú
-    dateOfPregnancyStart: string; // Ngày bắt đầu thai kỳ
-    expectedDeliveryDate: string; // Ngày dự sinh
-    actualDeliveryDate: string | null; // Ngày sinh thực tế (nếu có)
-    healthStatus: string; // Tình trạng sức khỏe
-    status: 'PREGNANT' | 'DELIVERED'; // Trạng thái thai nhi
-    isDeleted: number; // Trạng thái xóa
-    createdAt: string; // Ngày tạo
-    updatedAt: string; // Ngày cập nhật
-    checkupRecords: CheckupRecord[]; // Danh sách hồ sơ kiểm tra
-    mother: Mother; // Thông tin mẹ
-}
 
-export interface CheckupRecord {
-    id: string;
-    motherWeight: string; // Cân nặng của mẹ
-    motherBloodPressure: string; // Huyết áp của mẹ
-    motherHealthStatus: string; // Tình trạng sức khỏe của mẹ
-    fetalWeight: string | null; // Cân nặng thai nhi
-    fetalHeight: string | null; // Chiều cao thai nhi
-    fetalHeartbeat: string | null; // Nhịp tim thai nhi
-    warning: string | null; // Cảnh báo
-    createdAt: string; // Ngày tạo hồ sơ kiểm tra
-}
 
-export interface Mother {
-    id: string;
-    username: string; // Tên đăng nhập
-    password: string; // Mật khẩu
-    email: string; // Địa chỉ email
-    fullName: string; // Họ và tên
-    image: string | null; // Hình ảnh (nếu có)
-    phone: string; // Số điện thoại
-    role: 'user'; // Vai trò
-    isDeleted: boolean; // Trạng thái xóa
-}
 
-export interface Doctor {
-    id: string;
-    username: string; // Tên đăng nhập
-    password: string; // Mật khẩu
-    email: string; // Địa chỉ email
-    fullName: string; // Họ và tên
-    image: string; // Hình ảnh
-    phone: string; // Số điện thoại
-    role: 'doctor'; // Vai trò
-    isDeleted: boolean; // Trạng thái xóa
-}
+
+
+
 
 export interface AppointmentSlot {
     id: string;
@@ -235,12 +194,7 @@ const CancelAppointment = () => {
                     <DatePicker defaultValue={today} format="YYYY-MM-DD" onChange={onChange} />
                 </div>
 
-                <Input.Search
-                    placeholder="Tìm kiếm bằng tên người mẹ"
-                    onSearch={handleSearch}
-                    className='w-[250px]'
-                    style={{ marginBottom: 16 }}
-                />
+                <Search placeholder="Tìm kiếm bằng tên mẹ" className='w-[250px]' onSearch={handleSearch} enterButton />
             </div>
             <Table
                 dataSource={appoinments}
