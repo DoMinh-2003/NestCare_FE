@@ -9,36 +9,48 @@ import { Select } from "antd";
 import { useEffect, useState } from "react";
 import useOrderService from "../../../services/useOrderService";
 import { Order } from "../../../pages/admin/manage-overview";
+import { formatMoney } from "../../../utils/formatMoney";
 
 export default function RecentOrders() {
 
   const [status, setStatus] = useState<'PENDING' | 'PAID' | 'COMPLETED' | 'CANCEL' | ''>('');
   const { getOrders } = useOrderService();
   const [orders, setOrders] = useState<Order[]>([]);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+  const [totalOrders, setTotalOrders] = useState(0);
 
   useEffect(() => {
     getOrdersFromAdmin();
-  }, [status]); // Fetch orders when status changes
+  }, [status, page, pageSize]);
 
   const getOrdersFromAdmin = async () => {
     const response = await getOrders(status);
     if (response) {
       console.log("response: ", response)
       setOrders(response.items);
+      setTotalOrders(response.items.length);
     }
   };
-  
+
   const handleChange = (value: 'PENDING' | 'PAID' | 'COMPLETED' | 'CANCEL' | '') => {
     console.log(`selected ${value}`);
     setStatus(value)
+    setPage(1);
   };
 
+  const statusMap: Record<string, string> = {
+    PENDING: "Chờ xử lý",
+    PAID: "Đã thanh toán",
+    COMPLETED: "Hoàn thành",
+    CANCEL: "Đã hủy",
+  };
   return (
     <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white px-4 pb-3 pt-4 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6">
       <div className="flex flex-col gap-2 mb-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-            Recent Orders
+            Thông tin khách hàng
           </h3>
         </div>
 
@@ -80,20 +92,35 @@ export default function RecentOrders() {
               />
             </svg>
             <Select
-              defaultValue=""
+              value={status}
               style={{ width: 120 }}
               onChange={handleChange}
               options={[
                 { value: '', label: 'Tất cả' },
-                { value: 'PENING', label: 'Pending' },
-                { value: 'PAID', label: 'Paid' },
-                { value: 'CANCEL', label: 'Cancel' },
+                { value: 'PENDING', label: 'Chờ xử lý' },
+                { value: 'PAID', label: 'Đã thanh toán' },
+                { value: 'COMPLETED', label: 'Hoàn thành' },
+                { value: 'CANCEL', label: 'Đã hủy' },
               ]}
             />
+
+            {/* <Select
+              value={status}
+              style={{ width: 120 }}
+              onChange={handleChange}
+              options={[
+                { value: '', label: 'Tất cả' },
+                { value: 'PENDING', label: 'Pending' },
+                { value: 'PAID', label: 'Paid' },
+                { value: 'COMPLETED', label: 'Completed' },
+                { value: 'CANCEL', label: 'Cancelled' },
+              ]}
+            /> */}
+
           </button>
-          <button className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
-            See all
-          </button>
+          {/* <button className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-theme-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200">
+            Xem hết
+          </button> */}
         </div>
       </div>
       <div className="max-w-full overflow-x-auto">
@@ -105,25 +132,25 @@ export default function RecentOrders() {
                 isHeader
                 className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
-                Customer
+                Khách hàng
               </TableCell>
               <TableCell
                 isHeader
                 className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
-                Products
+                Gói dịch vụ
               </TableCell>
               <TableCell
                 isHeader
                 className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
-                Price
+                Giá
               </TableCell>
               <TableCell
                 isHeader
                 className="py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
               >
-                Status
+                Trạng thái
               </TableCell>
 
             </TableRow>
@@ -147,14 +174,26 @@ export default function RecentOrders() {
                   </div>
                 </TableCell>
                 <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                  {order.package.price}
+                  {formatMoney(order.package.price)}
                 </TableCell>
 
                 <TableCell className="py-3 text-gray-500 text-theme-sm dark:text-gray-400">
-                  {order.status}
+                  {statusMap[order.status] || "Không xác định"}
                 </TableCell>
               </TableRow>
             ))}
+            {/* <div className="flex justify-end mt-4">
+        <Pagination
+          current={page}
+          pageSize={pageSize}
+          total={totalOrders}
+          onChange={(page, pageSize) => {
+            setPage(page);
+            setPageSize(pageSize);
+          }}
+          showSizeChanger
+        />
+      </div> */}
           </TableBody>
         </Table>
       </div>
