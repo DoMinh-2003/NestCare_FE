@@ -44,6 +44,7 @@ import api from "../../../config/api"
 import ModalCreateReminder from "../../../components/organisms/modal-create-reminder/ModalCreateReminder"
 import useReminderService from "../../../services/useReminders"
 import ModalCreateAppointment, { CreateAppointment } from "../../../components/organisms/modal-create-appointment/ModalCreateAppointment"
+import useAppointmentService from "../../../services/useApoitment"
 
 const { Title, Text, Paragraph } = Typography
 const { TabPane } = Tabs
@@ -134,18 +135,52 @@ const DoctorFetalView: React.FC = () => {
 
 
     const { createReminderByDoctor } = useReminderService()
+    const { getAppointments } = useAppointmentService();
+
+    // useEffect(() => {
+    //     const fetchAppointments = async () => {
+    //         const response = await getAppointments(id);
+
+    //     }
+    // }, [])
 
     useEffect(() => {
-        const fetchFetalModel = async () => {
-            const response = await getFetalsByMotherId(fetalRecord?.mother.id)
-            console.log("Fetal model", response);
-
-            if (response) {
-                setFetals(response)
+        const fetchAppointmentAndFetals = async () => {
+            if (!id) {
+                setError("Không tìm thấy ID cuộc hẹn trong URL");
+                setLoading(false);
+                return;
             }
-        }
-        fetchFetalModel()
-    }, [fetalRecord])
+
+            try {
+                const response = await getAppointments(id);
+                const appointmentData = response;
+
+                const motherId = appointmentData.fetalRecords[0]?.mother.id;
+                if (!motherId) {
+                    setError("Không tìm thấy thông tin mẹ bầu");
+                    setLoading(false);
+                    return;
+                }
+
+                setFetalRecord({
+                    ...appointmentData.fetalRecords[0],
+                    mother: appointmentData.fetalRecords[0].mother,
+                });
+
+                const fetalsResponse = await getFetalsByMotherId(motherId);
+                setFetals(fetalsResponse);
+
+            } catch (err) {
+                console.error("Error fetching data:", err);
+                setError("Không thể tải dữ liệu");
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchAppointmentAndFetals();
+    }, [id]);
 
     // Tạo nhắc nhở
     const handleCreateReminder = async (values: any) => {
@@ -188,33 +223,65 @@ const DoctorFetalView: React.FC = () => {
         fetchMedicine()
     }, [id])
 
-    const { getFetailAndMotherDetail, getFetalsByMotherId } = useFetalService()
+    const { getFetailAndMotherDetail, getFetalsByMotherId, getFetalsByMother } = useFetalService()
     const navigate = useNavigate()
 
-    // Fetch fetal record data
     useEffect(() => {
-        const fetchFetalRecord = async () => {
-            if (!id) {
-                setError("Không tìm thấy ID hồ sơ")
-                setLoading(false)
-                return
-            }
+        console.log(fetalRecord);
+    }, [])
 
-            try {
-                const response = await getFetailAndMotherDetail(id)
-                console.log("Fetal record data:", response)
-                setFetalRecord(response)
-                setFetals(response.data)
-            } catch (err) {
-                console.error("Error fetching fetal record:", err)
-                setError("Không thể tải dữ liệu hồ sơ thai nhi")
-            } finally {
-                setLoading(false)
-            }
-        }
+    // Fetch fetal record data
+    // useEffect(() => {
+    //     const fetchFetalRecord = async () => {
+    //         if (!id) {
+    //             setError("Không tìm thấy ID hồ sơ")
+    //             setLoading(false)
+    //             return
+    //         }
 
-        fetchFetalRecord()
-    }, [id, getFetailAndMotherDetail])
+    //         try {
+    //             const response = await getFetailAndMotherDetail(id)
+    //             console.log(id);
+    //             console.log("Fetal record data:", response)
+    //             setFetalRecord(response)
+    //             setFetals(response.data)
+    //         } catch (err) {
+    //             console.error("Error fetching fetal record:", err)
+    //             setError("Không thể tải dữ liệu hồ sơ thai nhi")
+    //         } finally {
+    //             setLoading(false)
+    //         }
+    //     }
+
+    //     fetchFetalRecord()
+    // }, [id, getFetailAndMotherDetail])
+    // useEffect(() => {
+    //     const fetchFetalRecord = async () => {
+    //         if (!id) {
+    //             setError("Không tìm thấy ID hồ sơ trong URL");
+    //             setLoading(false);
+    //             return;
+    //         }
+
+    //         try {
+    //             console.log("Fetching fetal record with id:", fetalRecord?.mother.id); // Log để kiểm tra giá trị id
+    //             const response = await getFetalsByMother();
+    //             console.log("Fetal record data:", response);
+    //             setFetalRecord(response);
+    //             // Giả sử response.data chứa danh sách fetals
+    //             if (response.data) {
+    //                 setFetals(response.data);
+    //             }
+    //         } catch (err) {
+    //             console.error("Error fetching fetal record:", err);
+    //             setError("Không thể tải dữ liệu hồ sơ thai nhi");
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     };
+
+    //     fetchFetalRecord();
+    // }, [id, getFetailAndMotherDetail]);
 
     // Handle form submission
     const handleSubmit = async (values: any) => {
@@ -322,14 +389,18 @@ const DoctorFetalView: React.FC = () => {
         )
     }
 
-    if (error || !fetalRecord) {
-        return <Alert message={error || "Không tìm thấy dữ liệu"} type="error" showIcon />
-    }
+    // if (error || !fetalRecord) {
+    //     return <Alert message={error || "Không tìm thấy dữ liệu"} type="error" showIcon />
+    // }
 
     // Find appointments that are CHECKED_IN or IN_PROGRESS
-    const activeAppointments = fetalRecord.appointments.filter(
+    const activeAppointments = fetalRecord?.appointments?.filter(
         (app) => app.status === AppointmentStatus.CHECKED_IN || app.status === AppointmentStatus.IN_PROGRESS,
-    )
+    ) || [];
+
+    // if (!fetalRecord) {
+    //     return <Alert message="Không tìm thấy dữ liệu hồ sơ thai nhi" type="error" showIcon />;
+    // }
 
     // const { getFetalsByMotherId } = useFetalService()
 
@@ -338,7 +409,7 @@ const DoctorFetalView: React.FC = () => {
     };
 
     const getFetalsByMotherIdFromNurse = async () => {
-        const response = await getFetalsByMotherId();
+        const response = await getFetalsByMotherId(fetalRecord?.mother.id);
         console.log("&&&&&&&&&&&&&&response mother=============fetals", response)
 
         setFetals(response);
@@ -403,25 +474,25 @@ const DoctorFetalView: React.FC = () => {
                         <div className="flex items-center mb-4">
                             <HeartOutlined style={{ color: "#ff4d4f", fontSize: 24, marginRight: 12 }} />
                             <Title level={3} style={{ margin: 0 }}>
-                                {fetalRecord.name} {getPregnancyStatusTag(fetalRecord.status)}
+                                {fetalRecord?.fullName} {getPregnancyStatusTag(fetalRecord?.status)}
                             </Title>
                         </div>
 
                         <Descriptions bordered column={{ xxl: 3, xl: 3, lg: 2, md: 2, sm: 1, xs: 1 }}>
-                            <Descriptions.Item label="Ghi chú">{fetalRecord.note || "Không có ghi chú"}</Descriptions.Item>
+                            <Descriptions.Item label="Ghi chú">{fetalRecord?.note || "Không có ghi chú"}</Descriptions.Item>
                             <Descriptions.Item label="Ngày bắt đầu thai kỳ">
-                                {formatDate(fetalRecord.dateOfPregnancyStart)}
+                                {formatDate(fetalRecord?.dateOfPregnancyStart)}
                             </Descriptions.Item>
-                            <Descriptions.Item label="Ngày dự sinh">{formatDate(fetalRecord.expectedDeliveryDate)}</Descriptions.Item>
-                            {fetalRecord.actualDeliveryDate && (
+                            <Descriptions.Item label="Ngày dự sinh">{formatDate(fetalRecord?.expectedDeliveryDate)}</Descriptions.Item>
+                            {fetalRecord?.actualDeliveryDate && (
                                 <Descriptions.Item label="Ngày sinh thực tế">
-                                    {formatDate(fetalRecord.actualDeliveryDate)}
+                                    {formatDate(fetalRecord?.actualDeliveryDate)}
                                 </Descriptions.Item>
                             )}
                             <Descriptions.Item label="Tình trạng sức khỏe">
-                                {fetalRecord.healthStatus || "Chưa có thông tin"}
+                                {fetalRecord?.healthStatus || "Chưa có thông tin"}
                             </Descriptions.Item>
-                            <Descriptions.Item label="Trạng thái">{getPregnancyStatusTag(fetalRecord.status)}</Descriptions.Item>
+                            <Descriptions.Item label="Trạng thái">{getPregnancyStatusTag(fetalRecord?.status)}</Descriptions.Item>
                         </Descriptions>
                     </Card>
 
@@ -435,10 +506,10 @@ const DoctorFetalView: React.FC = () => {
                         className="shadow-sm mb-4"
                     >
                         <Descriptions bordered column={{ xxl: 3, xl: 3, lg: 2, md: 2, sm: 1, xs: 1 }}>
-                            <Descriptions.Item label="Họ tên">{fetalRecord.mother.fullName}</Descriptions.Item>
-                            <Descriptions.Item label="Email">{fetalRecord.mother.email}</Descriptions.Item>
-                            <Descriptions.Item label="Số điện thoại">{fetalRecord.mother.phone}</Descriptions.Item>
-                            <Descriptions.Item label="Tài khoản">{fetalRecord.mother.username}</Descriptions.Item>
+                            <Descriptions.Item label="Họ tên">{fetalRecord?.mother.fullName}</Descriptions.Item>
+                            <Descriptions.Item label="Email">{fetalRecord?.mother.email}</Descriptions.Item>
+                            <Descriptions.Item label="Số điện thoại">{fetalRecord?.mother.phone}</Descriptions.Item>
+                            <Descriptions.Item label="Tài khoản">{fetalRecord?.mother.username}</Descriptions.Item>
                         </Descriptions>
                     </Card>
 
@@ -451,9 +522,9 @@ const DoctorFetalView: React.FC = () => {
                         }
                         className="shadow-sm"
                     >
-                        {fetalRecord.appointments && fetalRecord.appointments.length > 0 ? (
+                        {fetalRecord?.appointments && fetalRecord?.appointments.length > 0 ? (
                             <Table
-                                dataSource={fetalRecord.appointments}
+                                dataSource={fetalRecord?.appointments}
                                 rowKey="id"
                                 columns={[
                                     {
@@ -511,9 +582,9 @@ const DoctorFetalView: React.FC = () => {
                     <Card className="shadow-sm mb-4">
                         <Title level={4}>Lịch sử khám thai nhi</Title>
 
-                        {fetalRecord.checkupRecords && fetalRecord.checkupRecords.length > 0 ? (
+                        {fetalRecord?.checkupRecords && fetalRecord.checkupRecords.length > 0 ? (
                             <Table
-                                dataSource={fetalRecord.checkupRecords}
+                                dataSource={fetalRecord?.checkupRecords}
                                 rowKey="id"
                                 columns={[
                                     {
@@ -586,8 +657,8 @@ const DoctorFetalView: React.FC = () => {
                                 description={
                                     <div>
                                         <p>Mã cuộc hẹn: {selectedAppointment}</p>
-                                        <p>Thai nhi: {fetalRecord.name}</p>
-                                        <p>Mẹ: {fetalRecord.mother.fullName}</p>
+                                        <p>Thai nhi: {fetalRecord?.name}</p>
+                                        <p>Mẹ: {fetalRecord?.mother.fullName}</p>
                                     </div>
                                 }
                                 type="info"
@@ -599,7 +670,7 @@ const DoctorFetalView: React.FC = () => {
                                 visible={reminderModalVisible}
                                 onCancel={() => setReminderModalVisible(false)}
                                 onCreate={handleCreateReminder}
-                                motherId={fetalRecord.mother.id}
+                                motherId={fetalRecord?.mother.id}
                             />
 
                             <Button
@@ -618,7 +689,7 @@ const DoctorFetalView: React.FC = () => {
                                         layout="vertical"
                                         onFinish={handleSubmit}
                                         initialValues={{
-                                            fetalRecordId: fetalRecord.id,
+                                            fetalRecordId: fetalRecord?.id,
                                         }}
                                     >
                                         <Form.Item name="fetalRecordId" hidden>

@@ -5,7 +5,8 @@ export enum AppointmentStatus {
     IN_PROGRESS = 'IN_PROGRESS', // Đang được khám
     COMPLETED = 'COMPLETED', // Đã hoàn tất
     CANCELED = 'CANCELED', // Đã hủy
-    AWAITING_DEPOSIT= "AWAITING_DEPOSIT"
+    AWAITING_DEPOSIT = "AWAITING_DEPOSIT",
+    NO_SHOW = "NO_SHOW",
 }
 
 export enum PregnancyStatus {

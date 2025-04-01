@@ -108,19 +108,44 @@ function DoctorManageCheckinAppointments() {
 
     // Lấy danh sách cuộc hẹn
     const getAppointmentFromDoctor = async () => {
-        if (!currentDoctor) return
-        setLoading(true)
+        if (!currentDoctor) return;
+        setLoading(true);
         try {
-            const response = await getAppointmentsByDoctor(currentDoctor.id, selectedDate, search, statusFilter)
+            const response = await getAppointmentsByDoctor(currentDoctor.id, selectedDate, search, statusFilter);
             if (response) {
-                setAppointments(response.filter((item) => !item.isDeleted))
+                // Danh sách trạng thái hợp lệ
+                const allowedStatuses = [
+                    "PENDING",
+                    "CHECKED_IN",
+                    "IN_PROGRESS",
+                    "COMPLETED",
+                    "CANCELED",
+                    "FAIL",
+                    "NO_SHOW"
+                ];
+
+                const filteredAppointments = response
+                    .filter((item) => !item.isDeleted && allowedStatuses.includes(item.status)) // Lọc theo status hợp lệ
+                    .sort((a, b) => {
+                        // So sánh ngày trước
+                        const dateA = moment(a.appointmentDate).format("YYYY-MM-DD");
+                        const dateB = moment(b.appointmentDate).format("YYYY-MM-DD");
+                        if (dateA === dateB) {
+                            // Nếu cùng ngày, so sánh slot.startTime
+                            return moment(a.slot.startTime, "H:mm:ss").unix() - moment(b.slot.startTime, "H:mm:ss").unix();
+                        }
+                        return moment(dateA).unix() - moment(dateB).unix();
+                    });
+
+                setAppointments(filteredAppointments);
             }
         } catch (error) {
-            message.error("Không thể tải danh sách cuộc hẹn")
+            message.error("Không thể tải danh sách cuộc hẹn");
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
+
 
     const openAddServiceModal = (record: Appointment) => {
         setSelectedAppointmentId(record.id) // Lưu id cuộc hẹn
@@ -197,6 +222,8 @@ function DoctorManageCheckinAppointments() {
                 return <Tag color="green">Hoàn tất</Tag>
             case AppointmentStatus.CANCELED:
                 return <Tag color="red">Đã hủy</Tag>
+            case AppointmentStatus.NO_SHOW:
+                return <Tag color="default">Không có mặt</Tag>
             default:
                 return <Tag color="default">Không xác định</Tag>
         }
@@ -223,11 +250,20 @@ function DoctorManageCheckinAppointments() {
 
     // Cấu hình cột cho bảng chính
     const columns = [
+        // {
+        //     title: "Hồ Sơ khám",
+        //     key: "fetalRecords",
+        //     render: (record: Appointment) => {
+        //         return <Link to={`fetals/${record.id}`}>Xem</Link>
+
+        //     },
+        // },
         {
-            title: "Hồ Sơ khám",
-            key: "fetalRecords",
+            title: "Tên sản phụ",
+            key: "motherName",
             render: (record: Appointment) => {
-                return <Link to={`appoinment/${record.id}`}>Xem</Link>
+                const motherName = record.fetalRecords?.[0]?.mother?.fullName || "N/A"
+                return <span className="font-medium">{motherName}</span>
             },
         },
         {
@@ -257,14 +293,7 @@ function DoctorManageCheckinAppointments() {
                     "N/A"
                 ),
         },
-        {
-            title: "Tên sản phụ",
-            key: "motherName",
-            render: (record: Appointment) => {
-                const motherName = record.fetalRecords?.[0]?.mother?.fullName || "N/A"
-                return <span className="font-medium">{motherName}</span>
-            },
-        },
+
         {
             title: "Trạng thái",
             dataIndex: "status",
@@ -501,7 +530,13 @@ function DoctorManageCheckinAppointments() {
                 bodyStyle={{ padding: "24px" }}
             >
                 <div className="flex items-center gap-4 mb-6">
-                    <DatePicker onChange={handleDateChange} value={datePickerValue} allowClear />
+                    <DatePicker
+                        value={datePickerValue}
+                        format={(date, dateString) => formatDate(date.toDate())}
+                        onChange={handleDateChange}
+                        allowClear
+
+                    />
 
                     <Input onChange={handleSearch} placeholder="Tìm kiếm theo tên sản phụ" value={search} allowClear style={{ width: '300px' }} />
 
@@ -566,6 +601,15 @@ function DoctorManageCheckinAppointments() {
                             </span>
                         }
                         key={AppointmentStatus.CANCELED}
+                    />
+                    <TabPane
+                        tab={
+                            <span>
+                                <Badge status="warning" />
+                                Không có mặt
+                            </span>
+                        }
+                        key={AppointmentStatus.NO_SHOW}
                     />
                 </Tabs>
 
