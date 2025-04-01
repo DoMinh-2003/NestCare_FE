@@ -1,4 +1,4 @@
-import { Modal } from 'antd';
+import { Button, Modal } from 'antd';
 
 export interface ModalDeleteProps {
     name: string;
@@ -10,9 +10,15 @@ export interface ModalDeleteProps {
 const ModalDelete = ({ name, isModalOpenDelete, handleOkModalDelete, handleCancelModalDelete }: ModalDeleteProps) => {
     return (
         <Modal
+            footer={
+                <>
+                    <Button onClick={handleOkModalDelete} type="primary" >
+                        Xoá
+                    </Button>
+                </>
+            }
             title={`Xóa ${name}`}
             open={isModalOpenDelete}
-            onOk={handleOkModalDelete} // Call the delete handler on OK
             onCancel={handleCancelModalDelete}
         >
             <p>Bạn có chắc chắn muốn xóa {name}?</p>
