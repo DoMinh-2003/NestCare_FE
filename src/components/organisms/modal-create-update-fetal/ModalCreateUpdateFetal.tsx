@@ -54,8 +54,8 @@ const ModalCreateUpdateFetal: React.FC<ModalCreateUpdateFetalProps> = ({ fetal, 
             ...values,
             dateOfPregnancyStart: moment(values.dateOfPregnancyStart?.$d).format('YYYY/MM/DD'),
             expectedDeliveryDate: moment(values.expectedDeliveryDate?.$d).format('YYYY/MM/DD'),
-            actualDeliveryDate: moment(values.actualDeliveryDate?.$d).format('YYYY/MM/DD'),
-            status: values.value ? values.value : values.status
+            actualDeliveryDate: fetal ? moment(values.actualDeliveryDate?.$d).format('YYYY/MM/DD') : null,
+            status: values.status.value ? values.status.value : values.status
             // id: fetal ? fetal.id : undefined, // Assign an ID if updating
             // isDeleted: 0, // Adjust based on your logic
             // createdAt: fetal ? fetal.createdAt : new Date().toISOString(),
@@ -65,6 +65,18 @@ const ModalCreateUpdateFetal: React.FC<ModalCreateUpdateFetalProps> = ({ fetal, 
         };
         console.log("fetal: ", values)
         onSubmit(record);
+    };
+
+    const handleDateChange = (date) => {
+        if (date) {
+            // Tính toán ngày dự kiến sinh (9 tháng 10 ngày)
+            const expectedDeliveryDate = date.clone().add(9, 'months').add(10, 'days');
+            // Cập nhật giá trị cho trường "expectedDeliveryDate"
+            form.setFieldsValue({ expectedDeliveryDate });
+        } else {
+            // Nếu không có ngày, đặt giá trị "expectedDeliveryDate" thành null
+            form.setFieldsValue({ expectedDeliveryDate: null });
+        }
     };
 
     return (
@@ -102,14 +114,14 @@ const ModalCreateUpdateFetal: React.FC<ModalCreateUpdateFetalProps> = ({ fetal, 
                     name="dateOfPregnancyStart"
                     rules={[{ required: true, message: 'Vui lòng chọn ngày!' }]}
                 >
-                    <DatePicker />
+                    <DatePicker onChange={handleDateChange}/>
                 </Form.Item>
                 <Form.Item
-                    label="Expected Delivery Date"
+                    label="Ngày dự kiến sinh"
                     name="expectedDeliveryDate"
-                    rules={[{ required: true, message: 'Ngày dự kiến sinh!' }]}
+                    rules={[{ required: true, message: 'Vui lòng chọn ngày dự kiến sinh!' }]}
                 >
-                    <DatePicker />
+                    <DatePicker disabled/>
                 </Form.Item>
                 {fetal
                     && <Form.Item

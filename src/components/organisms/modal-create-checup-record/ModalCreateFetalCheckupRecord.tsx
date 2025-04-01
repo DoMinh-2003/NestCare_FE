@@ -3,6 +3,8 @@ import { Modal, Form, Input, InputNumber, DatePicker, Button, Typography, messag
 import useFetalService from '../../../services/useFetalService';
 import { useParams } from 'react-router-dom';
 import moment from 'moment';
+import dayjs from 'dayjs';
+import { validateBloodPressure } from '../../../utils/validate';
 
 const { Title } = Typography;
 
@@ -34,6 +36,7 @@ const ModalCreateFetalCheckupRecord: React.FC<ModalCreateFetalCheckupRecordProps
     console.log("response: ", response);
     if (response) {
       message.success('Tạo hồ sơ kiểm tra thai nhi thành công!');
+      form.resetFields()
     }
     onClose(); // Close the modal after submission
   };
@@ -59,7 +62,7 @@ const ModalCreateFetalCheckupRecord: React.FC<ModalCreateFetalCheckupRecordProps
         <Form.Item
           label="Huyết Áp Của Người Mẹ"
           name="motherBloodPressure"
-          rules={[{ required: true, message: 'Vui lòng nhập huyết áp của người mẹ!' }]}
+          rules={[{ validator: (_, value) => validateBloodPressure(value) }]}
         >
           <Input placeholder="Ví dụ: 120/80" />
         </Form.Item>
@@ -73,7 +76,7 @@ const ModalCreateFetalCheckupRecord: React.FC<ModalCreateFetalCheckupRecordProps
         </Form.Item>
 
         <Form.Item
-          label="Cân Nặng Thai Nhi (g))"
+          label="Cân Nặng Thai Nhi (g)"
           name="fetalWeight"
           rules={[{ required: true, message: 'Vui lòng nhập cân nặng của thai nhi!' }]}
         >
@@ -81,7 +84,7 @@ const ModalCreateFetalCheckupRecord: React.FC<ModalCreateFetalCheckupRecordProps
         </Form.Item>
 
         <Form.Item
-          label="Chiều Cao Thai Nhi (cm)"
+          label="Chiều Cao Thai Nhi (mm)"
           name="fetalHeight"
           rules={[{ required: true, message: 'Vui lòng nhập chiều cao của thai nhi!' }]}
         >
@@ -107,8 +110,10 @@ const ModalCreateFetalCheckupRecord: React.FC<ModalCreateFetalCheckupRecordProps
           label="Ngày Kiểm Tra"
           name="createdAt"
           rules={[{ required: true, message: 'Vui lòng chọn ngày kiểm tra!' }]}
+          initialValue={dayjs()}
+          hidden
         >
-          <DatePicker showTime format="YYYY-MM-DDTHH:mm:ss.SSSZ" />
+          <DatePicker disabled showTime format="YYYY-MM-DDTHH:mm:ss.SSSZ" />
         </Form.Item>
 
         <Form.Item>
