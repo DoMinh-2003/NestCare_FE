@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 
 import {
@@ -564,7 +562,7 @@ function DoctorManageCheckinAppointments() {
 
 					/>
 
-					<Input onChange={handleSearch} placeholder="Tìm kiếm theo tên sản phụ" value={search} allowClear />
+					<Input onChange={handleSearch} placeholder="Tìm kiếm theo tên sản phụ" value={search} allowClear style={{ width: '300px' }} />
 
 					<Button
 						type="primary"

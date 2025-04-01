@@ -5,6 +5,7 @@ import style from "./style.module.scss"
 import useOrderService from "../../../services/useOrderService"
 import api from "../../../config/api"
 import { getUserDataFromLocalStorage } from "../../../constants/function"
+import { AppointmentStatus } from "../all-fetail"
 
 const PaymentResult = () => {
 	const [searchParams] = useSearchParams()
@@ -100,8 +101,10 @@ const PaymentResult = () => {
 								replace: true,
 							})
 						} else if (appointmentId) { // doctor
+							console.log("Doctor in here");
+
 							console.log(appointmentId);
-							await updateBookingStatus(appointmentId, "IN_PROGRESS")
+							await updateBookingStatus(appointmentId, AppointmentStatus.IN_PROGRESS)
 							navigate(USER_ROUTES.BOOKING_RESULT, {
 								state: { appointmentId },
 								replace: true,

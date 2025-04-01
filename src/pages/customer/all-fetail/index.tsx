@@ -3,7 +3,7 @@ import { Table, Button, Tag, Space, Input, Modal } from 'antd';
 import useFetalService from '../../../services/useFetalService';
 import { formatDate } from '../../../utils/formatDate';
 import FetalCreation from '../create-fetals';
-import HealthRecordModal from '../../../components/modal-input-health-fetal';
+import HealthRecordModal from '../../../components/molecules/modal-input-health-fetal';
 import FetalDetailModal from '../../../components/molecules/fetal-record-detail';
 
 
