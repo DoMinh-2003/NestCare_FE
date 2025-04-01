@@ -28,15 +28,9 @@ const ServiceAtNestCare = () => {
                         <button
                             onClick={showModal}
                             type="button"
-                            className="flex-1 focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
+                            className="mx-auto focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5"
                         >
                             Tạo Hồ Sơ Thai Nhi Ngay
-                        </button>
-                        <button
-                            type="button"
-                            className="flex-1 text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                        >
-                            Tìm hiểu thêm
                         </button>
                     </div>
                 </div>

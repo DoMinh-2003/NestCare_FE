@@ -34,7 +34,7 @@ function RegisterPage() {
           <h1 className="text-5xl-medium font-[800] text-[#ed302a] mb-4">ĐĂNG KÝ</h1>
           <img
             className="inline-block w-[60px] cursor-pointer"
-            src="https://sihospital.com.vn/images/logo.png"
+            src="/public/nestCareLogo.png"
             alt=""
             onClick={() => navigate(USER_ROUTES.HOME)}
           />

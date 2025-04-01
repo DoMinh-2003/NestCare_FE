@@ -6,6 +6,7 @@ import useOrderService from "../../../services/useOrderService"
 import api from "../../../config/api"
 import { getUserDataFromLocalStorage } from "../../../constants/function"
 import { AppointmentStatus } from "../all-fetail"
+import { message } from "antd"
 
 const PaymentResult = () => {
 	const [searchParams] = useSearchParams()
@@ -31,6 +32,7 @@ const PaymentResult = () => {
 			console.log("Updating order status:", orderId, status)
 			const response = await userUpdateOrder(orderId, status)
 			console.log("Order status update response:", response)
+			message.success("")
 			return response
 		} catch (error) {
 			console.error("Error updating order status:", error)
@@ -100,15 +102,16 @@ const PaymentResult = () => {
 								state: { orderId },
 								replace: true,
 							})
+							message.success("Thanh toán thành công")
 						} else if (appointmentId) { // doctor
-							console.log("Doctor in here");
-
 							console.log(appointmentId);
 							await updateBookingStatus(appointmentId, AppointmentStatus.IN_PROGRESS)
 							navigate(USER_ROUTES.BOOKING_RESULT, {
 								state: { appointmentId },
 								replace: true,
 							})
+							message.success("Đã thêm dịch vụ")
+							message.info("Chuyển sang khám")
 						}
 						break
 					case "24": // Customer canceled
@@ -120,6 +123,7 @@ const PaymentResult = () => {
 								state: { bookingId, errorCode: responseCode },
 								replace: true,
 							})
+							message.warning("Đã hủy thanh toán")
 						}
 						// Handle order payment cancellation
 						else if (orderId) {
@@ -128,6 +132,7 @@ const PaymentResult = () => {
 								state: { orderId, errorCode: responseCode },
 								replace: true,
 							})
+							message.warning("Đã hủy thanh toán")
 						}
 
 						else if (appointmentId) {
@@ -136,6 +141,7 @@ const PaymentResult = () => {
 								state: { appointmentId, errorCode: responseCode },
 								replace: true,
 							})
+							message.warning("Đã hủy thanh toán")
 						}
 						break
 

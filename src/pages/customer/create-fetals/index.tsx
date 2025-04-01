@@ -91,22 +91,47 @@ function FetalCreation({ open, onClose }: FetalCreationProps) {
 				onFinish={onFinish}
 				initialValues={{ status: 'PREGNANT' }}
 			>
+				{/* Tên em bé */}
 				<Form.Item
 					label="Tên em bé"
 					name="name"
-					rules={[{ required: true, message: 'Vui lòng nhập tên em bé!' }]}
+					rules={[
+						{ required: true, message: 'Vui lòng nhập tên em bé!' },
+						{ pattern: /^[A-Za-zÀ-ỹ\s]+$/, message: 'Tên chỉ được chứa chữ cái và khoảng trắng!' },
+						{ min: 2, message: 'Tên phải có ít nhất 2 ký tự!' },
+					]}
 				>
 					<Input placeholder="Nhập tên em bé" size="large" />
 				</Form.Item>
 
-				<Form.Item label="Ghi chú" name="note">
+				{/* Ghi chú */}
+				<Form.Item
+					label="Ghi chú"
+					name="note"
+					rules={[
+						{ max: 200, message: 'Ghi chú không được vượt quá 200 ký tự!' },
+					]}
+				>
 					<Input placeholder="Nhập ghi chú (ví dụ: 1 bé hay 2 bé)" size="large" />
 				</Form.Item>
 
 				<Form.Item
 					label="Ngày bắt đầu mang thai"
 					name="dateOfPregnancyStart"
-					rules={[{ required: true, message: 'Vui lòng chọn ngày bắt đầu mang thai!' }]}
+					rules={[
+						{ required: true, message: 'Vui lòng chọn ngày bắt đầu mang thai!' },
+						({ getFieldValue }) => ({
+							validator(_, value) {
+								if (!value) return Promise.reject();
+								const today = new Date();
+								const selectedDate = new Date(value);
+								if (selectedDate > today) {
+									return Promise.reject(new Error('Ngày bắt đầu mang thai không thể là ngày tương lai!'));
+								}
+								return Promise.resolve();
+							},
+						}),
+					]}
 				>
 					<DatePicker
 						format="DD/MM/YYYY"

@@ -16,7 +16,7 @@ const specialties: InstructProps[] = [
 
 const services: InstructProps[] = [
   { title: "Gói dịch vụ", link: "/services" },
-  { title: "Tất cả dịch vụ", link: "/tat-ca-dich-vu" },
+  // { title: "Tất cả dịch vụ", link: "/tat-ca-dich-vu" },
 ];
 
 const knowledge: InstructProps[] = [
@@ -47,10 +47,10 @@ export const instruct: InstructProps[] = [
     title: "Chính sách bảo mật NestCare",
     link: "/privacy-policy",
   },
-  {
-    title: "Thời gian hoạt động và thăm bệnh",
-    link: "/thoi-gian-hoat-dong-tham-benh",
-  },
+  // {
+  //   title: "Thời gian hoạt động và thăm bệnh",
+  //   link: "/thoi-gian-hoat-dong-tham-benh",
+  // },
   {
     title: "Hướng dẫn thanh toán viện phí",
     link: "/method-of-paying-hospital-fees",
@@ -59,11 +59,11 @@ export const instruct: InstructProps[] = [
 
 
 const news: InstructProps[] = [
-  { title: "Tin tức NestCare", link: "/tin-tuc-nestcare" },
   { title: "Blog", link: "/blog" },
-  { title: "Thông tin y khoa", link: "/thong-tin-y-khoa" },
-  { title: "Lớp tiền sản", link: "/lop-tien-san" },
-  { title: "Videos", link: "/videos" },
+  // { title: "Tin tức NestCare", link: "/tin-tuc-nestcare" },
+  // { title: "Thông tin y khoa", link: "/thong-tin-y-khoa" },
+  // { title: "Lớp tiền sản", link: "/lop-tien-san" },
+  // { title: "Videos", link: "/videos" },
 ];
 
 
@@ -84,9 +84,6 @@ const PopoverNavList = ({ title, link }: PopoverNavListProps) => {
       break;
     case "Hướng dẫn":
       popContent = instruct;
-      break;
-    case "Kiến thức":
-      popContent = knowledge;
       break;
     case "Tin tức":
       popContent = news;

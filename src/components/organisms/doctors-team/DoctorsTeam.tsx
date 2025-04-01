@@ -13,9 +13,6 @@ const DoctorsTeam = () => {
 
     return (
         <div className='mt-14'>
-            <div className='font-semibold text-xl my-2'>
-                Đội ngũ bác sĩ
-            </div>
             <div className='justify-items-center'>
                 <Swiper
                     modules={[Autoplay]}

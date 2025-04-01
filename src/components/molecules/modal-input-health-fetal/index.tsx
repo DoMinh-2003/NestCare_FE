@@ -36,11 +36,11 @@ const HealthRecordModal = ({
 		warning: "",
 	};
 
-	const handleFinish = (values: any) => {
+	const handleFinish = async (values: any) => {
 		const submittedData: HealthRecord = {
 			...values,
 		};
-		onSubmit(submittedData);
+		await onSubmit(submittedData);
 		form.resetFields();
 	};
 
@@ -61,27 +61,31 @@ const HealthRecordModal = ({
 				initialValues={initialValues}
 				onFinish={handleFinish}
 			>
+				{/* Cân nặng mẹ */}
 				<Form.Item
 					label="Cân nặng mẹ (kg)"
 					name="motherWeight"
-					rules={[{ required: true, message: "Vui lòng nhập cân nặng của mẹ!" }]}
+					rules={[
+						{ required: true, message: "Vui lòng nhập cân nặng của mẹ!" },
+						{ type: "number", min: 35, max: 150, message: "Cân nặng mẹ phải từ 35kg đến 150kg!" }
+					]}
 				>
-					<InputNumber
-						min={0}
-						step={0.1}
-						style={{ width: "100%" }}
-						placeholder="Nhập cân nặng (kg)"
-					/>
+					<InputNumber min={35} max={150} step={0.1} style={{ width: "100%" }} placeholder="Nhập cân nặng (kg)" />
 				</Form.Item>
 
+				{/* Huyết áp mẹ */}
 				<Form.Item
 					label="Huyết áp mẹ (mmHg)"
 					name="motherBloodPressure"
-					rules={[{ required: true, message: "Vui lòng nhập huyết áp của mẹ!" }]}
+					rules={[
+						{ required: true, message: "Vui lòng nhập huyết áp của mẹ!" },
+						{ pattern: /^\d{2,3}\/\d{2,3}$/, message: "Huyết áp phải có dạng: Tâm thu/Tâm trương (ví dụ: 120/80)" }
+					]}
 				>
 					<Input placeholder="Ví dụ: 120/80" />
 				</Form.Item>
 
+				{/* Tình trạng sức khỏe mẹ */}
 				<Form.Item
 					label="Tình trạng sức khỏe mẹ"
 					name="motherHealthStatus"
@@ -90,58 +94,60 @@ const HealthRecordModal = ({
 					<Input placeholder="Ví dụ: Sức khỏe bình thường" />
 				</Form.Item>
 
+				{/* Cân nặng thai nhi */}
 				<Form.Item
-					label="Cân nặng thai nhi (kg)"
+					label="Cân nặng thai nhi (g)"
 					name="fetalWeight"
-					rules={[{ required: true, message: "Vui lòng nhập cân nặng thai nhi!" }]}
+					rules={[
+						{ required: true, message: "Vui lòng nhập cân nặng thai nhi!" },
+						{ type: "number", min: 1, max: 5000, message: "Cân nặng thai nhi phải từ 11g đến 5000g!" }
+					]}
 				>
-					<InputNumber
-						min={0}
-						step={0.1}
-						style={{ width: "100%" }}
-						placeholder="Nhập cân nặng (kg)"
-					/>
+					<InputNumber min={1} max={5000} step={0.1} style={{ width: "100%" }} placeholder="Nhập cân nặng (g)" />
 				</Form.Item>
 
+				{/* Chiều cao thai nhi */}
 				<Form.Item
-					label="Chiều cao thai nhi (cm)"
+					label="Chiều cao thai nhi (mm)"
 					name="fetalHeight"
-					rules={[{ required: true, message: "Vui lòng nhập chiều cao thai nhi!" }]}
+					rules={[
+						{ required: true, message: "Vui lòng nhập chiều cao thai nhi!" },
+						{ type: "number", min: 1, max: 600, message: "Chiều cao thai nhi phải từ 1mm đến 600mm!" }
+					]}
 				>
-					<InputNumber
-						min={0}
-						step={1}
-						style={{ width: "100%" }}
-						placeholder="Nhập chiều cao (cm)"
-					/>
+					<InputNumber min={1} max={60} step={0.1} style={{ width: "100%" }} placeholder="Nhập chiều cao (mm)" />
 				</Form.Item>
 
+				{/* Nhịp tim thai nhi */}
 				<Form.Item
 					label="Nhịp tim thai nhi (lần/phút)"
 					name="fetalHeartbeat"
-					rules={[{ required: true, message: "Vui lòng nhập nhịp tim thai nhi!" }]}
+					rules={[
+						{ required: true, message: "Vui lòng nhập nhịp tim thai nhi!" },
+						{ type: "number", min: 100, max: 180, message: "Nhịp tim thai nhi phải từ 100 đến 180 lần/phút!" }
+					]}
 				>
-					<InputNumber
-						min={0}
-						step={1}
-						style={{ width: "100%" }}
-						placeholder="Nhập nhịp tim (lần/phút)"
-					/>
+					<InputNumber min={100} max={180} step={1} style={{ width: "100%" }} placeholder="Nhập nhịp tim (lần/phút)" />
 				</Form.Item>
 
+				{/* Cảnh báo */}
 				<Form.Item
 					label="Cảnh báo"
 					name="warning"
+					rules={[{ max: 200, message: "Cảnh báo không được vượt quá 200 ký tự!" }]}
 				>
 					<Input placeholder="Ví dụ: Không có dấu hiệu bất thường" />
 				</Form.Item>
 
+				{/* Nút điều khiển */}
 				<Form.Item>
 					<div style={{ display: "flex", justifyContent: "flex-end", gap: "8px" }}>
-						<Button onClick={() => {
-							form.resetFields();
-							onCancel();
-						}}>
+						<Button
+							onClick={() => {
+								form.resetFields();
+								onCancel();
+							}}
+						>
 							Hủy
 						</Button>
 						<Button type="primary" htmlType="submit">

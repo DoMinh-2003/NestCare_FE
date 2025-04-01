@@ -72,6 +72,7 @@ const ModalAddServices: React.FC<ModalAddServicesProps> = ({
             }
         } catch (error) {
             console.error(error);
+            message.error("Không thể cập nhật dịch vụ!");
         } finally {
             onCancel();  // Đóng modal
             onSuccess(); // Gọi callback refresh danh sách

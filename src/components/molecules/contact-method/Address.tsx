@@ -9,7 +9,7 @@ const Address = () => {
     <div>
       <ContactCard
         title='Địa chỉ'
-        content={["63 Bùi Thị Xuân, P. Phạm Ngũ Lão, Q. 1, TP. HCM"]}
+        content={["Lưu Hữu Phước Tân Lập, Đông Hoà, Dĩ An, Bình Dương, Vietnam"]}
         icon={<HomeOutlined />}
       />
     </div>

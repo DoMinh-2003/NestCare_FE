@@ -1,12 +1,14 @@
 import { Image } from 'antd';
 import { CircleX, CreditCard } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import paymentCancelImg from '../../../../../public/images/cancel.png';
 import useOrderService from '../../../../services/useOrderService';
+import { getUserDataFromLocalStorage } from '../../../../constants/function';
 
 
 const PaymentCancel = () => {
+	const [link, setLink] = useState('/')
 
 	const { orderId } = useParams();
 
@@ -26,6 +28,21 @@ const PaymentCancel = () => {
 		}
 	}, [orderId])
 
+	const user = getUserDataFromLocalStorage()
+
+	useEffect(() => {
+		if (user) {
+			if (user.role === 'user') {
+				setLink('/')
+			} else if (user.role === 'doctor') {
+				setLink('/doctor')
+			} else if (user.role === 'nurse') {
+				setLink('/nurse')
+			}
+		}
+	}, [user])
+
+
 	return (
 		<div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-blue-50 to-pink-50 p-4">
 			<div className="mx-auto max-w-[600px] flex flex-col items-center justify-center gap-6 rounded-2xl border border-pink-100 bg-white p-8 shadow-lg">
@@ -44,11 +61,11 @@ const PaymentCancel = () => {
 				</div>
 
 				<div className="mt-4 flex w-full flex-col gap-3 sm:flex-row sm:justify-center">
-					<Link to="/services" className="w-full sm:w-auto">
+					<Link to={link} className="w-full sm:w-auto">
 						<button className="w-full rounded-full bg-teal-500 px-8 py-3 text-base font-medium text-white shadow-md transition duration-300 hover:bg-teal-600 active:bg-teal-700 sm:w-auto">
 							<div className="flex items-center justify-center gap-2">
 								<CreditCard className="h-4 w-4" />
-								<span>Xem các gói dịch vụ</span>
+								<span>Trở về</span>
 							</div>
 						</button>
 					</Link>
