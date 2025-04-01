@@ -394,9 +394,9 @@ const DoctorFetalView: React.FC = () => {
         (app) => app.status === AppointmentStatus.CHECKED_IN || app.status === AppointmentStatus.IN_PROGRESS,
     ) || [];
 
-    if (!fetalRecord) {
-        return <Alert message="Không tìm thấy dữ liệu hồ sơ thai nhi" type="error" showIcon />;
-    }
+    // if (!fetalRecord) {
+    //     return <Alert message="Không tìm thấy dữ liệu hồ sơ thai nhi" type="error" showIcon />;
+    // }
 
     // const { getFetalsByMotherId } = useFetalService()
 

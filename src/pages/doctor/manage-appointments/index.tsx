@@ -108,19 +108,44 @@ function DoctorManageCheckinAppointments() {
 
     // Lấy danh sách cuộc hẹn
     const getAppointmentFromDoctor = async () => {
-        if (!currentDoctor) return
-        setLoading(true)
+        if (!currentDoctor) return;
+        setLoading(true);
         try {
-            const response = await getAppointmentsByDoctor(currentDoctor.id, selectedDate, search, statusFilter)
+            const response = await getAppointmentsByDoctor(currentDoctor.id, selectedDate, search, statusFilter);
             if (response) {
-                setAppointments(response.filter((item) => !item.isDeleted))
+                // Danh sách trạng thái hợp lệ
+                const allowedStatuses = [
+                    "PENDING",
+                    "CHECKED_IN",
+                    "IN_PROGRESS",
+                    "COMPLETED",
+                    "CANCELED",
+                    "FAIL",
+                    "NO_SHOW"
+                ];
+
+                const filteredAppointments = response
+                    .filter((item) => !item.isDeleted && allowedStatuses.includes(item.status)) // Lọc theo status hợp lệ
+                    .sort((a, b) => {
+                        // So sánh ngày trước
+                        const dateA = moment(a.appointmentDate).format("YYYY-MM-DD");
+                        const dateB = moment(b.appointmentDate).format("YYYY-MM-DD");
+                        if (dateA === dateB) {
+                            // Nếu cùng ngày, so sánh slot.startTime
+                            return moment(a.slot.startTime, "H:mm:ss").unix() - moment(b.slot.startTime, "H:mm:ss").unix();
+                        }
+                        return moment(dateA).unix() - moment(dateB).unix();
+                    });
+
+                setAppointments(filteredAppointments);
             }
         } catch (error) {
-            message.error("Không thể tải danh sách cuộc hẹn")
+            message.error("Không thể tải danh sách cuộc hẹn");
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
+
 
     const openAddServiceModal = (record: Appointment) => {
         setSelectedAppointmentId(record.id) // Lưu id cuộc hẹn
