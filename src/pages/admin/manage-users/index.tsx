@@ -166,7 +166,7 @@ const AdminManageUsers: React.FC = () => {
         console.log("currentUser: ", currentUser)
         if (!currentUser) return; // Ensure selectedService is defined
         await deleteUser(currentUser.id);
-        message.success(`Xóa dịch vụ ${currentUser.fullName} thành công`);
+        message.success(`Xóa ${currentUser.fullName} thành công`);
         setCurrentUser(null);
         setIsModalDeleteOpen(false);
         getUsersFromAdmin(); // Refresh the service list after deletion
