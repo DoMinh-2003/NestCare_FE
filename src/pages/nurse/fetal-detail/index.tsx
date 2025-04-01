@@ -13,6 +13,7 @@ import ModalCreateFetalCheckupRecord from '../../../components/organisms/modal-c
 import ModalGetReminders, { Reminder } from '../../../components/organisms/modal-get-reminders/ModalGetReminders';
 import useReminderService from '../../../services/useReminders';
 import ModalCreateReminder from '../../../components/organisms/modal-create-reminder/ModalCreateReminder';
+import Loading from '../../../components/molecules/loading/Loading';
 
 export interface FetalData {
     id?: string
@@ -58,8 +59,10 @@ const FetalDetail = () => {
     const [fetalId, setFetalId] = useState<string>('')
     const [isModalReminder, setIsModalReminder] = useState(false);
     const [reminders, setReminders] = useState<Reminder[]>([]);
-    const { getReminderByDoctor, createReminderByDoctor} = useReminderService();
+    const { getReminderByDoctor, createReminderByDoctor } = useReminderService();
     const [reminderModalVisible, setReminderModalVisible] = useState(false)
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [searchText, setSearchText] = useState<string>('')
 
     useEffect(() => {
         if (id) {
@@ -99,13 +102,16 @@ const FetalDetail = () => {
     }
 
     const getFetalsByMotherIdFromNurse = async () => {
+        setIsLoading(true)
         const response = await getFetalsByMotherId(id);
         setFetals(response);
+        setIsLoading(false)
     };
 
     const handleDelete = async (fetalId: string) => {
+        setIsLoading(true)
         await deleteFetal(fetalId);
-        message.success("Fetal record deleted successfully");
+        message.success("Hồ sơ thai nhi đã được xóa thành công");
         getFetalsByMotherIdFromNurse()
     };
 
@@ -223,7 +229,6 @@ const FetalDetail = () => {
 
     const handleCreateRespone = (values: CreateAppointment) => {
         if (values) {
-
             getFetalsByMotherIdFromNurse()
         }
     }
@@ -245,6 +250,12 @@ const FetalDetail = () => {
         } catch (error) {
             message.error("Tạo nhắc nhở thất bại!")
         }
+    }
+
+    if (isLoading) {
+        return (
+            < Loading />
+        )
     }
 
     return (
@@ -298,7 +309,7 @@ const FetalDetail = () => {
             <Button
                 type="primary"
                 className='ml-2'
-                onClick={()=>setReminderModalVisible(true)}
+                onClick={() => setReminderModalVisible(true)}
                 style={{ marginBottom: 16 }}
             >
                 Tạo nhắc nhở

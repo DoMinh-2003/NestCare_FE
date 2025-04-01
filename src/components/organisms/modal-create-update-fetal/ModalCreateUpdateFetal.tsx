@@ -3,6 +3,7 @@ import { Modal, Form, Input, DatePicker, Select, message, Button } from 'antd';
 import moment from 'moment';
 import { FetalData } from '../../../pages/nurse/fetal-detail';
 import dayjs from 'dayjs';
+import { Label } from 'recharts';
 
 export interface FetalRecord {
     id?: string; // Optional for new records
@@ -67,7 +68,7 @@ const ModalCreateUpdateFetal: React.FC<ModalCreateUpdateFetalProps> = ({ fetal, 
 
     return (
         <Modal
-            title={fetal ? "Update Fetal Record" : "Add Fetal Record"}
+            title={fetal ? "Cập nhật hồ sơ thai nhi" : "Thêm hồ sơ thai nhi"}
             visible={isModalOpen}
             onCancel={handleCancel}
             footer={null}
@@ -78,63 +79,63 @@ const ModalCreateUpdateFetal: React.FC<ModalCreateUpdateFetalProps> = ({ fetal, 
                 onFinish={handleFinish}
                 initialValues={!fetal && {
                     ...form,
-                    status: "PREGNANT"
+                    status: {value:"PREGNANT", label: getStatusFetalRecordVietnamese('PREGNANT')}
                 }}
             >
                 <Form.Item
-                    label="Name"
+                    label="Tên"
                     name="name"
-                    rules={[{ required: true, message: 'Please input the name!' }]}
+                    rules={[{ required: true, message: 'Vui lòng nhập tên!' }]}
                 >
                     <Input />
                 </Form.Item>
 
                 <Form.Item
-                    label="Note"
+                    label="Ghi chú"
                     name="note"
                 >
                     <Input />
                 </Form.Item>
                 <Form.Item
-                    label="Date of Pregnancy Start"
+                    label="Ngày bắt đầu mang thai"
                     name="dateOfPregnancyStart"
-                    rules={[{ required: true, message: 'Please select the date!' }]}
+                    rules={[{ required: true, message: 'Vui lòng chọn ngày!' }]}
                 >
                     <DatePicker />
                 </Form.Item>
                 <Form.Item
                     label="Expected Delivery Date"
                     name="expectedDeliveryDate"
-                    rules={[{ required: true, message: 'Please select the date!' }]}
+                    rules={[{ required: true, message: 'Ngày dự kiến sinh!' }]}
                 >
                     <DatePicker />
                 </Form.Item>
                 {fetal
                     && <Form.Item
-                        label="Actual Delivery Date"
+                        label="Ngày sinh thực tế"
                         name="actualDeliveryDate"
                     >
                         <DatePicker />
                     </Form.Item>
                 }
                 <Form.Item
-                    label="Health Status"
+                    label="Tình trạng sức khỏe"
                     name="healthStatus"
-                    rules={[{ required: true, message: 'Please input the health status!' }]}
+                    rules={[{ required: true, message: 'Vui lòng nhập tình trạng sức khỏe!' }]}
                 >
                     <Input />
                 </Form.Item>
                 {
                     fetal && <div>
                         <Form.Item
-                            label="Status"
+                            label="Trạng thái"
                             name="status"
-                            rules={[{ required: true, message: 'Please select the status!' }]}
+                            rules={[{ required: true, message: 'Vui lòng chọn trạng thái!' }]}
                         >
                             <Select>
                                 {
                                     status.map((item) => (
-                                        <Select.Option value={item}>{item}</Select.Option>
+                                        <Select.Option value={item}>{getStatusFetalRecordVietnamese(item)}</Select.Option>
                                     ))
                                 }
                             </Select>
@@ -145,16 +146,18 @@ const ModalCreateUpdateFetal: React.FC<ModalCreateUpdateFetalProps> = ({ fetal, 
                 }
                 {
                     !fetal && <Form.Item
-                        label="Status"
+                        label="Trạng thái"
                         name="status"
-                        rules={[{ required: true, message: 'Please select the status!' }]}
+                        rules={[{ required: true, message: 'Vui lòng chọn trạng thái!' }]}
                     >
-                        <Input type="text" disabled />
+                        <Select disabled>
+                            <Select.Option ></Select.Option>
+                        </Select>
                     </Form.Item>
                 }
                 <Form.Item>
                     <Button type="primary" htmlType="submit" style={{ width: '100%' }}>
-                        {fetal ? "Update" : "Create"}
+                        {fetal ? "Cập nhật" : "Tạo nên"}
                     </Button>
                 </Form.Item>
             </Form>
@@ -162,4 +165,23 @@ const ModalCreateUpdateFetal: React.FC<ModalCreateUpdateFetalProps> = ({ fetal, 
     );
 };
 const status = ["PREGNANT", "BORN", "MISSED", "STILLBIRTH", "ABORTED", "MISCARRIAGE"]
+
+export const getStatusFetalRecordVietnamese = (status: string) => {
+    switch (status) {
+        case "PREGNANT":
+            return "Mang thai";
+        case "BORN":
+            return "Đã sinh";
+        case "MISSED":
+            return "Bỏ lỡ";
+        case "STILLBIRTH":
+            return "Thai chết lưu";
+        case "ABORTED":
+            return "Phá thai";
+        case "MISCARRIAGE":
+            return "Sẩy thai";
+        default:
+            return "Trạng thái không xác định"; // Trả về giá trị mặc định nếu không khớp với bất kỳ trường hợp nào
+    }
+};
 export default ModalCreateUpdateFetal;

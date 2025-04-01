@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
 import userUserService from "../../../services/userUserService";
-import { Button, message, Table, Form, Image, Select, GetProps } from "antd";
+import { Button, message, Table, Form, Image, GetProps } from "antd";
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import ModalCreateUpdateUser, { UserData } from "../../../components/organisms/modal-create-update-user/ModalCreateUpdateUser";
 import ModalDelete from "../../../components/organisms/modal-delete";
 import { tableText } from "../../../constants/function";
 import { Link } from "react-router-dom";
 import { Input } from 'antd';
-import ModalAppointmentHistory from "../../../components/organisms/modal-appointment-history/ModalAppointmentHistory";
-import { CreateAppointment } from "../../../components/organisms/modal-create-appointment/ModalCreateAppointment";
 import Loading from "../../../components/molecules/loading/Loading";
 type SearchProps = GetProps<typeof Input.Search>;
 const { Search } = Input;
