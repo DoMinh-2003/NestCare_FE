@@ -201,6 +201,8 @@ export const getStatusTag = (status: AppointmentStatus) => {
             return <Tag color="green">Hoàn tất</Tag>;
         case AppointmentStatus.CANCELED:
             return <Tag color="red">Đã hủy</Tag>;
+        case AppointmentStatus.NO_SHOW:
+            return <Tag color="default">Không có mặt</Tag>;
         default:
             return <Tag color="default">Không xác định</Tag>;
     }
