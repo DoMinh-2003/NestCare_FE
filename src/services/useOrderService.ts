@@ -10,7 +10,7 @@ const useOrderService = () => {
   const dispatch = useDispatch();
 
   const getOrders = useCallback(
-    async (status: 'PENDING' | 'PAID' | 'COMPLETED' | 'CANCEL'| '') => {
+    async (status: 'PENDING' | 'PAID' | 'COMPLETED' | 'CANCEL' | '') => {
       let url;
       switch (status) {
         case "PENDING":
@@ -25,7 +25,7 @@ const useOrderService = () => {
         case 'CANCEL':
           url = "order?status=CANCEL&limit=100&page=1";
           break;
-          case '':
+        case '':
           url = "order?limit=100&page=1"; // Nếu không phải là số từ 1 đến 7
       }
       try {
@@ -108,7 +108,29 @@ const useOrderService = () => {
     }
   ), [callApi]);
 
-  return { getOrders, loading, userUpdateOrder, getOrderByUserId, deleteUser, createOrder, getOrderStatus, setIsLoading };
+
+  const getOrdersOfUser = useCallback(async (params = {}) => {
+    setIsLoading(true)
+    try {
+      const response = await callApi("get", "order", {
+        params: {
+          status: params.status || "",
+          packageName: params.packageName || "",
+          limit: params.limit || 10,
+          page: params.page || 1,
+          search: params.search || "",
+        },
+      })
+      return response
+    } catch (error) {
+      console.error("Error fetching orders:", error)
+      return { items: [], meta: { totalItems: 0, currentPage: 1, totalPages: 1 } }
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
+  return { getOrders, getOrdersOfUser, loading, userUpdateOrder, getOrderByUserId, deleteUser, createOrder, getOrderStatus, setIsLoading };
 };
 
 export default useOrderService;

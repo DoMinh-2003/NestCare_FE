@@ -1,28 +1,30 @@
-import { useCallback } from "react";
-import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import useApiService from "../hooks/useApi";
+"use client"
 
+import { useCallback } from "react"
+import { useDispatch } from "react-redux"
+import { useNavigate } from "react-router-dom"
+import useApiService from "../hooks/useApi"
 
 const useTransaction = () => {
-	const { callApi, loading, setIsLoading } = useApiService();
-	const router = useNavigate();
-	const dispatch = useDispatch();
+	const { callApi, loading, setIsLoading } = useApiService()
+	const router = useNavigate()
+	const dispatch = useDispatch()
 
 	const getTransaction = useCallback(
 		async (userId: string) => {
 			try {
-				const response = await callApi("get", `transactions/user/${userId}`);
-				console.log("getOrders: ", response)
-				return response;
+				const response = await callApi("get", `transactions/user/${userId}`)
+				return response
 			} catch (e: any) {
-				console.log("e: ", e)
+				console.error("Error fetching transactions:", e)
+				return { data: [] }
 			}
 		},
-		[callApi, dispatch, router]
-	);
+		[callApi],
+	)
 
-	return { getTransaction, loading };
-};
+	return { getTransaction, loading }
+}
 
 export default useTransaction
+

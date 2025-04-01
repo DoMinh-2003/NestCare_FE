@@ -1,4 +1,4 @@
-import { AppstoreOutlined, AreaChartOutlined, CalendarOutlined, HeartOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, AreaChartOutlined, BarcodeOutlined, BellOutlined, CalendarOutlined, HeartOutlined, HistoryOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Avatar, Dropdown } from 'antd';
 import { useEffect, useState } from "react";
@@ -10,6 +10,7 @@ import NavbarMenuList from "../../molecules/nav-menu-list/NavBarMenuList";
 import ModalBookingForm from "../modal-booking-form";
 import { useDispatch } from 'react-redux';
 import { logout } from '../../../redux/features/userSlice';
+import { ArrowLeftRight } from 'lucide-react';
 
 const Navbar = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -48,9 +49,9 @@ const Navbar = () => {
         {
             key: '1',
             label: (
-                <p>Các gói đã đăng ký</p>
+                <p>Các giao dịch của bạn</p>
             ),
-            icon: <ShoppingCartOutlined />
+            icon: <BarcodeOutlined />
         },
         {
             key: '2',
@@ -58,6 +59,13 @@ const Navbar = () => {
                 <p>Dịch vụ của bạn</p>
             ),
             icon: <AppstoreOutlined />
+        },
+        {
+            key: '9',
+            label: (
+                <p>Lịch sử thanh toán dịch vụ</p>
+            ),
+            icon: <HistoryOutlined />
         },
         {
             key: '5',
@@ -84,7 +92,7 @@ const Navbar = () => {
                     Lời nhắc của bác sĩ
                 </p>
             ),
-            icon: <AreaChartOutlined />,
+            icon: <BellOutlined />,
         },
         {
             key: '4',
@@ -123,6 +131,9 @@ const Navbar = () => {
             case '10':
                 navigate('/profile')
                 break;
+            case '9':
+                navigate(USER_ROUTES.SERVICES_PURCHASEED)
+                break;
             case '111':
                 navigate('/all-fetal')
                 break;
@@ -136,8 +147,8 @@ const Navbar = () => {
             <ModalBookingForm isModalOpen={isModalOpen} handleCancel={() => setIsModalOpen(false)} />
             <div className="flex justify-between items-center font-bold">
                 <div className="flex items-center">
-                <MainLogo className="w-[100px] h-[100px]" />
-                <NavbarMenuList />
+                    <MainLogo className="w-[100px] h-[100px]" />
+                    <NavbarMenuList />
                 </div>
 
                 <div className='flex gap-6'>
