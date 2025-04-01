@@ -222,6 +222,8 @@ function DoctorManageCheckinAppointments() {
                 return <Tag color="green">Hoàn tất</Tag>
             case AppointmentStatus.CANCELED:
                 return <Tag color="red">Đã hủy</Tag>
+            case AppointmentStatus.NO_SHOW:
+                return <Tag color="default">Không có mặt</Tag>
             default:
                 return <Tag color="default">Không xác định</Tag>
         }
@@ -248,12 +250,20 @@ function DoctorManageCheckinAppointments() {
 
     // Cấu hình cột cho bảng chính
     const columns = [
-        {
-            title: "Hồ Sơ khám",
-            key: "fetalRecords",
-            render: (record: Appointment) => {
-                return <Link to={`fetals/${record.id}`}>Xem</Link>
+        // {
+        //     title: "Hồ Sơ khám",
+        //     key: "fetalRecords",
+        //     render: (record: Appointment) => {
+        //         return <Link to={`fetals/${record.id}`}>Xem</Link>
 
+        //     },
+        // },
+        {
+            title: "Tên sản phụ",
+            key: "motherName",
+            render: (record: Appointment) => {
+                const motherName = record.fetalRecords?.[0]?.mother?.fullName || "N/A"
+                return <span className="font-medium">{motherName}</span>
             },
         },
         {
@@ -283,14 +293,7 @@ function DoctorManageCheckinAppointments() {
                     "N/A"
                 ),
         },
-        {
-            title: "Tên sản phụ",
-            key: "motherName",
-            render: (record: Appointment) => {
-                const motherName = record.fetalRecords?.[0]?.mother?.fullName || "N/A"
-                return <span className="font-medium">{motherName}</span>
-            },
-        },
+
         {
             title: "Trạng thái",
             dataIndex: "status",
@@ -598,6 +601,15 @@ function DoctorManageCheckinAppointments() {
                             </span>
                         }
                         key={AppointmentStatus.CANCELED}
+                    />
+                    <TabPane
+                        tab={
+                            <span>
+                                <Badge status="warning" />
+                                Không có mặt
+                            </span>
+                        }
+                        key={AppointmentStatus.NO_SHOW}
                     />
                 </Tabs>
 

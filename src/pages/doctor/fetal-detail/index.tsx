@@ -226,6 +226,10 @@ const DoctorFetalView: React.FC = () => {
     const { getFetailAndMotherDetail, getFetalsByMotherId, getFetalsByMother } = useFetalService()
     const navigate = useNavigate()
 
+    useEffect(() => {
+        console.log(fetalRecord);
+    }, [])
+
     // Fetch fetal record data
     // useEffect(() => {
     //     const fetchFetalRecord = async () => {
@@ -470,25 +474,25 @@ const DoctorFetalView: React.FC = () => {
                         <div className="flex items-center mb-4">
                             <HeartOutlined style={{ color: "#ff4d4f", fontSize: 24, marginRight: 12 }} />
                             <Title level={3} style={{ margin: 0 }}>
-                                {fetalRecord.name} {getPregnancyStatusTag(fetalRecord.status)}
+                                {fetalRecord?.fullName} {getPregnancyStatusTag(fetalRecord?.status)}
                             </Title>
                         </div>
 
                         <Descriptions bordered column={{ xxl: 3, xl: 3, lg: 2, md: 2, sm: 1, xs: 1 }}>
-                            <Descriptions.Item label="Ghi chú">{fetalRecord.note || "Không có ghi chú"}</Descriptions.Item>
+                            <Descriptions.Item label="Ghi chú">{fetalRecord?.note || "Không có ghi chú"}</Descriptions.Item>
                             <Descriptions.Item label="Ngày bắt đầu thai kỳ">
-                                {formatDate(fetalRecord.dateOfPregnancyStart)}
+                                {formatDate(fetalRecord?.dateOfPregnancyStart)}
                             </Descriptions.Item>
-                            <Descriptions.Item label="Ngày dự sinh">{formatDate(fetalRecord.expectedDeliveryDate)}</Descriptions.Item>
-                            {fetalRecord.actualDeliveryDate && (
+                            <Descriptions.Item label="Ngày dự sinh">{formatDate(fetalRecord?.expectedDeliveryDate)}</Descriptions.Item>
+                            {fetalRecord?.actualDeliveryDate && (
                                 <Descriptions.Item label="Ngày sinh thực tế">
-                                    {formatDate(fetalRecord.actualDeliveryDate)}
+                                    {formatDate(fetalRecord?.actualDeliveryDate)}
                                 </Descriptions.Item>
                             )}
                             <Descriptions.Item label="Tình trạng sức khỏe">
-                                {fetalRecord.healthStatus || "Chưa có thông tin"}
+                                {fetalRecord?.healthStatus || "Chưa có thông tin"}
                             </Descriptions.Item>
-                            <Descriptions.Item label="Trạng thái">{getPregnancyStatusTag(fetalRecord.status)}</Descriptions.Item>
+                            <Descriptions.Item label="Trạng thái">{getPregnancyStatusTag(fetalRecord?.status)}</Descriptions.Item>
                         </Descriptions>
                     </Card>
 
@@ -502,10 +506,10 @@ const DoctorFetalView: React.FC = () => {
                         className="shadow-sm mb-4"
                     >
                         <Descriptions bordered column={{ xxl: 3, xl: 3, lg: 2, md: 2, sm: 1, xs: 1 }}>
-                            <Descriptions.Item label="Họ tên">{fetalRecord.mother.fullName}</Descriptions.Item>
-                            <Descriptions.Item label="Email">{fetalRecord.mother.email}</Descriptions.Item>
-                            <Descriptions.Item label="Số điện thoại">{fetalRecord.mother.phone}</Descriptions.Item>
-                            <Descriptions.Item label="Tài khoản">{fetalRecord.mother.username}</Descriptions.Item>
+                            <Descriptions.Item label="Họ tên">{fetalRecord?.mother.fullName}</Descriptions.Item>
+                            <Descriptions.Item label="Email">{fetalRecord?.mother.email}</Descriptions.Item>
+                            <Descriptions.Item label="Số điện thoại">{fetalRecord?.mother.phone}</Descriptions.Item>
+                            <Descriptions.Item label="Tài khoản">{fetalRecord?.mother.username}</Descriptions.Item>
                         </Descriptions>
                     </Card>
 
@@ -518,9 +522,9 @@ const DoctorFetalView: React.FC = () => {
                         }
                         className="shadow-sm"
                     >
-                        {fetalRecord.appointments && fetalRecord.appointments.length > 0 ? (
+                        {fetalRecord?.appointments && fetalRecord?.appointments.length > 0 ? (
                             <Table
-                                dataSource={fetalRecord.appointments}
+                                dataSource={fetalRecord?.appointments}
                                 rowKey="id"
                                 columns={[
                                     {
@@ -578,9 +582,9 @@ const DoctorFetalView: React.FC = () => {
                     <Card className="shadow-sm mb-4">
                         <Title level={4}>Lịch sử khám thai nhi</Title>
 
-                        {fetalRecord.checkupRecords && fetalRecord.checkupRecords.length > 0 ? (
+                        {fetalRecord?.checkupRecords && fetalRecord.checkupRecords.length > 0 ? (
                             <Table
-                                dataSource={fetalRecord.checkupRecords}
+                                dataSource={fetalRecord?.checkupRecords}
                                 rowKey="id"
                                 columns={[
                                     {
@@ -653,8 +657,8 @@ const DoctorFetalView: React.FC = () => {
                                 description={
                                     <div>
                                         <p>Mã cuộc hẹn: {selectedAppointment}</p>
-                                        <p>Thai nhi: {fetalRecord.name}</p>
-                                        <p>Mẹ: {fetalRecord.mother.fullName}</p>
+                                        <p>Thai nhi: {fetalRecord?.name}</p>
+                                        <p>Mẹ: {fetalRecord?.mother.fullName}</p>
                                     </div>
                                 }
                                 type="info"
@@ -666,7 +670,7 @@ const DoctorFetalView: React.FC = () => {
                                 visible={reminderModalVisible}
                                 onCancel={() => setReminderModalVisible(false)}
                                 onCreate={handleCreateReminder}
-                                motherId={fetalRecord.mother.id}
+                                motherId={fetalRecord?.mother.id}
                             />
 
                             <Button
@@ -685,7 +689,7 @@ const DoctorFetalView: React.FC = () => {
                                         layout="vertical"
                                         onFinish={handleSubmit}
                                         initialValues={{
-                                            fetalRecordId: fetalRecord.id,
+                                            fetalRecordId: fetalRecord?.id,
                                         }}
                                     >
                                         <Form.Item name="fetalRecordId" hidden>
