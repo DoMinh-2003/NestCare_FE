@@ -78,9 +78,8 @@ const userUserService = () => {
 
   const updateUser = useCallback(
     async (values: any) => {
-      console.log("id: ", values.id)
       try {
-        const response = await callApi("put", `users/${values.id}`, {
+        const response = await callApi("put", `users`, {
           ...values
         });
         console.log("createUser: ", response)
