@@ -22,7 +22,7 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
     visible: boolean;
     onCancel: () => void;
     onSubmit: (values: PackageCreateUpdate) => void;
-    initialValues?: PackageCreateUpdate | null;
+    initialValues: PackageCreateUpdate | null;
     width?: number | string;
     form: any
 }) => {
