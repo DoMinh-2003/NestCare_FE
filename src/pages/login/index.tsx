@@ -5,8 +5,12 @@ import useAuthService from "../../services/useAuthService";
 import { Link, useNavigate } from "react-router-dom";
 import { USER_ROUTES } from "../../constants/routes";
 function CustomerLoginPage() {
-  const { login } = useAuthService()
+  const { login, loginGoogle } = useAuthService()
   const navigate = useNavigate();
+
+  const handleLoginGoogle = async () => {
+    const response = await loginGoogle();
+  };
 
   const onFinish: FormProps['onFinish'] = async (values) => {
     console.log('Success:', values);
@@ -64,6 +68,7 @@ function CustomerLoginPage() {
           Bạn chưa có tài khoản? <Link to={USER_ROUTES.REGISTER} className=" text-red-500 hover:opacity-85 hover:text-red-500 font-sans">Đăng ký tài khoản</Link>
         </p>
         <button
+        onClick={handleLoginGoogle}
           className="w-full focus:outline-none text-black border border-gray-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2
         flex gap-2 justify-center items-center transition-all duration-300 hover:bg-gray-100 hover:border-gray-400 
         shadow-md hover:shadow-lg"
