@@ -18,6 +18,13 @@ const BlogPage = () => {
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [categories, setCategories] = useState([]);
 
+    const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+
+    useEffect(() => {
+        const user = localStorage.getItem("USER");
+        setIsUserLoggedIn(!!user);
+    }, []);
+
     useEffect(() => {
         const fetchBlogs = async () => {
             const result = await getBlogs({
@@ -93,13 +100,21 @@ const BlogPage = () => {
             {/* Nút và ghi chú */}
             <div className="flex justify-end items-center gap-4 mb-4">
                 <p className="text-sm text-gray-500">Chỉ được thêm blog mới tối đa 5 lần một ngày</p>
-                <Button
-                    onClick={() => setShowCreateForm(true)}
-                    className="bg-blue-500 text-black px-4 py-2 rounded hover:bg-blue-700"
-                >
-                    Tạo blog mới
-                </Button>
+
+                {isUserLoggedIn ? (
+                    <Button
+                        onClick={() => setShowCreateForm(true)}
+                        className="bg-blue-500 text-black px-4 py-2 rounded hover:bg-blue-700"
+                    >
+                        Tạo blog mới
+                    </Button>
+                ) : (
+                    <a href="/auth/login" className="text-blue-500 hover:underline">
+                        Đăng nhập để tạo blog
+                    </a>
+                )}
             </div>
+
 
             {/* Modal cho form tạo blog */}
             <Modal
