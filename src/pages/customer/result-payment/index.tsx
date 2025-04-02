@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import { useSearchParams, useNavigate } from "react-router-dom"
-import { USER_ROUTES } from "../../../constants/routes"
+import { DOCTOR_ROUTES, USER_ROUTES } from "../../../constants/routes"
 import style from "./style.module.scss"
 import useOrderService from "../../../services/useOrderService"
 import api from "../../../config/api"
@@ -107,7 +107,7 @@ const PaymentResult = () => {
 							console.log(appointmentId);
 							await updateBookingStatus(appointmentId, AppointmentStatus.IN_PROGRESS)
 							message.success("Thanh toán thành công")
-							navigate(USER_ROUTES.BOOKING_RESULT, {
+							navigate(DOCTOR_ROUTES.IN_PROGRESS_APPOINTMENT, {
 								state: { appointmentId },
 								replace: true,
 							})
