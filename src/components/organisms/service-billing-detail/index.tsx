@@ -88,7 +88,7 @@ const ServiceBillingDetails: React.FC<ServiceBillingProps> = ({ serviceBilling }
 						<Descriptions.Item label="Tổng tiền dịch vụ">
 							<Text strong>{formatMoney(Number(totalAmount))} VND</Text>
 						</Descriptions.Item>
-						<Descriptions.Item label="Giảm giá">
+						<Descriptions.Item label="Hoàn tiền">
 							<Text type="danger">{formatMoney(Number(discountAmount))} VND</Text>
 						</Descriptions.Item>
 						<Descriptions.Item label="Thành tiền">
