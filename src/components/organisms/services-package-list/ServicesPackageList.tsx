@@ -3,12 +3,14 @@ import usePackageService from '../../../services/usePackageService';
 import ServicePackage from '../../molecules/service-package';
 import { Package } from '../../../model/Pakage';
 import useOrderService from '../../../services/useOrderService';
+import { getUserDataFromLocalStorage } from '../../../constants/function';
 
 const ServicesPackageList = () => {
     const [servicePackages, setServicePackages] = useState<Package[]>([]);
     const [filteredPackages, setFilteredPackages] = useState<Package[]>([]);
     const { getPackages } = usePackageService();
     const { getOrderByUserId, getOrdersOfUser } = useOrderService();
+    const user = getUserDataFromLocalStorage()
 
     useEffect(() => {
         const fetchData = async () => {
@@ -17,6 +19,10 @@ const ServicesPackageList = () => {
                 const user = JSON.parse(localStorage.getItem("USER") || "{}");
 
                 if (!user || !user.id) {
+                    // Nếu không có user, chỉ lấy tất cả packages mà không lọc
+                    const packages = await getPackages();
+                    setServicePackages(packages);
+                    setFilteredPackages(packages); // Hiển thị tất cả packages
                     console.error("Không tìm thấy userId trong localStorage.");
                     return;
                 }
@@ -27,7 +33,6 @@ const ServicesPackageList = () => {
                 const [packages, orders] = await Promise.all([
                     getPackages(),
                     getOrderByUserId(userId),
-                    // getOrdersOfUser()
                 ]);
 
                 setServicePackages(packages);
