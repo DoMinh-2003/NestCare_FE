@@ -144,7 +144,7 @@ const Navbar = () => {
 
     return (
         <div className="mx-3">
-            <ModalBookingForm isModalOpen={isModalOpen} handleCancel={() => setIsModalOpen(false)} />
+            {/* <ModalBookingForm isModalOpen={isModalOpen} handleCancel={() => setIsModalOpen(false)} /> */}
             <div className="flex justify-between items-center font-bold">
                 <div className="flex items-center">
                     <MainLogo className="w-[100px] h-[100px]" />
@@ -165,11 +165,12 @@ const Navbar = () => {
 
                     <Button
                         onClick={() => {
-                            if (user && user.role === "user") {
-                                navigate(USER_ROUTES.BOOKING_DOCTOR);
-                            } else {
-                                setIsModalOpen(true);
-                            }
+                            navigate(USER_ROUTES.BOOKING_DOCTOR);
+                            // if (user && user.role === "user") {
+                            // }
+                            // else {
+                            //     setIsModalOpen(true);
+                            // }
                         }}
                         type="button"
                         status="pending"
