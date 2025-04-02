@@ -59,6 +59,9 @@ const ModalAddServices: React.FC<ModalAddServicesProps> = ({
                 serviceId,
                 notes: values.notes?.[serviceId] || "", // Get note for each service ID
             }));
+            console.log('====================================');
+            console.log("serviceList", serviceList);
+            console.log('====================================');
 
             // values.servicesSelected là mảng ID dịch vụ
             if (!appointmentId) return;

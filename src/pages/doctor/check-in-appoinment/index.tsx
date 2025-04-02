@@ -407,7 +407,7 @@ function DoctorManageCheckinAppointments() {
 						render: (text) => <span className="font-medium text-green-600">{text}</span>,
 					},
 					{
-						title: "Trọng lượng thai nhi (kg)",
+						title: "Trọng lượng thai nhi (g)",
 						dataIndex: "fetalWeight",
 						key: "fetalWeight",
 						render: (text) => <span className="font-medium text-blue-600">{text}</span>,
