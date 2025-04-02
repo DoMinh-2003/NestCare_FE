@@ -224,9 +224,9 @@ export const router = createBrowserRouter([
       },
       {
         path: '/reminders',
-        element: <ProtectedRouteAuth>
+        element: <ProtectedRouteByRole allowedRoles={["user"]}>
           <Reminder />
-        </ProtectedRouteAuth>,
+        </ProtectedRouteByRole>,
       },
       {
         path: USER_ROUTES.BOOKING_DOCTOR,
