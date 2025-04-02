@@ -1,7 +1,7 @@
 import type React from "react"
 import { Card, Divider, Table, Typography, Badge } from "antd"
 import { formatMoney } from "../../../utils/formatMoney"
-import { useEffect, useMemo } from "react"
+import { useEffect, useMemo, useState } from "react"
 
 interface Service {
 	id: string
@@ -18,41 +18,59 @@ interface ServiceResponse {
 }
 
 export const ServiceDetails: React.FC<{ data: ServiceResponse }> = ({ data }) => {
-
+	console.log("hihi", data)
+	const [services, setServices] = useState()
 	// Transform the data to match the expected format
-	const transformedData = useMemo(() => {
-		if (!data || !Array.isArray(data)) return null
+	// const transformedData = useMemo(() => {
+	// 	if (!data || !Array.isArray(data)) return null
 
-		const services = data.map((item) => ({
-			id: item.id,
-			name: item.service.name,
-			price: Number.parseFloat(item.price),
-			isInPackage: item.isInPackage,
-			notes: item.notes,
-		}))
+	// 	const services = data.map((item) => ({
+	// 		id: item.id,
+	// 		name: item.service.name,
+	// 		price: Number.parseFloat(item.price),
+	// 		isInPackage: item.isInPackage,
+	// 		notes: item.notes,
+	// 	}))
 
-		// Calculate totals
-		const totalCostWithoutPackage = services
-			.filter((service) => !service.isInPackage)
-			.reduce((sum, service) => sum + service.price, 0)
+	// 	// Calculate totals
+	// 	const totalCostWithoutPackage = services
+	// 		.filter((service) => !service.isInPackage)
+	// 		.reduce((sum, service) => sum + service.price, 0)
 
-		// You might need to adjust these calculations based on your business logic
-		const depositAmount = totalCostWithoutPackage * 0.3 // Example: 30% deposit
-		const finalCost = totalCostWithoutPackage
+	// 	// You might need to adjust these calculations based on your business logic
+	// 	const depositAmount = totalCostWithoutPackage // Example: 30% deposit
+	// 	const finalCost = totalCostWithoutPackage
 
-		return {
-			services,
-			totalCostWithoutPackage,
-			depositAmount,
-			finalCost,
-		}
-	}, [data])
+	// 	return {
+	// 		services,
+	// 		totalCostWithoutPackage,
+	// 		depositAmount,
+	// 		finalCost,
+	// 	}
+	// }, [data])
+
+	// useEffect(() => {
+	// 	console.log("Transformed data:", transformedData)
+	// }, [transformedData])
 
 	useEffect(() => {
-		console.log("Transformed data:", transformedData)
-	}, [transformedData])
 
-	if (!data || !transformedData) {
+		console.log(data.appointmentServices)
+		const services = data?.serviceBilling.appointmentServices?.map((appointment) => ({
+			id: appointment.service.id,
+			name: appointment.service.name,
+			price: parseFloat(appointment.service.price), // Convert to number
+			isInPackage: appointment.service.isInPackage,
+			notes: appointment.notes,
+		}))
+
+		setServices(services)
+		console.log(services)
+	}, [data])
+
+
+
+	if (!data) {
 		return (
 			<Card className="shadow-md rounded-lg">
 				<div className="p-8 text-center">
@@ -96,7 +114,7 @@ export const ServiceDetails: React.FC<{ data: ServiceResponse }> = ({ data }) =>
 			title: "Ghi chú",
 			dataIndex: "notes",
 			key: "notes",
-			render: (notes: string) => <Typography.Text>{notes || "-"}</Typography.Text>,
+			render: (notes: string) => <Typography.Text>{notes}</Typography.Text>,
 		},
 	]
 
@@ -113,7 +131,7 @@ export const ServiceDetails: React.FC<{ data: ServiceResponse }> = ({ data }) =>
 			}
 		>
 			<Table
-				dataSource={transformedData.services}
+				dataSource={services}
 				columns={columns}
 				rowKey="id"
 				pagination={false}
@@ -129,7 +147,7 @@ export const ServiceDetails: React.FC<{ data: ServiceResponse }> = ({ data }) =>
 						Tổng chi phí không có trong gói:
 					</Typography.Text>
 					<Typography.Text type="success" strong className="text-lg">
-						{formatMoney(transformedData.totalCostWithoutPackage)} VND
+						{formatMoney(data?.serviceBilling.totalAmount)} VND
 					</Typography.Text>
 				</div>
 
@@ -138,7 +156,7 @@ export const ServiceDetails: React.FC<{ data: ServiceResponse }> = ({ data }) =>
 						Tiền cọc:
 					</Typography.Text>
 					<Typography.Text type="primary" strong className="text-lg">
-						{formatMoney(transformedData.depositAmount)} VND
+						{formatMoney(data?.serviceBilling.discountAmount)} VND
 					</Typography.Text>
 				</div>
 
@@ -149,7 +167,7 @@ export const ServiceDetails: React.FC<{ data: ServiceResponse }> = ({ data }) =>
 						Tổng chi phí cuối:
 					</Typography.Text>
 					<Typography.Text type="danger" strong className="text-xl">
-						{formatMoney(transformedData.finalCost)} VND
+						{formatMoney(data?.serviceBilling?.finalAmount)} VND
 					</Typography.Text>
 				</div>
 			</div>
