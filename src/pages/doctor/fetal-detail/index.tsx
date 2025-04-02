@@ -593,7 +593,7 @@ const DoctorFetalView: React.FC = () => {
                                         render: (text) => formatDate(text),
                                     },
                                     {
-                                        title: "Cân nặng mẹ (kg)",
+                                        title: "Cân nặng mẹ (g)",
                                         dataIndex: "motherWeight",
                                         key: "motherWeight",
                                     },
@@ -620,7 +620,7 @@ const DoctorFetalView: React.FC = () => {
                                         render: (text) => text || <Tag color="orange">Chưa có dữ liệu</Tag>,
                                     },
                                     {
-                                        title: "Cân nặng thai (kg)",
+                                        title: "Cân nặng thai (g)",
                                         dataIndex: "fetalWeight",
                                         key: "fetalWeight",
                                         render: (text) => text || <Tag color="orange">Chưa có dữ liệu</Tag>,

@@ -152,7 +152,7 @@ const WeekCheckup: React.FC = () => {
         <div>
             <div className='text-center font-bold text-3xl'>Quản lý lịch khám</div>
 
-            <div className='flex gap-2'>
+            <div className='flex gap-2 justify-between'>
                 <Search placeholder="Tìm kiếm bằng tiêu đề" className='w-[200px]' onSearch={onSearch} enterButton />
                 <Button type="primary" className='mb-2' onClick={() => showModal()}>Thêm lịch khám</Button>
             </div>

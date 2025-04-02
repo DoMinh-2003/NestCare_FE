@@ -146,7 +146,7 @@ const ManageSlot = () => {
                 name={""}
                 isModalOpenDelete={isModalDeleteOpen}
             />
-            <div className='flex gap-2'>
+            <div className='flex gap-2 justify-between'>
                 <Search placeholder="Tìm kiếm theo thời gian bắt đầu" className='w-[200px]' onSearch={onSearch} enterButton />
                 <Button type="primary" className='mb-5' onClick={() => showModal()}>
                     Thêm Slot
