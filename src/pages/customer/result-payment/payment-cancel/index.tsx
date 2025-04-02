@@ -33,17 +33,17 @@ const PaymentCancel = () => {
 			if (user?.role === "user") {
 				setLink(USER_ROUTES.APPOINTMENT_HISTORY);
 			} else if (user?.role === 'nurse') {
-				setLink(NURSE_ROUTES.NURSE_APPOINTMENT);
+				setLink('/nurse/appointments');
 			} else if (user?.role === 'doctor') {
-				setLink(DOCTOR_ROUTES.APPOINTMENT);
+				setLink('/doctor/in_progress');
 			}
 		} else if (appointmentId) {
 			if (user?.role === "user") {
 				setLink(USER_ROUTES.APPOINTMENT_HISTORY);
 			} else if (user?.role === 'nurse') {
-				setLink(NURSE_ROUTES.NURSE_APPOINTMENT);
+				setLink('/nurse/appointments');
 			} else if (user?.role === 'doctor') {
-				setLink(DOCTOR_ROUTES.CHECK_IN_APPOINTMENT);
+				setLink('/doctor/in_progress');
 			}
 		}
 	}, [orderId, user, bookingId, appointmentId]);
