@@ -1,5 +1,5 @@
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
-import { Button, Form, Image, Input, message, Table } from "antd";
+import { Button, Form, Input, message, Table } from "antd";
 import React, { useEffect, useState } from "react";
 import ModalDelete from "../../../components/organisms/modal-delete";
 import { tableText } from "../../../constants/function";
@@ -7,6 +7,7 @@ import useBlogService from '../../../services/useBlogService';
 import useCategoryService from '../../../services/useCategoryService';
 import { formatDate } from '../../../utils/formatDate';
 import ModalCreateUpdateBlog from '../../../components/organisms/modal-create-update-blog';
+import Loading from "../../../components/molecules/loading/Loading";
 
 const { Search } = Input;
 
@@ -16,21 +17,34 @@ const AdminManageBlogs: React.FC = () => {
     const [currentBlog, setCurrentBlog] = useState<any | null>(null);
     const [visible, setVisible] = useState(false);
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true); // Thêm trạng thái loading
 
     const { getBlogs, createBlog, updateBlog, deleteBlog } = useBlogService();
     const { getCategories } = useCategoryService();
     const [form] = Form.useForm();
 
     useEffect(() => {
-        fetchBlogs();
-        fetchCategories();
+        fetchInitialData();
     }, []);
 
+    const fetchInitialData = async () => {
+        setIsLoading(true); // Bắt đầu loading
+        try {
+            await Promise.all([fetchBlogs(), fetchCategories()]);
+        } catch (error) {
+            console.error("Error fetching initial data:", error);
+        } finally {
+            setIsLoading(false); // Kết thúc loading
+        }
+    };
+
     const fetchBlogs = async () => {
+        setIsLoading(true); // Bắt đầu loading khi fetch blogs
         const response = await getBlogs({ isPublished: 1 });
         if (response) {
             setBlogs(response.data.pageData);
         }
+        setIsLoading(false); // Kết thúc loading
     };
 
     const fetchCategories = async () => {
@@ -58,22 +72,30 @@ const AdminManageBlogs: React.FC = () => {
     };
 
     const handleCreateOrUpdate = async (values: any) => {
-        if (currentBlog) {
-            const response = await updateBlog(currentBlog.id, values);
-            if (response) {
-                message.success("Cập nhật blog thành công");
-                fetchBlogs();
-                setVisible(false);
-                form.resetFields();
+        setIsLoading(true); // Bắt đầu loading khi tạo/cập nhật
+        try {
+            if (currentBlog) {
+                const response = await updateBlog(currentBlog.id, values);
+                if (response) {
+                    message.success("Cập nhật blog thành công");
+                    await fetchBlogs();
+                    setVisible(false);
+                    form.resetFields();
+                }
+            } else {
+                const response = await createBlog(values);
+                if (response) {
+                    message.success("Tạo blog thành công");
+                    await fetchBlogs();
+                    setVisible(false);
+                    form.resetFields();
+                }
             }
-        } else {
-            const response = await createBlog(values);
-            if (response) {
-                message.success("Tạo blog thành công");
-                fetchBlogs();
-                setVisible(false);
-                form.resetFields();
-            }
+        } catch (error) {
+            console.error("Error creating/updating blog:", error);
+            message.error("Thao tác thất bại");
+        } finally {
+            setIsLoading(false); // Kết thúc loading
         }
     };
 
@@ -84,11 +106,19 @@ const AdminManageBlogs: React.FC = () => {
 
     const handleOkModalDelete = async () => {
         if (!currentBlog) return;
-        await deleteBlog(currentBlog.id);
-        message.success(`Xóa blog "${currentBlog.title}" thành công`);
-        setCurrentBlog(null);
-        setIsModalDeleteOpen(false);
-        fetchBlogs();
+        setIsLoading(true); // Bắt đầu loading khi xóa
+        try {
+            await deleteBlog(currentBlog.id);
+            message.success(`Xóa blog "${currentBlog.title}" thành công`);
+            setCurrentBlog(null);
+            setIsModalDeleteOpen(false);
+            await fetchBlogs();
+        } catch (error) {
+            console.error("Error deleting blog:", error);
+            message.error("Xóa blog thất bại");
+        } finally {
+            setIsLoading(false); // Kết thúc loading
+        }
     };
 
     const handleCancelModalDelete = () => {
@@ -96,13 +126,20 @@ const AdminManageBlogs: React.FC = () => {
     };
 
     const onSearch = async (value: string) => {
-        const response = await getBlogs({ isPublished: 1, categoryId: "", authorId: "", pageNum: 1, pageSize: 100 });
-        if (response) {
-            const keyword = value.toLowerCase();
-            const filtered = response.data.pageData.filter((b: any) =>
-                b.title?.toLowerCase().includes(keyword)
-            );
-            setBlogs(filtered);
+        setIsLoading(true); // Bắt đầu loading khi tìm kiếm
+        try {
+            const response = await getBlogs({ isPublished: 1, categoryId: "", authorId: "", pageNum: 1, pageSize: 100 });
+            if (response) {
+                const keyword = value.toLowerCase();
+                const filtered = response.data.pageData.filter((b: any) =>
+                    b.title?.toLowerCase().includes(keyword)
+                );
+                setBlogs(filtered);
+            }
+        } catch (error) {
+            console.error("Error searching blogs:", error);
+        } finally {
+            setIsLoading(false); // Kết thúc loading
         }
     };
 
@@ -142,6 +179,10 @@ const AdminManageBlogs: React.FC = () => {
             )
         },
     ];
+
+    if (isLoading) {
+        return <Loading />;
+    }
 
     return (
         <div>
