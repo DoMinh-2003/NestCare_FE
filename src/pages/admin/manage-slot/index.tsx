@@ -6,6 +6,7 @@ import { formatDate } from '../../../utils/formatDate';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import ModalDelete from '../../../components/organisms/modal-delete';
 import Search, { SearchProps } from 'antd/es/input/Search';
+import Loading from '../../../components/molecules/loading/Loading';
 const ManageSlot = () => {
     const [slots, setSlots] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -14,15 +15,20 @@ const ManageSlot = () => {
     const [form] = Form.useForm();
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
     const [selectedSlot, setSelectedSlot] = useState<Slot | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [searchText, setSearchText] = useState<string>('')
+
     useEffect(() => {
         getSlotsFromAdmin()
     }, [])
 
     const getSlotsFromAdmin = async () => {
+        setIsLoading(true)
         const response = await getSlots()
         if (response) {
             setSlots(response.sort((a: Slot, b: Slot) => new Date(b.createdAt).getTime() - new Date(a.updatedAt).getTime()))
         }
+        setIsLoading(false)
     }
 
     const showModal = (slot?: Slot) => {
@@ -33,6 +39,7 @@ const ManageSlot = () => {
     const handleCreate = async (newSlot: Slot) => {
         console.log("newSlot: ", newSlot)
         if (editingSlot) {
+            setIsLoading(true)
             const response = await updateslot(newSlot, editingSlot.id + "")
             console.log("response: ", response)
             if (response) {
@@ -42,6 +49,7 @@ const ManageSlot = () => {
                 setIsModalVisible(false);
                 setEditingSlot(null);
             }
+            setIsLoading(false)
         } else {
             // Thêm slot mới   
             const valuesSubmit = {
@@ -49,6 +57,7 @@ const ManageSlot = () => {
                 startTime: newSlot.startTime,
                 endTime: newSlot.endTime
             }
+            setIsLoading(true)
             const response = await createslot(valuesSubmit)
             if (response) {
                 console.log("handleCreate: ", response)
@@ -58,6 +67,7 @@ const ManageSlot = () => {
                 setIsModalVisible(false);
                 setEditingSlot(null);
             }
+            setIsLoading(false)
         }
 
     };
@@ -112,6 +122,7 @@ const ManageSlot = () => {
     };
 
     const handleOkModalDelete = async () => {
+        setIsLoading(true)
         if (!selectedSlot) return; // Ensure selectedService is defined
         const response = await deleteSlot(selectedSlot.id + "");
         console.log("response: ", response)
@@ -125,14 +136,24 @@ const ManageSlot = () => {
         }
     };
 
-    const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
+    const onSearch: SearchProps['onSearch'] = async (value, _e,) => {
+        setSearchText(value)
+        setIsLoading(true)
         const response = await getSlots();
         console.log("response: ", response);
         if (response && value != '') {
             setSlots(response.filter((item: Slot) => item.startTime.includes(value)));
+            setIsLoading(false)
         } else if (response) {
             setSlots(response);
+            setIsLoading(false)
         }
+    }
+
+    if (isLoading) {
+        return (
+            < Loading />
+        )
     }
 
     return (
@@ -146,8 +167,13 @@ const ManageSlot = () => {
                 name={""}
                 isModalOpenDelete={isModalDeleteOpen}
             />
-            <div className='flex gap-2 justify-between'>
-                <Search placeholder="Tìm kiếm theo thời gian bắt đầu" className='w-[200px]' onSearch={onSearch} enterButton />
+
+            <div className='flex gap-2'>
+                <Search placeholder="Tìm kiếm theo thời gian bắt đầu" className='w-[300px]'
+                 onSearch={onSearch} enterButton 
+                 defaultValue={searchText}
+                 />
+
                 <Button type="primary" className='mb-5' onClick={() => showModal()}>
                     Thêm Slot
                 </Button>

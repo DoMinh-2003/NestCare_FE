@@ -7,6 +7,7 @@ import ModalServicesOfWeekCheckup from '../../../components/organisms/modal-serv
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import ModalDelete from '../../../components/organisms/modal-delete';
 import Search, { SearchProps } from 'antd/es/input/Search';
+import Loading from '../../../components/molecules/loading/Loading';
 
 interface CheckupData {
     week: number;
@@ -40,6 +41,9 @@ const WeekCheckup: React.FC = () => {
     const { getWeekCheckup, createWeekCheckup, updateWeekCheckup, deleteWeekCheckup } = useWeekCheckupService()
     const [isServiceModalVisible, setIsServiceModalVisible] = useState(false);
     const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [searchText, setSearchText] = useState<string>('')
+
     useEffect(() => {
         getWeekCheckupFromAdmin();
     }, [])
@@ -51,11 +55,13 @@ const WeekCheckup: React.FC = () => {
     };
 
     const getWeekCheckupFromAdmin = async () => {
+        setIsLoading(true)
         const response = await getWeekCheckup()
         console.log("getWeekCheckupFromAdmin: ", response)
         if (response) {
             setCheckups(response)
         }
+        setIsLoading(false)
     }
     const showModal = (checkup?: CheckupData) => {
         setCurrentCheckup(checkup || null);
@@ -65,21 +71,27 @@ const WeekCheckup: React.FC = () => {
     const handleCreateOrUpdate = async (values: CheckupData) => {
         console.log("handleCreateOrUpdate: ", values)
         if (currentCheckup) {
+            setIsLoading(true)
             const response = await updateWeekCheckup(values, currentCheckup.id + "")
             if (response) {
                 message.success('Câp nhật lịch khám thành công!');
                 getWeekCheckupFromAdmin()
             }
+            setIsModalVisible(false);
+            setCurrentCheckup(null);
+            setIsLoading(false)
         } else {
             // Thêm lịch khám mới
+            setIsLoading(true)
             const response = await createWeekCheckup(values)
             if (response) {
                 message.success('Thêm lịch khám thành công!');
                 getWeekCheckupFromAdmin()
             }
+            setIsModalVisible(false);
+            setCurrentCheckup(null);
+            setIsLoading(false)
         }
-        setIsModalVisible(false);
-        setCurrentCheckup(null);
     };
 
     const handleCancel = () => {
@@ -89,14 +101,14 @@ const WeekCheckup: React.FC = () => {
 
     const columns = [
         {
-            title: 'Tuần',
-            dataIndex: 'week',
-            key: 'week',
-        },
-        {
             title: 'Tiêu đề',
             dataIndex: 'title',
             key: 'title',
+        },
+        {
+            title: 'Tuần',
+            dataIndex: 'week',
+            key: 'week',
         },
         {
             title: 'Mô tả',
@@ -127,6 +139,7 @@ const WeekCheckup: React.FC = () => {
         setCurrentCheckup(record);
     }
     const handleOkDelete = async () => {
+        setIsLoading(true)
         await deleteWeekCheckup(currentCheckup?.id + "")
         message.success("Xoá lịch khám thành công")
         setIsModalOpenDelete(false)
@@ -138,22 +151,37 @@ const WeekCheckup: React.FC = () => {
         setCheckups(null)
     }
 
-    const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
+    const onSearch: SearchProps['onSearch'] = async (value, _e) => {
+        setSearchText(value)
+        setIsLoading(true)
         const response = await getWeekCheckup();
         console.log("response: ", response);
         if (response && value != '') {
             setCheckups(response.filter((item: Checkup) => item.title.toLocaleLowerCase().includes(value.toLocaleLowerCase())));
+            setIsLoading(false)
         } else if (response) {
             setCheckups(response);
+            setIsLoading(false)
         }
+    }
+
+    if (isLoading) {
+        return (
+            < Loading />
+        )
     }
 
     return (
         <div>
             <div className='text-center font-bold text-3xl'>Quản lý lịch khám</div>
 
-            <div className='flex gap-2 justify-between'>
-                <Search placeholder="Tìm kiếm bằng tiêu đề" className='w-[200px]' onSearch={onSearch} enterButton />
+
+            <div className='flex gap-2'>
+                <Search placeholder="Tìm kiếm bằng tiêu đề" className='w-[200px]'
+                    onSearch={onSearch} enterButton
+                    defaultValue={searchText}
+                />
+
                 <Button type="primary" className='mb-2' onClick={() => showModal()}>Thêm lịch khám</Button>
             </div>
             <Table rowClassName={() => tableText()} dataSource={checkups} columns={columns} rowKey="week" />
