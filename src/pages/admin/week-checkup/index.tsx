@@ -175,11 +175,13 @@ const WeekCheckup: React.FC = () => {
         <div>
             <div className='text-center font-bold text-3xl'>Quản lý lịch khám</div>
 
+
             <div className='flex gap-2'>
                 <Search placeholder="Tìm kiếm bằng tiêu đề" className='w-[200px]'
                     onSearch={onSearch} enterButton
                     defaultValue={searchText}
                 />
+
                 <Button type="primary" className='mb-2' onClick={() => showModal()}>Thêm lịch khám</Button>
             </div>
             <Table rowClassName={() => tableText()} dataSource={checkups} columns={columns} rowKey="week" />

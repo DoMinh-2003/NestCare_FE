@@ -167,11 +167,13 @@ const ManageSlot = () => {
                 name={""}
                 isModalOpenDelete={isModalDeleteOpen}
             />
+
             <div className='flex gap-2'>
                 <Search placeholder="Tìm kiếm theo thời gian bắt đầu" className='w-[300px]'
                  onSearch={onSearch} enterButton 
                  defaultValue={searchText}
                  />
+
                 <Button type="primary" className='mb-5' onClick={() => showModal()}>
                     Thêm Slot
                 </Button>

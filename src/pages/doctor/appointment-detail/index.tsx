@@ -312,7 +312,7 @@ function AppointmentDetail() {
 			key: "motherHealthStatus",
 		},
 		{
-			title: "Cân nặng thai (kg)",
+			title: "Cân nặng thai (g)",
 			dataIndex: "fetalWeight",
 			key: "fetalWeight",
 			render: (text) => text || "-",
@@ -345,7 +345,7 @@ function AppointmentDetail() {
 			render: (id) => appointment.fetalRecords.find((f) => f.id === id)?.name,
 		},
 		{
-			title: "Cân nặng thai (kg)",
+			title: "Cân nặng thai (g)",
 			dataIndex: "fetalWeight",
 			key: "fetalWeight",
 		},
@@ -558,7 +558,7 @@ function AppointmentDetail() {
 																	{latestCheckup.motherHealthStatus}
 																</Descriptions.Item>
 																<Descriptions.Item label="Cân nặng thai">
-																	{latestCheckup.fetalWeight ? `${latestCheckup.fetalWeight} kg` : "Chưa có dữ liệu"}
+																	{latestCheckup.fetalWeight ? `${latestCheckup.fetalWeight} g` : "Chưa có dữ liệu"}
 																</Descriptions.Item>
 																<Descriptions.Item label="Chiều cao thai">
 																	{latestCheckup.fetalHeight ? `${latestCheckup.fetalHeight} cm` : "Chưa có dữ liệu"}
@@ -651,11 +651,19 @@ function AppointmentDetail() {
 							<Col span={8}>
 								<Form.Item
 									name="fetalWeight"
-									label="Cân nặng thai (kg)"
+									label="Cân nặng thai (g)"
 									rules={[{ required: true, message: "Vui lòng nhập cân nặng thai" }]}
 								>
-									<InputNumber min={0} step={0.01} style={{ width: "100%" }} placeholder="Nhập cân nặng" />
+									<InputNumber
+										min={0}
+										step={0.01}
+										style={{ width: "100%" }}
+										placeholder="Nhập cân nặng"
+										formatter={(value) => value.replace(/[^\d.]/g, '')} // Loại bỏ tất cả ký tự không phải là số hoặc dấu chấm
+										parser={(value) => value.replace(/[^\d.]/g, '')}    // Loại bỏ tất cả ký tự không phải là số hoặc dấu chấm
+									/>
 								</Form.Item>
+
 							</Col>
 							<Col span={8}>
 								<Form.Item
