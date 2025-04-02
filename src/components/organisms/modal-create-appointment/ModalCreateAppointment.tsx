@@ -25,15 +25,27 @@ const ModalCreateAppointment = ({ isVisible, onClose, createRespone, fetals }: {
     const [selectedSlot, setSelectedSlot] = useState<string>('');
     const [doctors, setDoctors] = useState<User[]>([]);
     const [selectedDoctor, setSelectedDoctor] = useState<string | undefined>(undefined);
-    const [selectedFetalRecordIds, setSelectedFetalRecordIds] = useState([]);
+    const [selectedFetalRecordIds, setSelectedFetalRecordIds] = useState<string[]>([]);
 
+    
     useEffect(() => {
         getSlotsFromNurse();
     }, []);
 
     useEffect(() => {
-        getAvailableDoctorFromNurse();
+        if (selectedDate && selectedSlot) {
+            getAvailableDoctorFromNurse();
+        }
     }, [selectedDate, selectedSlot]);
+
+    useEffect(() => {
+        // Tự động chọn thai nhi nếu thai nhi đang là PREGNANT
+        const pregnantFetals = fetals.filter(fetal => fetal.status === 'PREGNANT');
+        if (pregnantFetals.length > 0) {
+            const ids = pregnantFetals.map(fetal => fetal.id);
+            setSelectedFetalRecordIds(ids);
+        }
+    }, [fetals]);
 
     const getSlotsFromNurse = async () => {
         const response = await getSlots();
@@ -53,30 +65,28 @@ const ModalCreateAppointment = ({ isVisible, onClose, createRespone, fetals }: {
 
     const handleSubmit = async (values: CreateAppointment) => {
         const appointmentData = {
-            fetalRecordIds: selectedFetalRecordIds.map(id => ({ fetalRecordId: id })), // Format fetalRecordIds, // Ensure this matches the expected structure
+            fetalRecordIds: selectedFetalRecordIds.map(id => ({ fetalRecordId: id })),
             doctorId: values.doctorId,
-            date: moment(selectedDate + '').format('YYYY-MM-DD'),
+            date: moment(selectedDate).format('YYYY-MM-DD'),
             slotId: values.slotId
         };
-        console.log("appointmentData: ", appointmentData)
         const response = await createAppointment(appointmentData);
-        console.log("response: ", response)
         if (response && response.appointmentDate) {
             createRespone(values);
             message.success('Tạo lịch hẹn thành công');
-            onClose(); // Close the modal after submission
-            form.resetFields()
+            onClose();
+            form.resetFields();
         } else if (response) {
             createRespone(values);
             message.success('Tạo lịch hẹn thành công');
-            window.location.href = response
-            onClose(); // Close the modal after submission
-            form.resetFields()
+            window.location.href = response;
+            onClose();
+            form.resetFields();
         }
     };
 
     const disablePastDates = (current: Moment) => {
-        return current && current < moment().startOf('day'); // Disable all past dates
+        return current && current < moment().startOf('day');
     };
 
     const handleChangeSelectedSlot = (value: string) => {
@@ -85,15 +95,26 @@ const ModalCreateAppointment = ({ isVisible, onClose, createRespone, fetals }: {
 
     const handleChangeSelectedDate = (value: Moment) => {
         setSelectedDate(value.format('YYYY-MM-DD'));
+        setSelectedSlot(''); // Reset selected slot when date changes
+        setDoctors([]); // Reset doctors when date changes
     };
 
     const handleChangeSelectedDoctor = (value: string) => {
         setSelectedDoctor(value);
     };
 
+    const filteredSlots = slots.filter(slot => {
+        const slotStartTime = moment(`${selectedDate} ${slot.startTime}`, 'YYYY-MM-DD HH:mm'); // Kết hợp ngày và giờ
+        const currentMoment = moment(); // Thời gian hiện tại
+
+        // Lọc các khung giờ khám hợp lệ
+        return slotStartTime.isAfter(currentMoment) ||
+            (slotStartTime.isSame(currentMoment, 'minute') && currentMoment.minute() < 30);
+    });
+
     return (
         <Modal
-            title="Create Appointment"
+            title="Đặt lịch"
             visible={isVisible}
             onCancel={onClose}
             footer={null}
@@ -107,7 +128,7 @@ const ModalCreateAppointment = ({ isVisible, onClose, createRespone, fetals }: {
                 <Form.Item
                     label="Chọn ngày"
                     name="date"
-                    rules={[{ required: true, message: 'Please select the appointment date!' }]}
+                    rules={[{ required: true, message: 'Vui lòng chọn ngày hẹn!' }]}
                 >
                     <DatePicker
                         format="YYYY-MM-DD"
@@ -119,43 +140,45 @@ const ModalCreateAppointment = ({ isVisible, onClose, createRespone, fetals }: {
                 <Form.Item
                     label="Chọn khung giờ khám"
                     name="slotId"
-                    rules={[{ required: true, message: 'Please select a slot!' }]}
+                    rules={[{ required: true, message: 'Vui lòng chọn khung giờ khám!' }]}
                 >
                     <Select
                         onChange={handleChangeSelectedSlot}
                         placeholder="Chọn khung giờ khám"
                         className='w-[150px]'
                         options={
-                            slots?.map((item) => ({
+                            filteredSlots.map((item) => ({
                                 value: item.id,
                                 label: `${item.startTime} - ${item.endTime}`
                             }))
                         }
+                        disabled={!selectedDate} // Disable if no date is selected
                     />
                 </Form.Item>
 
                 <Form.Item
                     label="Chọn bác sĩ"
                     name="doctorId"
-                    rules={[{ required: true, message: 'Please select a doctor!' }]}
+                    rules={[{ required: true, message: 'Vui lòng chọn bác sĩ!' }]}
                 >
                     <Select
                         onChange={handleChangeSelectedDoctor}
                         placeholder="Chọn bác sĩ"
                         className='w-[150px]'
                         options={
-                            doctors?.map((item) => ({
+                            doctors.map((item) => ({
                                 value: item.id,
                                 label: item.fullName
                             }))
                         }
+                        disabled={!selectedSlot} // Disable if no slot is selected
                     />
                 </Form.Item>
 
                 <Form.Item
                     label="Chọn thai nhi"
                     name="fetalRecordId"
-                    rules={[{ required: true, message: 'Please select a fetal record!' }]}
+                    rules={[{ required: true, message: 'Vui lòng chọn thai nhi!' }]}
                 >
                     <Select
                         placeholder="Chọn thai nhi"
@@ -163,7 +186,7 @@ const ModalCreateAppointment = ({ isVisible, onClose, createRespone, fetals }: {
                         className='w-[150px]'
                         onChange={setSelectedFetalRecordIds}
                         options={
-                            fetals?.map((item) => ({
+                            fetals.map((item) => ({
                                 value: item.id,
                                 label: item.name
                             }))
@@ -176,7 +199,7 @@ const ModalCreateAppointment = ({ isVisible, onClose, createRespone, fetals }: {
                         <Button onClick={onClose} className="bg-red-500 text-white mr-2">
                             Hủy
                         </Button>
-                        <Button type="primary" htmlType="submit" >
+                        <Button type="primary" htmlType="submit">
                             Tạo lịch hẹn
                         </Button>
                     </div>
