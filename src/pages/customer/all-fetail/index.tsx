@@ -114,8 +114,9 @@ const AllFetail = () => {
         setIsAppointmentModalOpen(true);
     };
 
-    const showHealthModal = (fetalId: string) => {
-        setSelectedFetalId(fetalId);
+
+    const showHealthModal = (fetal) => {
+        setSelectedFetalId(fetal);
         setIsHealthModalOpen(true);
     };
 
@@ -129,11 +130,11 @@ const AllFetail = () => {
             console.log('====================================');
             console.log("Values được gửi", values);
             console.log('====================================');
-            const submittedData = { ...values, fetalId: selectedFetalId };
+            const submittedData = { ...values, fetalId: selectedFetalId.id };
             console.log("Dữ liệu sức khỏe được gửi:", submittedData);
 
             try {
-                const response = await createFetalCheckupRecord(values, selectedFetalId);
+                const response = await createFetalCheckupRecord(values, selectedFetalId.id);
                 console.log("Response:", response);
                 message.success("Gửi dữ liệu sức khỏe thành công!");
                 await getFetalsByMother()
@@ -244,7 +245,7 @@ const AllFetail = () => {
                             Xem lịch hẹn
                         </Button>
                     )}
-                    <Button type="link" onClick={() => showHealthModal(record.id)}>
+                    <Button type="link" onClick={() => showHealthModal(record)}>
                         Thêm thông tin sức khỏe
                     </Button>
                     <Popconfirm title="Xóa hồ sơ của thai này" onConfirm={() => handleDelete(record.id)}>
@@ -313,6 +314,7 @@ const AllFetail = () => {
                 visible={isHealthModalOpen}
                 onCancel={() => setIsHealthModalOpen(false)}
                 onSubmit={handleHealthSubmit}
+                fetal={selectedFetalId}
             />
             <FetalDetailModal
                 visible={isDetailModalOpen}

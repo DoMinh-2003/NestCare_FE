@@ -116,17 +116,17 @@ function FetalCreation({ open, onClose }: FetalCreationProps) {
 				</Form.Item>
 
 				<Form.Item
-					label="Ngày bắt đầu mang thai"
+					label="ngày cuối cùng của kì kinh cuối"
 					name="dateOfPregnancyStart"
 					rules={[
-						{ required: true, message: 'Vui lòng chọn ngày bắt đầu mang thai!' },
+						{ required: true, message: 'Vui lòng chọn ngày cuối cùng của kì kinh cuối!' },
 						({ getFieldValue }) => ({
 							validator(_, value) {
 								if (!value) return Promise.reject();
 								const today = new Date();
 								const selectedDate = new Date(value);
 								if (selectedDate > today) {
-									return Promise.reject(new Error('Ngày bắt đầu mang thai không thể là ngày tương lai!'));
+									return Promise.reject(new Error('ngày cuối cùng của kì kinh cuối không thể là ngày tương lai!'));
 								}
 								return Promise.resolve();
 							},
