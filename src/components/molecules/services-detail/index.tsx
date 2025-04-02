@@ -1,5 +1,7 @@
 import type React from "react"
 import { Card, Divider, Table, Typography, Badge } from "antd"
+import { formatMoney } from "../../../utils/formatMoney"
+import { useEffect, useMemo } from "react"
 
 interface Service {
 	id: string
@@ -16,7 +18,41 @@ interface ServiceResponse {
 }
 
 export const ServiceDetails: React.FC<{ data: ServiceResponse }> = ({ data }) => {
-	if (!data) {
+
+	// Transform the data to match the expected format
+	const transformedData = useMemo(() => {
+		if (!data || !Array.isArray(data)) return null
+
+		const services = data.map((item) => ({
+			id: item.id,
+			name: item.service.name,
+			price: Number.parseFloat(item.price),
+			isInPackage: item.isInPackage,
+			notes: item.notes,
+		}))
+
+		// Calculate totals
+		const totalCostWithoutPackage = services
+			.filter((service) => !service.isInPackage)
+			.reduce((sum, service) => sum + service.price, 0)
+
+		// You might need to adjust these calculations based on your business logic
+		const depositAmount = totalCostWithoutPackage * 0.3 // Example: 30% deposit
+		const finalCost = totalCostWithoutPackage
+
+		return {
+			services,
+			totalCostWithoutPackage,
+			depositAmount,
+			finalCost,
+		}
+	}, [data])
+
+	useEffect(() => {
+		console.log("Transformed data:", transformedData)
+	}, [transformedData])
+
+	if (!data || !transformedData) {
 		return (
 			<Card className="shadow-md rounded-lg">
 				<div className="p-8 text-center">
@@ -39,7 +75,7 @@ export const ServiceDetails: React.FC<{ data: ServiceResponse }> = ({ data }) =>
 			key: "price",
 			render: (price: number) => (
 				<Typography.Text type="success" strong>
-					{price.toLocaleString()} VND
+					{formatMoney(price)}
 				</Typography.Text>
 			),
 		},
@@ -56,6 +92,12 @@ export const ServiceDetails: React.FC<{ data: ServiceResponse }> = ({ data }) =>
 				/>
 			),
 		},
+		{
+			title: "Ghi chú",
+			dataIndex: "notes",
+			key: "notes",
+			render: (notes: string) => <Typography.Text>{notes || "-"}</Typography.Text>,
+		},
 	]
 
 	return (
@@ -70,7 +112,14 @@ export const ServiceDetails: React.FC<{ data: ServiceResponse }> = ({ data }) =>
 				</div>
 			}
 		>
-			<Table dataSource={data.services} columns={columns} rowKey="id" pagination={false} bordered className="mb-6" />
+			<Table
+				dataSource={transformedData.services}
+				columns={columns}
+				rowKey="id"
+				pagination={false}
+				bordered
+				className="mb-6"
+			/>
 
 			<Divider />
 
@@ -80,7 +129,7 @@ export const ServiceDetails: React.FC<{ data: ServiceResponse }> = ({ data }) =>
 						Tổng chi phí không có trong gói:
 					</Typography.Text>
 					<Typography.Text type="success" strong className="text-lg">
-						{data.totalCostWithoutPackage.toLocaleString()} VND
+						{formatMoney(transformedData.totalCostWithoutPackage)} VND
 					</Typography.Text>
 				</div>
 
@@ -89,7 +138,7 @@ export const ServiceDetails: React.FC<{ data: ServiceResponse }> = ({ data }) =>
 						Tiền cọc:
 					</Typography.Text>
 					<Typography.Text type="primary" strong className="text-lg">
-						{data.depositAmount.toLocaleString()} VND
+						{formatMoney(transformedData.depositAmount)} VND
 					</Typography.Text>
 				</div>
 
@@ -100,7 +149,7 @@ export const ServiceDetails: React.FC<{ data: ServiceResponse }> = ({ data }) =>
 						Tổng chi phí cuối:
 					</Typography.Text>
 					<Typography.Text type="danger" strong className="text-xl">
-						{data.finalCost.toLocaleString()} VND
+						{formatMoney(transformedData.finalCost)} VND
 					</Typography.Text>
 				</div>
 			</div>
