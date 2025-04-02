@@ -4,6 +4,7 @@ import ModalAppointmentDetail, { AppointmentHistoryDetail } from '../modal-appoi
 import useAppointmentService from '../../../services/useAppointmentService';
 import Loading from '../../molecules/loading/Loading';
 import { getStatusAppointment } from '../../../utils/statusLabelValue';
+import moment from 'moment';
 
 const ModalAppointmentHistory = ({ isVisible, onClose, appointmentData }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -23,9 +24,9 @@ const ModalAppointmentHistory = ({ isVisible, onClose, appointmentData }) => {
         const response = await getAppointmentDetail(id);
         if (response) {
           console.log("showModal: ", response);
-          setAppointment(response); // Set the fetched appointment data
-          setIsLoading(false)
-        }
+          setAppointment(response); // Set the fetched and sorted appointment data
+          setIsLoading(false);
+      }
       } catch (error) {
         console.error("Error fetching appointment details:", error);
         setIsLoading(false)
@@ -46,9 +47,19 @@ const ModalAppointmentHistory = ({ isVisible, onClose, appointmentData }) => {
       render:(status: string)=> getStatusAppointment(status)
     },
     {
-      title: 'Ngày đặt lịch',
+      title: 'Ngày hẹn',
       dataIndex: 'appointmentDate',
       key: 'appointmentDate',
+    },
+    {
+      title: 'Ngày đặt lịch',
+      dataIndex: 'createdAt',
+      key: 'createdAt',
+      render:(createdAt: string)=>(
+        <div>
+          {moment(createdAt).format('YYYY-MM-DD')}
+        </div>
+      )
     },
     {
       title: 'Xem chi tiết',
@@ -77,7 +88,9 @@ const ModalAppointmentHistory = ({ isVisible, onClose, appointmentData }) => {
         onClose={onCloseModalAppointmentHistoryDetail} 
       />
       <Table
-        dataSource={appointmentData?.appointments}
+        dataSource={appointmentData?.appointments.sort((a, b) => {
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      })}
         columns={columns}
         rowKey="id"
         pagination={false}
