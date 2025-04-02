@@ -160,7 +160,7 @@ const ModalCreateUpdateUser: React.FC<UserModalProps> = ({ visible, onCreate, on
             },
             ]}
           >
-            <Input />
+            <Input.Password />
           </Form.Item>
         }
         <Form.Item

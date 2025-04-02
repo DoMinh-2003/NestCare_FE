@@ -6,6 +6,7 @@ import ModalCreateUpdateServices, { ServiceData } from "../../../components/orga
 import ModalDelete from "../../../components/organisms/modal-delete";
 import { formatMoney } from "../../../utils/formatMoney";
 import { formatCreatedAt, formatDate } from "../../../utils/formatDate";
+import Loading from "../../../components/molecules/loading/Loading";
 
 const ManagerServices = () => {
     const [services, setServices] = useState<Service[]>([]);
@@ -14,6 +15,7 @@ const ManagerServices = () => {
     const [selectedService, setSelectedService] = useState<Service | null>(null);
     const { createServices, updateServices, getServices, deleteServices } = useServiceService();
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
         getServicesFromCustomer();
@@ -30,6 +32,7 @@ const ManagerServices = () => {
     };
 
     const handleOkModalDelete = async () => {
+        setIsLoading(true)
         if (!selectedService) return; // Ensure selectedService is defined
         const response = await deleteServices(selectedService.id);
         if (response) {
@@ -48,22 +51,27 @@ const ManagerServices = () => {
 
     const handleSaveService = async (values: ServiceData) => {
         if (!values.id) {
+            setIsLoading(true)
             const response = await createServices(values);
             console.log(response);
             if (response && response.data) {
                 message.success("Tạo service thành công");
                 getServicesFromCustomer();
             }
+            setIsLoading(false)
         } else {
+            setIsLoading(true)
             const response = await updateServices(values);
             if (response && response.data) {
                 message.success("Cập nhật service thành công");
                 getServicesFromCustomer();
             }
+            setIsLoading(false)
         }
     };
 
     const getServicesFromCustomer = async () => {
+        setIsLoading(true)
         const response = await getServices();
         console.log("getServicesFromCustomer: ", response)
         console.log(response);
@@ -75,6 +83,7 @@ const ManagerServices = () => {
             console.error("Expected an array but got:", response.data);
             setServices([]); // Ensure an array is always passed to Table
         }
+        setIsLoading(false)
     };
 
     const handleSearch = (value: string) => {
@@ -124,6 +133,12 @@ const ManagerServices = () => {
             )
         },
     ];
+
+    if (isLoading) {
+        return (
+            < Loading />
+        )
+    }
 
     return (
         <div>

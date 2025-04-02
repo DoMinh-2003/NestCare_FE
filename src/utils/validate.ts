@@ -43,3 +43,18 @@ export const validateBloodPressure = async (value: string) => {
 
     return Promise.resolve();
 };
+// validators.ts
+import { Rule } from 'antd/lib/form';
+
+export const validatePrice: Rule = {
+    required: true,
+    validator: (_, value) => {
+        if (value === undefined || value === null) {
+            return Promise.reject(new Error("Vui lòng nhập giá"));
+        } else if (value < 1000) {
+            return Promise.reject(new Error("Giá phải lớn hơn hoặc bằng 1000"));
+        }
+        return Promise.resolve();
+    },
+};
+
