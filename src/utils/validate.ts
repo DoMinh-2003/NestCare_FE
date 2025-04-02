@@ -28,3 +28,33 @@ export const validateUsername = (_: any, value: string) => {
     }
     return Promise.resolve();
 };
+
+// validators.ts
+export const validateBloodPressure = async (value: string) => {
+    if (!value) {
+        return Promise.reject('Vui lòng nhập huyết áp của người mẹ!');
+    }
+
+    // Kiểm tra định dạng huyết áp (ví dụ: 120/80)
+    const regex = /^\d{1,3}\/\d{1,3}$/;
+    if (!regex.test(value)) {
+        return Promise.reject('Huyết áp không hợp lệ! Vui lòng nhập theo định dạng: 120/80');
+    }
+
+    return Promise.resolve();
+};
+// validators.ts
+import { Rule } from 'antd/lib/form';
+
+export const validatePrice: Rule = {
+    required: true,
+    validator: (_, value) => {
+        if (value === undefined || value === null) {
+            return Promise.reject(new Error("Vui lòng nhập giá"));
+        } else if (value < 1000) {
+            return Promise.reject(new Error("Giá phải lớn hơn hoặc bằng 1000"));
+        }
+        return Promise.resolve();
+    },
+};
+

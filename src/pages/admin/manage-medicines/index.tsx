@@ -3,10 +3,10 @@ import { Table, Button, Form, message, Input } from 'antd';
 import ModalCreateUpdateMedicine, { Medicine } from '../../../components/organisms/modal-create-update-medicine/ModalCreateUpdateMedicine';
 import useMedicineService from '../../../services/useMedicineService';
 import { DeleteOutlined, EditOutlined, SearchOutlined } from "@ant-design/icons";
-import ModalDelete from '../../../components/organisms/modal-delete';
-import { toast } from 'react-toastify';
 import { formatMoney } from '../../../utils/formatMoney';
 import { formatDate } from '../../../utils/formatDate';
+import Loading from '../../../components/molecules/loading/Loading';
+import ModalDelete from '../../../components/organisms/modal-delete';
 
 const AdminManageMedicines: React.FC = () => {
 
@@ -16,17 +16,21 @@ const AdminManageMedicines: React.FC = () => {
     const [isModalDdelete, setIsModalDelete] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [currentMedicine, setCurrentMedicine] = useState<Medicine | null>(null);
-
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [searchText, setSearchText] = useState<string>('');
     const [form] = Form.useForm()
+
     useEffect(() => {
         getMedicine();
     }, [])
 
     const getMedicine = async (keyword = "") => {
+        setIsLoading(true)
         const response = await getMedicinesService(keyword, 0)
         if (response) {
             setMedicines(response.data.pageData)
         }
+        setIsLoading(false)
     }
 
 
@@ -34,6 +38,8 @@ const AdminManageMedicines: React.FC = () => {
         console.log("medicine: ", medicine)
         if (medicine) {
             setCurrentMedicine(medicine);
+        } else {
+            setCurrentMedicine(null);
         }
         setIsModalVisible(true);
     };
@@ -43,22 +49,30 @@ const AdminManageMedicines: React.FC = () => {
         }
         setIsModalDelete(true);
     };
+
     const handleOk = async (values: Medicine) => {
         console.log("values: ", values)
         if (currentMedicine) {
+            setIsLoading(true)
             const response = await updateMedicine(values, currentMedicine.id + "")
             if (response) {
                 message.success("Cập nhật thuốc thành công")
+                form.resetFields()
+                getMedicine()
+                setIsModalVisible(false);
+                setIsLoading(false)
             }
         } else {
+            setIsLoading(true)
             const response = await createMedicine(values)
             if (response) {
                 message.success("Thêm thuốc thành công")
+                form.resetFields()
+                getMedicine()
+                setIsModalVisible(false);
+                setIsLoading(false)
             }
         }
-        form.resetFields()
-        getMedicine()
-        setIsModalVisible(false);
     };
 
     const handleCancel = () => {
@@ -102,10 +116,10 @@ const AdminManageMedicines: React.FC = () => {
         {
             title: 'Hành động',
             key: 'action',
-            render: (text: any, record: Medicine) => (
+            render: (record: Medicine) => (
                 <div className='flex gap-2'>
                     <EditOutlined className='text-blue' onClick={() => showModal(record)} />
-                    <DeleteOutlined onClick={() => showModal(record)} className='text-red-500' />
+                    <DeleteOutlined onClick={() => showModalDelete(record)} className='text-red-500' />
                 </div>
 
             ),
@@ -113,6 +127,7 @@ const AdminManageMedicines: React.FC = () => {
     ];
 
     const handleOkDelete = async () => {
+        setIsLoading(true)
         await deleteMedicine(currentMedicine?.id + "")
         message.success('Xoá thuốc thành công!')
         setIsModalDelete(false)
@@ -121,6 +136,12 @@ const AdminManageMedicines: React.FC = () => {
 
     const handleCancelModalDelete = async () => {
         setIsModalDelete(false)
+    }
+
+    if (isLoading) {
+        return (
+            < Loading />
+        )
     }
 
     return (
@@ -142,7 +163,7 @@ const AdminManageMedicines: React.FC = () => {
             </div>
             <Table dataSource={medicines} columns={columns} rowKey="id" className="mt-4" />
             <ModalDelete
-                name={createMedicine.name}
+                name={currentMedicine?.name+''}
                 isModalOpenDelete={isModalDdelete}
                 handleCancelModalDelete={handleCancelModalDelete}
                 handleOkModalDelete={handleOkDelete}

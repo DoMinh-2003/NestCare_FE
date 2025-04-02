@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { Modal, Form, Input, InputNumber } from 'antd';
+import { Modal, Form, Input, InputNumber, Button } from 'antd';
+import { validatePrice } from '../../../utils/validate';
 
 export interface Medicine {
   id?: string;
@@ -74,15 +75,17 @@ const ModalCreateUpdateMedicine: React.FC<MedicineModalProps> = ({ visible, onCr
         <Form.Item
           label="Giá (VNĐ)"
           name="price"
-          rules={[{ required: true, message: 'Vui lòng nhập giá thuốc!' }]}
+          rules={[validatePrice]}
         >
           <InputNumber min={0} className="border border-gray-300 rounded-md p-2 w-full" placeholder="Nhập giá thuốc" />
         </Form.Item>
 
         <Form.Item>
-          <button type="submit" className="ant-btn ant-btn-primary w-full py-2 rounded-md">
-            {currentMedicine ? "Cập Nhật" : "Thêm"}
-          </button>
+          <div className='float-right'>
+            <Button htmlType="submit" type="primary" className=" py-2 rounded-md">
+              {currentMedicine ? "Cập Nhật" : "Thêm"}
+            </Button>
+          </div>
         </Form.Item>
       </Form>
     </Modal>

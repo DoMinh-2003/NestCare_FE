@@ -8,6 +8,7 @@ import userUserService from "../../../services/userUserService";
 import FetalProfileModal from "./fetal-model";
 import type { GetProps } from 'antd';
 import { Input } from 'antd';
+import Loading from '../../../components/molecules/loading/Loading';
 type SearchProps = GetProps<typeof Input.Search>;
 const { Search } = Input;
 
@@ -21,6 +22,13 @@ const AdminManageUsers: React.FC = () => {
     const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
     const [isFetalProfileModalVisible, setIsFetalProfileModalVisible] = useState(false);
     const [roleToFilter, setRoleToFilter] = useState<string>('')
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [searchText, setSearchText] = useState<string>('')
+
+    useEffect(() => {
+        getUsersFromAdmin();
+    }, [roleToFilter]);
+
     const showModal = (user: UserData | null = null) => {
         if (user) {
             setCurrentUser(user);
@@ -34,6 +42,7 @@ const AdminManageUsers: React.FC = () => {
     const handleCreateOrUpdate = async (values: UserData) => {
         if (currentUser) {
             // Update user logic can be added here
+            setIsLoading(true)
             const response = await updateUser(values);
             console.log("updateUser: ", response)
             if (response) {
@@ -41,15 +50,18 @@ const AdminManageUsers: React.FC = () => {
                 getUsersFromAdmin();
                 setVisible(false); // Close the modal only after successful creation
                 form.resetFields(); // Reset the form fields
+                setIsLoading(false)
             }
         } else {
             // Create new user
+            setIsLoading(true)
             const response = await createUser(values);
             if (response) {
                 message.success("Tạo người dùng thành công");
                 getUsersFromAdmin();
                 setVisible(false); // Close the modal only after successful creation
                 form.resetFields(); // Reset the form fields
+                setIsLoading(false)
             }
         }
     };
@@ -58,22 +70,18 @@ const AdminManageUsers: React.FC = () => {
         setVisible(false);
     };
 
-    useEffect(() => {
-        getUsersFromAdmin();
-    }, [roleToFilter]);
-
     const getUsersFromAdmin = async () => {
+        setIsLoading(true)
         const response = await getUsersSearch("", "");
         console.log("response: ", response);
         if (response) {
             let filteredUsers = response.users.filter((item: UserData) => item.role !== "admin" && !item.isDeleted);
-
             if (roleToFilter) {
                 filteredUsers = filteredUsers.filter((item: UserData) => item.role === roleToFilter);
             }
-
             setUsers(filteredUsers);
         }
+        setIsLoading(false)
     };
 
 
@@ -147,13 +155,11 @@ const AdminManageUsers: React.FC = () => {
         {
             title: 'Hành động',
             render: (record: UserData) => {
-                if (record.role === "doctor" || record.role === "nurse") {
-                    return <div className="flex gap-2 text-xl">
-                        <EditOutlined onClick={() => showModal(record)} className="text-blue" />
-                        <DeleteOutlined onClick={() => handleOpenModalDelete(record)} className="text-red-500" />
-                    </div>
-                }
-                return null;
+                return <div className="flex gap-2 text-xl">
+                    <EditOutlined onClick={() => showModal(record)} className="text-blue" />
+                    <DeleteOutlined onClick={() => handleOpenModalDelete(record)} className="text-red-500" />
+                </div>
+
             }
         },
     ];
@@ -165,6 +171,7 @@ const AdminManageUsers: React.FC = () => {
     const handleOkModalDelete = async () => {
         console.log("currentUser: ", currentUser)
         if (!currentUser) return; // Ensure selectedService is defined
+        setIsLoading(true)
         await deleteUser(currentUser.id);
         message.success(`Xóa ${currentUser.fullName} thành công`);
         setCurrentUser(null);
@@ -172,17 +179,17 @@ const AdminManageUsers: React.FC = () => {
         getUsersFromAdmin(); // Refresh the service list after deletion
     };
 
-    const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
+    const onSearch: SearchProps['onSearch'] = async (value, _e) => {
+        setSearchText(value)
+        setIsLoading(true)
         const response = await getUsersSearch(value, roleToFilter);
         console.log("response: ", response);
         if (response) {
             setUsers(response.users.filter((item: UserData) => item.role != "admin" && !item.isDeleted));
         }
+        setIsLoading(false)
     }
 
-    const handleChange = (value: string) => {
-        setRoleToFilter(value);
-    }
     const roles = [{ "role": "user", "name": "User" }, { "role": "doctor", "name": "Doctor" }, { "role": "nurse", "name": "Nurse" }, { "role": "", "name": "Tất cả" }]
 
 
@@ -192,6 +199,13 @@ const AdminManageUsers: React.FC = () => {
         doctor: "Bác sĩ",
         nurse: "Y tá",
     };
+
+    if (isLoading) {
+        return (
+            < Loading />
+        )
+    }
+
     return (
         <div>
             <div className='text-3xl font-semibold text-center mb-5'>
@@ -199,7 +213,10 @@ const AdminManageUsers: React.FC = () => {
             </div>
             <div className='flex gap-2 justify-between px-2'>
                 <div className='gap-2 flex'>
-                    <Search placeholder="Tìm kiếm bằng tên hoặc email" className='w-[250px]' onSearch={onSearch} enterButton />
+                    <Search placeholder="Tìm kiếm bằng tên hoặc email" className='w-[250px]' 
+                    onSearch={onSearch} enterButton
+                    defaultValue={searchText}
+                    />
 
                     <Select
                         style={{ width: 200, marginBottom: 16 }}

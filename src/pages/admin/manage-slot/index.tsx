@@ -138,7 +138,7 @@ const ManageSlot = () => {
     return (
         <div>
             <div className="text-3xl font-semibold text-center mb-5">
-                Quản lí dịch vụ
+                Quản lí slot
             </div>
             <ModalDelete
                 handleCancelModalDelete={handleCancelModalDelete}

@@ -85,6 +85,11 @@ const ModalOrderDetail = ({ order, isModalOpen, handleCancel }: ModalOrderDetail
                         </div>
                     ))
                 }
+                {
+                    order.length === 0 && <div>
+                        Chưa có thanh toán
+                    </div>
+                }
             </Modal>
         </div>
     )

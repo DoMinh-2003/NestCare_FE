@@ -1,4 +1,5 @@
 import { Modal, Typography, List, Avatar } from 'antd';
+import { getStatusAppointment } from '../../../utils/statusLabelValue';
 
 const { Title, Text } = Typography;
 // Interface for the Mother
@@ -76,7 +77,7 @@ const ModalAppointmentDetail = ({ isVisible, onClose, appointmentData }: { isVis
       <Text>{appointmentData?.appointmentDate}</Text>
       <br />
       <Text strong>Trạng thái: </Text>
-      <Text>{appointmentData?.status}</Text>
+      <Text>{getStatusAppointment(appointmentData?.status)}</Text>
       <br />
 
       <Title level={5}>Hồ sơ thai nhi</Title>
@@ -118,7 +119,7 @@ const ModalAppointmentDetail = ({ isVisible, onClose, appointmentData }: { isVis
           }
         />
       </List.Item>
-
+          <div className='border border-solid my-3'></div>
       <Title level={5}>Lịch sử đặt lịch</Title>
       <List
         itemLayout="horizontal"
@@ -126,7 +127,7 @@ const ModalAppointmentDetail = ({ isVisible, onClose, appointmentData }: { isVis
         renderItem={history => (
           <List.Item>
             <List.Item.Meta
-              title={<Text strong>Trạng thái: {history?.status}</Text>}
+              title={<Text strong>Trạng thái: {getStatusAppointment(history?.status)}</Text>}
               description={
                 <>
                   <Text>Thay đổi bở: {history?.changedBy?.fullName}</Text>

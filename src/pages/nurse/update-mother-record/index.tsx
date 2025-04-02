@@ -152,10 +152,8 @@ const NurseUpdateMotherRecord = () => {
             key: 'action',
             render: (record: Appointment) => (
                 <div className='flex gap-2'>
-                    {
-                        record?.fetalRecords[0]?.checkupRecords[record?.fetalRecords[0]?.checkupRecords?.length - 1]?.fetalHeartbeat === null ? <Button className='bg-blue hover:bg-blue text-white' type="default" onClick={() => showModal(record.id)}>Cập nhật thông tin sức khoẻ</Button>
-                            : <Button danger onClick={() => handleReject(record.id)} style={{ marginLeft: 8 }}>Từ chối</Button>
-                    }
+                    <Button className='bg-blue hover:bg-blue text-white' type="default" onClick={() => showModal(record.id)}>Cập nhật thông tin sức khoẻ</Button>
+                    <Button danger onClick={() => handleReject(record.id)} style={{ marginLeft: 8 }}>Từ chối</Button>
                 </div >
             ),
         },

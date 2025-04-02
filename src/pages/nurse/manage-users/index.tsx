@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
 import userUserService from "../../../services/userUserService";
-import { Button, message, Table, Form, Image, Select, GetProps } from "antd";
+import { Button, message, Table, Form, Image, GetProps } from "antd";
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import ModalCreateUpdateUser, { UserData } from "../../../components/organisms/modal-create-update-user/ModalCreateUpdateUser";
 import ModalDelete from "../../../components/organisms/modal-delete";
 import { tableText } from "../../../constants/function";
 import { Link } from "react-router-dom";
 import { Input } from 'antd';
-import ModalAppointmentHistory from "../../../components/organisms/modal-appointment-history/ModalAppointmentHistory";
-import { CreateAppointment } from "../../../components/organisms/modal-create-appointment/ModalCreateAppointment";
 import Loading from "../../../components/molecules/loading/Loading";
 type SearchProps = GetProps<typeof Input.Search>;
 const { Search } = Input;
@@ -54,11 +52,8 @@ const NurseManageUsers: React.FC = () => {
     const { createUser, updateUser, deleteUser, getUsers, getUsersSearch } = userUserService();
     const [form] = Form.useForm(); // Create a form reference
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false);
-    // const [isLoading, setIsLoading] = useState<boolean>(false);
-
-    // if (isLoading) {
-    //     return <Loading />
-    // }
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [searchText, setSearchText] = useState<string>('')
 
     useEffect(() => {
         getUsersFromAdmin();
@@ -76,17 +71,21 @@ const NurseManageUsers: React.FC = () => {
 
     const handleCreateOrUpdate = async (values: UserData) => {
         console.log("handleCreateOrUpdate:", values);
+
         if (currentUser) {
             // Update user logic can be added here
+            // setIsLoading(true)
             const response = await updateUser(values);
             if (response) {
                 message.success("Cập nhật dùng thành công");
+      
                 getUsersFromAdmin();
                 setVisible(false); // Close the modal only after successful creation
                 form.resetFields(); // Reset the form fields
             }
         } else {
             // Create new user
+            setIsLoading(true)
             const response = await createUser(values);
             if (response) {
                 message.success("Tạo người dùng thành công");
@@ -95,6 +94,7 @@ const NurseManageUsers: React.FC = () => {
                 form.resetFields(); // Reset the form fields
             }
         }
+        setIsLoading(false)
     };
 
     const handleCancel = () => {
@@ -102,23 +102,24 @@ const NurseManageUsers: React.FC = () => {
     };
 
     const getUsersFromAdmin = async () => {
-
+        setIsLoading(true)
         const response = await getUsersSearch("", "");;
         console.log("response: ", response);
         if (response) {
             // Filter users to include only those with the role of "user" and not deleted
             const filteredUsers = response.users.filter((item: UserData) => item.role === "user" && !item.isDeleted);
-            
+
             // Sort the filtered users alphabetically by fullName
             const sortedUsers = filteredUsers.sort((a: UserData, b: UserData) => {
                 if (a.fullName < b.fullName) return -1; // a comes before b
                 if (a.fullName > b.fullName) return 1;  // a comes after b
                 return 0; // a and b are equal
             });
-    
+
             // Update the state with the sorted users
             setUsers(sortedUsers);
         }
+        setIsLoading(false)
     };
 
     const handleOpenModalDelete = (record: UserData) => {
@@ -188,6 +189,7 @@ const NurseManageUsers: React.FC = () => {
     const handleOkModalDelete = async () => {
         console.log("currentUser: ", currentUser)
         if (!currentUser) return; // Ensure selectedService is defined
+        setIsLoading(true)
         await deleteUser(currentUser.id);
         message.success(`Xóa dịch vụ ${currentUser.fullName} thành công`);
         setCurrentUser(null);
@@ -195,21 +197,28 @@ const NurseManageUsers: React.FC = () => {
         getUsersFromAdmin(); // Refresh the service list after deletion
     };
 
-    const onSearch: SearchProps['onSearch'] = async (value, _e, info) => {
+    const onSearch: SearchProps['onSearch'] = async (value, _e) => {
+        setSearchText(value)
+        setIsLoading(true)
         const response = await getUsersSearch(value, '');
         console.log("response: ", response);
         if (response) {
             const filteredUsers = response.users.filter((item: UserData) => item.role !== "admin" && !item.isDeleted);
-
             // Sort the filtered users alphabetically by name
             const sortedUsers = filteredUsers.sort((a: UserData, b: UserData) => {
                 if (a.fullName < b.fullName) return -1; // a comes before b
                 if (a.fullName > b.fullName) return 1;  // a comes after b
                 return 0; // a and b are equal
             });
-
             setUsers(sortedUsers);
         }
+        setIsLoading(false)
+    }
+
+    if (isLoading) {
+        return (
+            < Loading />
+        )
     }
 
     return (
@@ -232,7 +241,11 @@ const NurseManageUsers: React.FC = () => {
                 form={form} // Pass the form reference to the modal
             />
             <div className='flex justify-between px-2'>
-                <Search placeholder="Tìm kiếm bằng tên, email, số điện thoại" className='w-[350px]' onSearch={onSearch} enterButton />
+                <Search
+                    placeholder="Tìm kiếm bằng tên, email, số điện thoại" className='w-[350px]'
+                    onSearch={onSearch} enterButton
+                    defaultValue={searchText}
+                />
                 <Button onClick={() => showModal()} type="primary" style={{ marginBottom: 16 }}>
                     Thêm người dùng
                 </Button>

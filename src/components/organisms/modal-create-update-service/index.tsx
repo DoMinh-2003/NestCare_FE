@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { Modal, Form, Input, InputNumber, Button } from "antd";
+import { validatePrice } from "../../../utils/validate";
 
 interface ServiceFormProps {
   visible: boolean;
@@ -77,11 +78,9 @@ const ModalCreateUpdateServices: React.FC<ServiceFormProps> = ({
         <Form.Item
           label="Giá"
           name="price"
-          rules={[
-            { required: true, message: "Vui lòng nhập giá" },
-          ]}
+          rules={[validatePrice]}
         >
-          <InputNumber placeholder="Nhập giá dịch vụ" className="w-full" />
+          <InputNumber type="number" placeholder="Nhập giá dịch vụ" className="w-full" />
         </Form.Item>
       </Form>
     </Modal>

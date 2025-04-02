@@ -3,6 +3,7 @@ import { useState } from 'react';
 import ModalAppointmentDetail, { AppointmentHistoryDetail } from '../modal-appointment-detail/ModalAppointmentDetail';
 import useAppointmentService from '../../../services/useAppointmentService';
 import Loading from '../../molecules/loading/Loading';
+import { getStatusAppointment } from '../../../utils/statusLabelValue';
 
 const ModalAppointmentHistory = ({ isVisible, onClose, appointmentData }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -42,6 +43,7 @@ const ModalAppointmentHistory = ({ isVisible, onClose, appointmentData }) => {
       title: 'Trạng thái',
       dataIndex: 'status',
       key: 'status',
+      render:(status: string)=> getStatusAppointment(status)
     },
     {
       title: 'Ngày đặt lịch',
