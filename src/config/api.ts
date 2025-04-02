@@ -20,6 +20,8 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+
+
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -39,7 +41,13 @@ api.interceptors.response.use(
             isTokenExpired = false;
           }, 1500);
         }
-      } else {
+      } else if (status === 403) {
+        console.log(error.response);
+        message.error(data.message);
+      } else if (status === 409) {
+        message.error(data.message);
+      }
+      else {
         message.error(data.message);
       }
     }
