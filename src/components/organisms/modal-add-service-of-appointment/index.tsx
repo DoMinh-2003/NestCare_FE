@@ -66,13 +66,13 @@ const ModalAddServices: React.FC<ModalAddServicesProps> = ({
             console.log('====================================');
             console.log("response", response);
             console.log('====================================');
-            // if (response) {
-            //     if (!response?.id) {
-            //         window.location.href = response
-            //     } else {
-            //         message.success("Cập nhật dịch vụ thành công!");
-            //     }
-            // }
+            if (response) {
+                if (!response?.id) {
+                    window.location.href = response
+                } else {
+                    message.success("Cập nhật dịch vụ thành công!");
+                }
+            }
         } catch (error) {
             console.error(error);
             message.error("Không thể cập nhật dịch vụ!");
