@@ -69,12 +69,16 @@ const ModalAddServices: React.FC<ModalAddServicesProps> = ({
             console.log('====================================');
             console.log("response", response);
             console.log('====================================');
-            if (response) {
-                if (!response?.id) {
-                    window.location.href = response
-                } else {
-                    message.success("Cập nhật dịch vụ thành công!");
-                }
+            if (typeof response === "string" && response.startsWith("http")) {
+                window.location.href = response; // Redirect to payment page
+            }
+            // ✅ If response is an object (successful update)
+            else if (typeof response === "object" && response !== null) {
+                message.success("Cập nhật dịch vụ thành công!");
+            }
+            // ❌ If response is unexpected
+            else {
+                message.warning("Đã xảy ra lỗi! Vui lòng thử lại.");
             }
         } catch (error) {
             console.error(error);
