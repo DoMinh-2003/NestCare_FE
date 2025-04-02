@@ -10,6 +10,7 @@ import moment from 'moment';
 import dayjs from 'dayjs';
 import { Slot } from '../../../model/Slot';
 import viVN from 'antd/es/date-picker/locale/vi_VN';
+import Loading from '../../../components/molecules/loading/Loading';
 
 
 type SearchProps = GetProps<typeof Input.Search>;
@@ -40,27 +41,33 @@ const NurseCheckIn: React.FC = () => {
     const [appointments, setAppointments] = useState<Appointment[]>([]);
     const { updateAppointmentsByStatus } = useAppointmentService()
     const { getAppointmentsByDate } = userAppointmentService();
-    const [day, setDay] = useState<string>('')
+    const [day, setDay] = useState(dayjs())
     const today = dayjs();
+    const [searchText, setSearchText] = useState<string>('')
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    // const [dayValue, setDayValue] = useState<string>('')
 
     useEffect(() => {
         getAppointmentsByStatusFromNurse();
     }, [day])
 
-    useEffect(() => {
-        const today = moment().format('YYYY-MM-DD');
-        console.log(today)
-        setDay(today);
-    }, [])
+    // useEffect(() => {
+    //     const today = moment().format('YYYY-MM-DD');
+    //     console.log(today)
+    //     setDay(today);
+    // }, [])
 
     const getAppointmentsByStatusFromNurse = async () => {
+        setIsLoading(true)
         if (day) {
-            const response = await getAppointmentsByDate(day, '', "PENDING")
+            console.log("day: ", day)
+            const response = await getAppointmentsByDate(day.format('YYYY-MM-DD'), '', "PENDING")
             console.log("getAppointmentsByStatusFromNurse: ", response)
             if (response) {
                 setAppointments(response)
             }
         }
+        setIsLoading(false)
     }
 
     const handleAccept = (appointmentId: string) => {
@@ -129,41 +136,42 @@ const NurseCheckIn: React.FC = () => {
     ];
 
     const onSearch: SearchProps['onSearch'] = async (value, _e) => {
+        setSearchText(value)
         console.log(day, value, "PENDING")
-        const response = await getAppointmentsByDate(day, value, "PENDING")
+        setIsLoading(true)
+        const response = await getAppointmentsByDate(day.format('YYYY-MM-DD'), value, "PENDING")
         console.log("response: ", response);
         setAppointments(response);
-        // if (response && value != '') {
-        //     setAppointments(response.filter((item: Appointment) =>
-        //         item.fetalRecords[0].mother.fullName.toLocaleLowerCase().includes(value.toLocaleLowerCase()) ||
-        //             item.doctor.fullName.toLocaleLowerCase().includes(value.toLocaleLowerCase()) ||
-        //             item.fetalRecords[0].mother.username.toLocaleLowerCase().includes(value.toLocaleLowerCase()) 
-        //         )
-        //     );
-        // } else {
-        //     setAppointments(response);
-        // }
+        setIsLoading(false)
     }
 
     const onChange: DatePickerProps['onChange'] = (date, dateString) => {
         if (date) {
-            const formattedDate = date.format('YYYY-MM-DD');
+            const formattedDate = date;
             setDay(formattedDate);
+            // setDayValue(date)
         }
     };
 
+    if (isLoading) {
+        return (
+            < Loading />
+        )
+    }
 
     return (
         <div>
             <div className='text-3xl font-bold text-center my-5'>Xác nhận cuộc hẹn</div>
             <div className='flex gap-2'>
                 <div className='flex gap-2 mb-2'>
-                    <Search placeholder="Tìm kiếm bằng tên mẹ" className='w-[250px]' onSearch={onSearch} enterButton />
+                    <Search placeholder="Tìm kiếm bằng tên mẹ"
+                        defaultValue={searchText}
+                        className='w-[250px]' onSearch={onSearch} enterButton
+                    />
                 </div>
                 <div>
-
                     <DatePicker
-                        defaultValue={today}
+                        defaultValue={day}
                         format="DD/MM/YYYY" // Hiển thị theo định dạng dd/MM/yyyy
                         onChange={onChange}
                         locale={viVN} // Đặt ngôn ngữ là tiếng Việt
