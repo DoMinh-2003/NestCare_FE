@@ -163,6 +163,8 @@ function AppointmentDashboard() {
 
 	useEffect(() => {
 		fetchFetalRecords()
+
+
 	}, [])
 
 	// Filter appointments based on status and date range
@@ -316,9 +318,9 @@ function AppointmentDashboard() {
 			render: (text) => formatDate(text),
 		},
 		{
-			title: "Tổng tiền",
-			dataIndex: "totalPrice",
-			key: "totalPrice",
+			title: "Giá tiền",
+			dataIndex: "price",
+			key: "price",
 			render: (text) => `${parseFloat(text).toLocaleString("vi-VN")} VND`,
 		},
 	]
@@ -349,11 +351,18 @@ function AppointmentDashboard() {
 
 	// Render appointment detail drawer
 	const renderAppointmentDetail = () => {
+		// 
+		// const [medication, setMedication] = useState()
 		if (!selectedAppointment) return null
 
 		const { appointmentDate, status, doctor, slot, fetalRecords, history, serviceBilling, medicationBills } = selectedAppointment
 		const statusConfigValue = statusConfig[status] || { color: "default", text: status, icon: null }
 		const selectedFetal = fetalRecords?.find((record) => record.id === selectedFetalId) || fetalRecords?.[0]
+
+		console.log("medicationBills", medicationBills)
+
+		const medication = medicationBills[0]?.details?.map(
+			c => { return c.medication })
 
 		return (
 			<div className="p-2">
@@ -454,9 +463,9 @@ function AppointmentDashboard() {
 				{serviceBilling && <ServiceBillingDetails serviceBilling={serviceBilling} />}
 
 				<Divider orientation="left">Đơn thuốc</Divider>
-				{medicationBills && medicationBills.length > 0 ? (
+				{medication && medication?.length > 0 ? (
 					<Table
-						dataSource={medicationBills}
+						dataSource={medication}
 						columns={medicationColumns}
 						rowKey="id"
 						pagination={false}
