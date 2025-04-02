@@ -1,5 +1,6 @@
 import { Modal, Typography, List, Avatar } from 'antd';
 import { getStatusAppointment } from '../../../utils/statusLabelValue';
+import { formatDate } from '../../../utils/formatDate';
 
 const { Title, Text } = Typography;
 // Interface for the Mother
@@ -74,7 +75,7 @@ const ModalAppointmentDetail = ({ isVisible, onClose, appointmentData }: { isVis
       className="rounded-lg"
     >
       <Text strong>Ngày đặt lịch: </Text>
-      <Text>{appointmentData?.appointmentDate}</Text>
+      <Text>{formatDate(appointmentData?.appointmentDate)}</Text>
       <br />
       <Text strong>Trạng thái: </Text>
       <Text>{getStatusAppointment(appointmentData?.status)}</Text>
@@ -93,9 +94,9 @@ const ModalAppointmentDetail = ({ isVisible, onClose, appointmentData }: { isVis
                 <>
                   <Text>Ghi chú: {record.note}</Text>
                   <br />
-                  <Text>Ngày cuối cùng của kì kinh cuối: {record.dateOfPregnancyStart}</Text>
+                  <Text>Ngày cuối cùng của kì kinh cuối: {formatDate(record.dateOfPregnancyStart)}</Text>
                   <br />
-                  <Text>Ngày dự sinh: {record.expectedDeliveryDate}</Text>
+                  <Text>Ngày dự sinh: {formatDate(record.expectedDeliveryDate)}</Text>
                   <br />
                   <Text>Trạng thái sức khoẻ: {record.healthStatus}</Text>
                 </>
@@ -119,9 +120,9 @@ const ModalAppointmentDetail = ({ isVisible, onClose, appointmentData }: { isVis
           }
         />
       </List.Item>
-          <div className='border border-solid my-3'></div>
+      <div className='border border-solid my-3'></div>
       <Title level={5}>Lịch sử đặt lịch</Title>
-      <List
+      {/* <List
         itemLayout="horizontal"
         dataSource={appointmentData?.history}
         renderItem={history => (
@@ -138,7 +139,28 @@ const ModalAppointmentDetail = ({ isVisible, onClose, appointmentData }: { isVis
             />
           </List.Item>
         )}
+      /> */}
+      <List
+        itemLayout="horizontal"
+        dataSource={[...(appointmentData?.history || [])].sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )}
+        renderItem={history => (
+          <List.Item>
+            <List.Item.Meta
+              title={<Text strong>Trạng thái: {getStatusAppointment(history?.status)}</Text>}
+              description={
+                <>
+                  <Text>Thay đổi bởi: {history?.changedBy?.fullName}</Text>
+                  <br />
+                  <Text>Thời gian đặt lịch: {new Date(history?.createdAt).toLocaleString()}</Text>
+                </>
+              }
+            />
+          </List.Item>
+        )}
       />
+
     </Modal>
   );
 };
