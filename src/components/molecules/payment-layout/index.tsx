@@ -31,10 +31,10 @@ const PaymentBooking = () => {
 					setLink(USER_ROUTES.APPOINTMENT_HISTORY)
 					break;
 				case 'nurse':
-					setLink(NURSE_ROUTES.NURSE_APPOINTMENT)
+					setLink('/nurse/appointments')
 					break;
 				case 'doctor':
-					setLink(DOCTOR_ROUTES.IN_PROGRESS_APPOINTMENT)
+					setLink('/doctor/in_progress')
 					break;
 				default:
 					setLink(USER_ROUTES.APPOINTMENT_HISTORY)

@@ -107,7 +107,7 @@ const PaymentResult = () => {
 							console.log(appointmentId);
 							await updateBookingStatus(appointmentId, AppointmentStatus.IN_PROGRESS)
 							message.success("Thanh toán thành công")
-							navigate('doctor/in-progress', {
+							navigate(USER_ROUTES.BOOKING_RESULT, {
 								state: { appointmentId },
 								replace: true,
 							})
