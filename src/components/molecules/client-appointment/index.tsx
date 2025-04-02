@@ -305,6 +305,11 @@ function AppointmentDashboard() {
 			key: "id",
 		},
 		{
+			title: "Tên thuốc",
+			dataIndex: "name",
+			key: "name",
+		},
+		{
 			title: "Ngày tạo",
 			dataIndex: "createdAt",
 			key: "createdAt",
