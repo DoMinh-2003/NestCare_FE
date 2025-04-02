@@ -58,7 +58,9 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
             setSlots(initialSlots);
         } else {
             form.resetFields();
-            setSelectedServices([])
+            setSelectedServices(null)
+            setTotalPrice(0)
+            setDiscount(0)
         }
     }, [initialValues, form]);
 
@@ -84,11 +86,12 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
                         slot: slots[serviceId], // Lấy số slot từ trường nhập
                     })),
                 };
-                setDiscount(0);
-           
-                form.resetFields();
-                setTotalPrice(0)
                 onSubmit(formattedValues);
+                setDiscount(0);
+                setTotalPrice(0)
+                setSelectedServices(null)
+                setSlots(null)
+                form.resetFields();
 
             } else {
                 const values = await form.validateFields();
@@ -100,10 +103,12 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
                         slot: slots[serviceId], // Lấy số slot từ trường nhập
                     })),
                 };
+                onSubmit(formattedValues);
                 setDiscount(0);
                 form.resetFields();
                 setTotalPrice(0)
-                onSubmit(formattedValues);
+                setSelectedServices(null)
+                setSlots(null)
             }
         } catch (error) {
             console.error("Validation failed:", error);
@@ -111,14 +116,16 @@ const ModalCreateUpdatePackage = ({ visible, onCancel, onSubmit, initialValues, 
     };
 
     const calculateTotalPrice = () => {
-        const total = selectedServices.reduce((sum, serviceId) => {
-            const service = services.find(s => s.id === serviceId);
-            const slot = slots[serviceId] || 0; // Sử dụng số slot mới
-            return sum + (service ? service.price * slot : 0);
-        }, 0);
-
-        const priceDiscount = total - (total * (discount / 100));
-        setTotalPrice(priceDiscount); // Cập nhật tổng giá
+        let total;
+        if (selectedServices) {
+            total = selectedServices?.reduce((sum, serviceId) => {
+                const service = services.find(s => s.id === serviceId);
+                const slot = slots[serviceId] || 0; // Sử dụng số slot mới
+                return sum + (service ? service.price * slot : 0);
+            }, 0);
+            const priceDiscount = total - (total * (discount / 100));
+            setTotalPrice(priceDiscount); // Cập nhật tổng giá
+        }
     };
 
     useEffect(() => {

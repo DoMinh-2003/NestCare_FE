@@ -6,6 +6,7 @@ import ModalCreateUpdatePackage, { PackageCreateUpdate } from "../../../componen
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { formatMoney } from "../../../utils/formatMoney";
 import ModalDelete from "../../../components/organisms/modal-delete";
+import Loading from "../../../components/molecules/loading/Loading";
 type SearchProps = GetProps<typeof Input.Search>;
 const { Search } = Input;
 
@@ -20,7 +21,8 @@ const ManagePackage = () => {
     const [form] = Form.useForm();
     const [isModalDeleteOpen, setIsModalDeleteOpen] = useState(false); //Modal delete
     // const [currentPackage, setCurrentPackage] = useState<PackageCreateUpdate | null>(null);
-
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [searchText, setSearchText] = useState<string>("");
     useEffect(() => {
         getPackagesFromAdmin();
     }, []);
@@ -53,6 +55,7 @@ const ManagePackage = () => {
     };
 
     const getPackagesFromAdmin = async () => {
+        setIsLoading(true)
         const response = await getPackages();
         console.log("response: ", response);
         if (response) {
@@ -61,23 +64,28 @@ const ManagePackage = () => {
             });
             setPackages(sortedPackages);
         }
+        setIsLoading(false)
     };
 
     const handleSubmit = async (data: PackageCreateUpdate) => {
         console.log("Submitted Package:", data);
         setIsModalOpenCreateUpdate(false);
         if (!editingPackage) {
+            setIsLoading(true)
             const response = await createPackage(data);
             if (response && response.data) {
                 message.success("Tạo gói thành công");
                 getPackagesFromAdmin();
             }
+            setIsLoading(false)
         } else {
-            const response = await updatePackage(data, editingPackage?.id+'');
+            setIsLoading(true)
+            const response = await updatePackage(data, editingPackage?.id + '');
             if (response && response.data) {
                 message.success("Cập nhật gói thành công");
                 getPackagesFromAdmin();
             }
+            setIsLoading(false)
         }
     };
 
@@ -85,7 +93,7 @@ const ManagePackage = () => {
         if (packageCreateUpdate) {
             console.log("packageCreateUpdate: ", packageCreateUpdate)
             setEditingPackage(packageCreateUpdate);
-        } else{
+        } else {
             setEditingPackage(null)
         }
         setIsModalOpenCreateUpdate(true);
@@ -121,19 +129,6 @@ const ManagePackage = () => {
         //                 return period;
         //         }
         //     },
-        // },
-
-        // {
-        //     title: "Giao hàng",
-        //     dataIndex: "delivery_included",
-        //     key: "delivery_included",
-        //     render: (value: number) => (value ? <Tag color="green">Có</Tag> : <Tag color="red">Không</Tag>),
-        // },
-        // {
-        //     title: "Cảnh báo",
-        //     dataIndex: "alerts_included",
-        //     key: "alerts_included",
-        //     render: (value: number) => (value ? <Tag color="green">Có</Tag> : <Tag color="red">Không</Tag>),
         // },
         {
             title: "Trạng thái",
@@ -172,6 +167,7 @@ const ManagePackage = () => {
     }
 
     const onSearch: SearchProps['onSearch'] = async (value, _e) => {
+
         const response = await getPackages();
         console.log("response: ", response);
         if (response) {
@@ -185,6 +181,7 @@ const ManagePackage = () => {
 
     const handleOkModalDelete = async () => {
         if (!editingPackage) return;
+        setIsLoading(true)
         await deletePackages(editingPackage.id + '');
         message.success(`Xóa  "${editingPackage?.name}" thành công`);
         setEditingPackage(null);
@@ -195,6 +192,12 @@ const ManagePackage = () => {
     const handleCancelModalDelete = () => {
         setIsModalDeleteOpen(false);
     };
+
+    if (isLoading) {
+        return (
+            < Loading />
+        )
+    }
 
     return (
         <div>
@@ -210,7 +213,10 @@ const ManagePackage = () => {
             />
 
             <div className="mb-4 flex items-center justify-between">
-                <Search placeholder="Tìm kiếm bằng tên hoặc email" className='w-[250px]' onSearch={onSearch} enterButton />
+                <Search placeholder="Tìm kiếm bằng tên hoặc email" className='w-[250px]'
+                 onSearch={onSearch} enterButton
+                 defaultValue={searchText}
+                 />
                 <Button type="primary" onClick={() => handleOpenModalCreateUpdate()}>
                     Thêm gói dịch vụ
                 </Button>
