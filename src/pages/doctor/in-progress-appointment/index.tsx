@@ -91,7 +91,7 @@ function DoctorManageCheckinAppointments() {
 	const [services, setServices] = useState<[]>([])
 	const [currentDoctor, setCurrentDoctor] = useState(null)
 	const [loading, setLoading] = useState(false)
-	const { getAppointmentsByDoctor, updateAppointmentStatus, getAppointmentCheckupPreview } = userAppointmentService()
+	const { getAppointmentsByDoctor } = userAppointmentService()
 	const [form] = Form.useForm()
 	const { getServices } = useServiceService()
 	const [modalVisible, setModalVisible] = useState(false)
@@ -130,11 +130,7 @@ function DoctorManageCheckinAppointments() {
 		console.log("Payload", services);
 
 		try {
-			const response = await getAppointmentCheckupPreview(details.id, services)
-			console.log('====================================');
-			console.log("RESPONSE", response);
-			console.log('====================================');
-			setModalData(response)
+			setModalData(services)
 			setModalTitle(title)
 			setModalVisible(true)
 			// setModalData(details)
