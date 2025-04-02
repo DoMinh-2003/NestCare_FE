@@ -63,8 +63,11 @@ const ModalAddServices: React.FC<ModalAddServicesProps> = ({
             // values.servicesSelected là mảng ID dịch vụ
             if (!appointmentId) return;
             const response = await addServicesToAppointment(appointmentId, serviceList);
+            console.log('====================================');
+            console.log("response", response);
+            console.log('====================================');
             if (response) {
-                if (!response.id) {
+                if (!response?.id) {
                     window.location.href = response
                 } else {
                     message.success("Cập nhật dịch vụ thành công!");

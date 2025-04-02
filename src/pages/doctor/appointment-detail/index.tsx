@@ -1,7 +1,6 @@
-"use client"
 
 import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
+import { useParams, useNavigate } from "react-router-dom"
 import {
 	Select,
 	Card,
@@ -32,11 +31,11 @@ import {
 	HistoryOutlined,
 	PlusOutlined,
 	EditOutlined,
+	ArrowLeftOutlined,
 } from "@ant-design/icons"
 import { motion } from "framer-motion"
 import userAppointmentService from "../../../services/useAppointmentService"
 import useMedicineService from "../../../services/useMedicineService"
-import { useNavigate } from "react-router"
 
 
 // Types
@@ -147,6 +146,7 @@ function AppointmentDetail() {
 	const [showMedicationSection, setShowMedicationSection] = useState(false)
 	const { getAppointmentDetail, completedAppointmentByDoctor } = userAppointmentService()
 	const { getMedicinesService } = useMedicineService()
+	const navigate = useNavigate()
 
 	const handleGetAppointmentDetail = async (appointmentId) => {
 		try {
@@ -399,6 +399,9 @@ function AppointmentDetail() {
 
 	return (
 		<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }}>
+			<Button onClick={() => navigate(-1)} type="primary" icon={<ArrowLeftOutlined />}>
+				Quay lại
+			</Button>
 			<Card className="appointment-detail-card">
 				<Row gutter={[16, 16]}>
 					<Col span={24}>

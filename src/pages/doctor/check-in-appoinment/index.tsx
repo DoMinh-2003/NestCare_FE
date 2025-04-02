@@ -223,13 +223,13 @@ function DoctorManageCheckinAppointments() {
 
 	// Cấu hình cột cho bảng chính
 	const columns = [
-		// {
-		// 	title: "Hồ Sơ khám",
-		// 	key: "fetalRecords",
-		// 	render: (record: Appointment) => {
-		// 		return <Link to={`appointments/${record.id}`}>Xem</Link>
-		// 	},
-		// },
+		{
+			title: "Hồ Sơ khám",
+			key: "fetalRecords",
+			render: (record: Appointment) => {
+				return <Link to={`appointments/${record.id}`}>Xem</Link>
+			},
+		},
 		{
 			title: "Ngày hẹn",
 			dataIndex: "appointmentDate",
@@ -536,6 +536,7 @@ function DoctorManageCheckinAppointments() {
 
 	return (
 		<div className="p-6">
+
 			<Card
 				title={
 					<Title level={3} style={{ margin: 0, color: "#1890ff" }}>

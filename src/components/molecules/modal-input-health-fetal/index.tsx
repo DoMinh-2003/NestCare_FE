@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Modal, Form, Input, InputNumber, Button, DatePicker } from 'antd';
 
 export interface HealthRecord {
@@ -18,13 +18,18 @@ const HealthRecordModal = ({
 	onCancel,
 	onSubmit,
 	initialData,
+	fetal
 }: {
 	visible: boolean;
 	onCancel: () => void;
 	onSubmit: (values: HealthRecord) => void;
 	initialData?: HealthRecord;
+	fetal?: any;
 }) => {
 	const [form] = Form.useForm();
+	const [fetalStartDate, setFetalStartDate] = useState()
+	// dateOfPregnancyStart
+
 
 	const initialValues = initialData || {
 		motherWeight: undefined,
@@ -43,6 +48,8 @@ const HealthRecordModal = ({
 		await onSubmit(submittedData);
 		form.resetFields();
 	};
+
+
 
 	return (
 		<Modal
@@ -142,10 +149,37 @@ const HealthRecordModal = ({
 				{/* Ngày tạo */}
 				<Form.Item
 					label="Ngày tạo"
-					name="createAt"
-					required
+					name="createdAt"
+					rules={[
+						{ required: true, message: "Vui lòng chọn ngày tạo!" },
+						({ getFieldValue }) => ({
+							validator(_, value) {
+								if (!value) {
+									return Promise.reject("Vui lòng chọn ngày tạo!");
+								}
+								const selectedDate = value.toDate();
+								const startDate = fetal?.dateOfPregnancyStart ? new Date(fetal.dateOfPregnancyStart) : null;
+								const today = new Date();
+
+								if (startDate && selectedDate < startDate) {
+									return Promise.reject("Ngày tạo không được trước ngày bắt đầu thai kỳ!");
+								}
+								if (selectedDate > today) {
+									return Promise.reject("Ngày tạo không được trong tương lai!");
+								}
+								return Promise.resolve();
+							},
+						}),
+					]}
 				>
-					<DatePicker format="DD/MM/YYYY" placeholder="Chọn ngày tạo" />
+					<DatePicker
+						format="DD/MM/YYYY"
+						placeholder="Chọn ngày tạo"
+						disabledDate={(current) => {
+							const startDate = fetal?.dateOfPregnancyStart ? new Date(fetal.dateOfPregnancyStart) : null;
+							return current && (current.isAfter(new Date(), 'day') || (startDate && current.isBefore(startDate, 'day')));
+						}}
+					/>
 				</Form.Item>
 
 				{/* Nút điều khiển */}
