@@ -123,9 +123,9 @@ function DoctorManageCheckinAppointments() {
 		}
 	}
 	// Hiển thị chi tiết (Modal bảng con)
-	const showDetails = async (title: string, details: Appointment[], services: any[]) => {
+	const showDetails = async (title: string, services: any[]) => {
 		console.log('====================================');
-		console.log("details", details);
+		// console.log("details", details);
 		console.log('====================================');
 		console.log("Payload", services);
 
@@ -274,9 +274,9 @@ function DoctorManageCheckinAppointments() {
 		},
 		{
 			title: "Dịch vụ",
-			dataIndex: ['serviceBilling', 'appointmentServices'],
+			dataIndex: ['serviceBilling', "appointmentServices"],
 			key: "appointmentServices",
-			render: (services: any[], record: Appointment) => (
+			render: (services: any[], record) => (
 				<Space>
 					<Button
 						onClick={() => showDetails("Dịch vụ khám", record, services)}
